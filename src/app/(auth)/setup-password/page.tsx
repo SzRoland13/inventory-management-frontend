@@ -1,3 +1,3 @@
 export default function SetupPasswordPage() {
-  return <div></div>;
+  return <div>Page where users can setup their first password</div>;
 }

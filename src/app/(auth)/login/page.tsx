@@ -1,3 +1,3 @@
 export default function LoginPage() {
-  return <div></div>;
+  return <div>Page where users can give their passwords</div>;
 }

@@ -7,6 +7,8 @@ import {
   LoginRequest,
   LoginResponse,
   PasswordSetupRequest,
+  ShortLifeTokenResponse,
+  TwoFactorVerifyRequest,
 } from './dtos/authDtos';
 import { ApiResponse } from './dtos/genericDtos';
 
@@ -57,9 +59,29 @@ export class AuthService extends BaseService {
     );
   }
 
-  async login(req: LoginRequest): Promise<ApiResponse<LoginResponse>> {
+  async login(req: LoginRequest): Promise<ApiResponse<ShortLifeTokenResponse>> {
     return this.handleRequest(
-      axiosClient.post<ApiResponse<LoginResponse>>('/auth/login', req),
+      axiosClient.post<ApiResponse<ShortLifeTokenResponse>>('/auth/login', req),
+    );
+  }
+
+  async twoFaSetup(req: EmailRequest): Promise<ApiResponse<string>> {
+    return this.handleRequest(
+      axiosClient.post<ApiResponse<string>>('/auth/2fa/setup', req),
+    );
+  }
+
+  async twoFaVerify(req: TwoFactorVerifyRequest): Promise<ApiResponse<void>> {
+    return this.handleRequest(
+      axiosClient.post<ApiResponse<void>>('/auth/2fa/verify', req),
+    );
+  }
+
+  async twoFaLogin(
+    req: TwoFactorVerifyRequest,
+  ): Promise<ApiResponse<LoginResponse>> {
+    return this.handleRequest(
+      axiosClient.post<ApiResponse<LoginResponse>>('/auth/2fa/login', req),
     );
   }
 }

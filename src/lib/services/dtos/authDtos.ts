@@ -38,3 +38,13 @@ export type LoginResponse = {
   user: UserDetails;
   tokens: TokensDetails;
 };
+
+export type ShortLifeTokenResponse = {
+  shortLifeToken: string;
+};
+
+export type TwoFactorVerifyRequest = {
+  email: string;
+  code: string;
+  shortLifeToken: string;
+};
