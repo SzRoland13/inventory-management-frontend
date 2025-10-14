@@ -11,15 +11,15 @@ export abstract class BaseService {
       if (error.response?.data?.messageKey) {
         return {
           success: false,
-          massageKey: error.response.data.messageKey,
-          data: null as any,
+          messageKey: error.response.data.messageKey,
+          data: error.response?.data?.data ?? null,
         };
       }
 
       return {
         success: false,
-        massageKey: 'error.unexpected',
-        data: null as any,
+        messageKey: 'error.unexpected',
+        data: error.response?.data?.data ?? null,
       };
     }
   }

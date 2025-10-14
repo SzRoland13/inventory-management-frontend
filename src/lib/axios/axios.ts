@@ -8,7 +8,7 @@ import { ApiResponse } from '../services/dtos/genericDtos';
 import { TokensDetails } from '../services/dtos/authDtos';
 
 const baseURL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/V1';
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
 const axiosClient = axios.create({
   baseURL: baseURL,

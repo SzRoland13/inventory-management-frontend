@@ -19,8 +19,8 @@ export type LoginRequest = {
 };
 
 export type CheckFirstLoginResponse = {
-  isEmailRegistered: boolean;
-  isFirstLogin: boolean;
+  emailRegistered: boolean;
+  firstLogin: boolean;
 };
 
 export type UserDetails = {
@@ -41,6 +41,7 @@ export type LoginResponse = {
 
 export type ShortLifeTokenResponse = {
   shortLifeToken: string;
+  expiresAt: Date;
 };
 
 export type TwoFactorVerifyRequest = {
