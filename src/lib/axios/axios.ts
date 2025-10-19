@@ -8,7 +8,7 @@ import { ApiResponse } from '../services/dtos/genericDtos';
 import { TokensDetails } from '../services/dtos/authDtos';
 
 const baseURL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/V1';
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
 const axiosClient = axios.create({
   baseURL: baseURL,
@@ -31,21 +31,20 @@ axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && originalRequest._retry) {
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
         const refreshToken = getRefreshToken();
 
         const response = await axios.post<ApiResponse<TokensDetails>>(
-          baseURL + '/auth/refresh',
+          `${baseURL}/auth/refresh`,
           {
             refreshToken,
           },
         );
 
         const { accessToken } = response.data.data;
-
         useUserStore.getState().setUser({ accessToken });
 
         axiosClient.defaults.headers.common[

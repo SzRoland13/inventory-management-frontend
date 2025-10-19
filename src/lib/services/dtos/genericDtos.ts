@@ -1,5 +1,5 @@
 export type ApiResponse<T> = {
   success: boolean;
-  massageKey: string;
+  messageKey: string;
   data: T;
 };
