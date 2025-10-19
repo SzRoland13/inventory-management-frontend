@@ -21,11 +21,11 @@ export default async function LocaleLayout({
   }
 
   return (
-    <main className='flex-1'>
+    <div className='flex-1'>
       <NextIntlClientProvider locale={locale} messages={messages}>
         <LocaleSetter locale={locale} />
         {children}
       </NextIntlClientProvider>
-    </main>
+    </div>
   );
 }

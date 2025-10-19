@@ -6,6 +6,7 @@ import {
 } from '../stores/userStore';
 import { ApiResponse } from '../services/dtos/genericDtos';
 import { TokensDetails } from '../services/dtos/authDtos';
+import { useLocaleStore } from '@/lib/stores/localeStore';
 
 const baseURL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
@@ -56,7 +57,10 @@ axiosClient.interceptors.response.use(
         console.error('Token refresh failed:', refreshError);
 
         useUserStore.getState().clearUser();
-        window.location.href = '/login';
+
+        const locale = useLocaleStore.getState().locale || 'en';
+        window.location.href = `/${locale}/login-start`;
+
         return Promise.reject(refreshError);
       }
     }

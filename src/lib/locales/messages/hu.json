@@ -90,6 +90,11 @@
     }
   },
   "messagekey": {
+    "guard": {
+      "session-expired": "Lejárt munkamenet. Kérlek lépj be újra.",
+      "invalid-session": "Érvénytelen munkamenet. A hitelesítő adatai már nem érvényesek.",
+      "logged-in-redirect": "Már bejelentkezve. Átirányítás az irányítópultra."
+    },
     "auth": {
       "login": {
         "success": "Sikeres bejelentkezés! Üdv újra.",
@@ -114,5 +119,16 @@
       "one-time-code-sent": "Az egyszer használatos kód elküldve. Ellenőrizd a postaládádat!",
       "one-time-code-expired": "A kód lejárt. Kérjük, kérj újat."
     }
+  },
+  "sidebar": {
+    "dashboard": "Irányítópult",
+    "products": "Termékek",
+    "warehouses": "Raktárak",
+    "stocks": "Készletek",
+    "documents": "Dokumentumok",
+    "reports": "Riportok",
+    "sales": "Akciók",
+    "users": "Felhasználók",
+    "settings": "Beállítások"
   }
 }

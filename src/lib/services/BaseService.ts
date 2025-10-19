@@ -8,6 +8,7 @@ export abstract class BaseService {
       const { data } = await promise;
       return data;
     } catch (error: any) {
+      console.error(error);
       if (error.response?.data?.messageKey) {
         return {
           success: false,

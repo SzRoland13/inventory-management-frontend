@@ -18,7 +18,7 @@ export class UserService extends BaseService {
 
   async checkSession(): Promise<ApiResponse<void>> {
     return this.handleRequest(
-      axiosClient.get<ApiResponse<void>>('/auth/check-session'),
+      axiosClient.get<ApiResponse<void>>('/user/check-session'),
     );
   }
 }
