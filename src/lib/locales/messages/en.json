@@ -1,0 +1,118 @@
+{
+  "common": {
+    "submitting": "Submitting...",
+    "continue": "Continue",
+    "verifying": "Verifying...",
+    "verify": "Verify code",
+    "back": "Back",
+    "email": {
+      "title": "Email",
+      "required": "Email is required",
+      "invalid": "Invalid email address"
+    },
+    "password": {
+      "title": "Password",
+      "required": "Password is required",
+      "invalid": "Invalid password",
+      "show-rules": "Show password rules",
+      "rules": {
+        "min-8-chars": "Password must be at least 8 characters long",
+        "min-1-upper": "Must contain at least one uppercase letter",
+        "min-1-lower": "Must contain at least one lowercase letter",
+        "min-1-number": "Must contain at least one number",
+        "min-1-special": "Must contain at least one special character",
+        "no-repeating-chars": "Cannot contain 3 or more repeating characters",
+        "no-sequences": "Cannot contain simple sequences (abcd, 1234, etc.)"
+      },
+      "strength": {
+        "very-weak": "Very weak",
+        "weak": "Weak",
+        "moderate": "Moderate",
+        "good": "Good",
+        "strong": "Strong",
+        "excellent": "Excellent"
+      }
+    },
+    "requesting": "Requesting...",
+    "request": "Request"
+  },
+  "pages": {
+    "login": {
+      "title": "Login to your account",
+      "subtitle": "Enter your password to continue",
+      "footer": "Forgot your password? Contact your administrator."
+    },
+    "login-start": {
+      "subtitle": "Enter your email below to get started"
+    },
+    "setup-password": {
+      "title": "Setup your password",
+      "subtitle": "Enter your new password to proceed",
+      "repeat-password": {
+        "title": "Repeat password",
+        "required": "Please repeat your password",
+        "no-match": "Passwords do not match"
+      }
+    },
+    "first-login": {
+      "title": "Request one time code",
+      "step-one": {
+        "subtitle": "Press request button to request a one time code."
+      },
+      "step-two": {
+        "subtitle": "Please type in the one time code you received."
+      },
+      "otc": {
+        "title": "Enter one time code",
+        "required": "Code is required"
+      }
+    },
+    "2fa": {
+      "code": {
+        "required": "Code is required",
+        "invalid": "Invalid code format"
+      },
+      "qr": {
+        "title": "Scan this QR code in your Authenticator app.",
+        "label": "Enter 6-digit code"
+      },
+      "setup": {
+        "title": "Setup Two-Factor Authentication",
+        "subtitle": "Request a QR code for 2FA (Authenticator app).",
+        "footer": "Keep your authenticator safe. You can always reset 2FA later if needed."
+      },
+      "login": {
+        "title": "Two-Factor Authentication",
+        "subtitle": "Authenticate yourself with 2FA (Authenticator app).",
+        "footer": "If you cannot authenticate yourself, please contact your administrator."
+      },
+      "countdown": "This countdown shows how long you have to complete 2FA verification."
+    }
+  },
+  "messagekey": {
+    "auth": {
+      "login": {
+        "success": "Login successful! Welcome back.",
+        "invalid-credentials": "Invalid credentials. Please try again.",
+        "first-login": "First login not completed yet, please setup your account",
+        "not-first-login": "You have already completed your first login.",
+        "password-not-match": "Passwords do not match. Please check and try again.",
+        "password-setup-success": "Your password has been successfully set up.",
+        "email-send-failed": "Failed to send verification email. Please try again later."
+      },
+      "token-refreshed": "Your session has been refreshed successfully.",
+      "invalid-token": "Your token is invalid. Please log in again.",
+      "token-expired": "Your session has expired. Please log in again.",
+      "two-fa-already-enabled": "Two-factor authentication is already enabled.",
+      "two-fa-code-generated": "Your 2FA QR code has been generated successfully.",
+      "invalid-two-fa-code": "Invalid 2FA code. Please try again.",
+      "invalid-or-expired-session": "Your session is invalid or has expired. Please log in again.",
+      "two-fa-setup-complete": "Two-factor authentication has been successfully set up.",
+      "two-fa-not-enabled": "Two-factor authentication is not enabled on your account. Please set it up.",
+      "password-valid-needs-two-fa": "Password verified. Please enter your 2FA code next.",
+      "one-time-code-validation-success": "One-time code validated successfully.",
+      "one-time-code-sent": "One time code sent out. Please check you inbox!",
+      "one-time-code-expired": "The one-time code has expired. Please request a new one."
+    }
+  }
+}

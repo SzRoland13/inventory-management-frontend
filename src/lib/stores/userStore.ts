@@ -15,7 +15,7 @@ interface UserState {
 
 export const useUserStore = create(
   persist(
-    immer<UserState>((set, get) => ({
+    immer<UserState>((set) => ({
       username: null,
       email: null,
       role: null,
@@ -26,7 +26,7 @@ export const useUserStore = create(
       clearUser: () =>
         set(() => ({
           username: null,
-          roles: [],
+          role: [],
           accessToken: null,
           refreshToken: null,
         })),

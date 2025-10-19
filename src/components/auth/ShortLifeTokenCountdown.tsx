@@ -8,12 +8,14 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useAuthStore } from '@/lib/stores/authStore';
+import { useTranslations } from 'next-intl';
 
 export function ShortLifeTokenCountdown({
   onExpire,
 }: {
   onExpire?: () => void;
 }) {
+  const t = useTranslations();
   const getRemainingSessionSeconds = useAuthStore(
     (state) => state.getRemainingSessionSeconds,
   );
@@ -22,7 +24,7 @@ export function ShortLifeTokenCountdown({
 
   // client-only effect
   useEffect(() => {
-    setSecondsLeft(getRemainingSessionSeconds()); // initialize only on client
+    setSecondsLeft(getRemainingSessionSeconds());
 
     const interval = setInterval(() => {
       const remaining = getRemainingSessionSeconds();
@@ -37,7 +39,7 @@ export function ShortLifeTokenCountdown({
     return () => clearInterval(interval);
   }, [getRemainingSessionSeconds, onExpire]);
 
-  if (secondsLeft === null || secondsLeft <= 0) return null; // hide until client renders
+  if (secondsLeft === null || secondsLeft <= 0) return null;
 
   const minutes = Math.floor(secondsLeft / 60)
     .toString()
@@ -53,9 +55,7 @@ export function ShortLifeTokenCountdown({
           </div>
         </TooltipTrigger>
         <TooltipContent>
-          <p>
-            This countdown shows how long you have to complete 2FA verification.
-          </p>
+          <p>{t('pages.2fa.countdown')}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

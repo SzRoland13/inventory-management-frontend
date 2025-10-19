@@ -1,0 +1,118 @@
+{
+  "common": {
+    "submitting": "Beküldés folyamatban...",
+    "continue": "Folytatás",
+    "verifying": "Ellenőrzés folyamatban...",
+    "verify": "Kód ellenőrzése",
+    "back": "Vissza",
+    "email": {
+      "title": "E-mail cím",
+      "required": "Az e-mail cím megadása kötelező",
+      "invalid": "Érvénytelen e-mail cím"
+    },
+    "password": {
+      "title": "Jelszó",
+      "required": "A jelszó megadása kötelező",
+      "invalid": "Érvénytelen jelszó",
+      "show-rules": "Jelszószabályok megjelenítése",
+      "rules": {
+        "min-8-chars": "A jelszónak legalább 8 karakter hosszúnak kell lennie",
+        "min-1-upper": "Tartalmaznia kell legalább egy nagybetűt",
+        "min-1-lower": "Tartalmaznia kell legalább egy kisbetűt",
+        "min-1-number": "Tartalmaznia kell legalább egy számot",
+        "min-1-special": "Tartalmaznia kell legalább egy speciális karaktert",
+        "no-repeating-chars": "Nem tartalmazhat 3 vagy több egymás utáni azonos karaktert",
+        "no-sequences": "Nem tartalmazhat egyszerű sorozatokat (pl. abcd, 1234, stb.)"
+      },
+      "strength": {
+        "very-weak": "Nagyon gyenge",
+        "weak": "Gyenge",
+        "moderate": "Közepes",
+        "good": "Jó",
+        "strong": "Erős",
+        "excellent": "Kiváló"
+      }
+    },
+    "requesting": "Kérés folyamatban...",
+    "request": "Kérés"
+  },
+  "pages": {
+    "login": {
+      "title": "Bejelentkezés a fiókba",
+      "subtitle": "Add meg a jelszavad a folytatáshoz",
+      "footer": "Elfelejtetted a jelszavad? Lépj kapcsolatba a rendszergazdáddal."
+    },
+    "login-start": {
+      "subtitle": "Add meg az e-mail címed a kezdéshez"
+    },
+    "setup-password": {
+      "title": "Jelszó beállítása",
+      "subtitle": "Add meg az új jelszavad a folytatáshoz",
+      "repeat-password": {
+        "title": "Ismételt jelszó",
+        "required": "Kérjük, ismételd meg a jelszavad",
+        "no-match": "A jelszavak nem egyeznek"
+      }
+    },
+    "first-login": {
+      "title": "Egyszer használatos kód kérése",
+      "step-one": {
+        "subtitle": "Nyomd meg a Kérés gombot az egyszer használatos kód igényléséhez."
+      },
+      "step-two": {
+        "subtitle": "Írd be az e-mailben kapott egyszer használatos kódot."
+      },
+      "otc": {
+        "title": "Egyszer használatos kód megadása",
+        "required": "A kód megadása kötelező"
+      }
+    },
+    "2fa": {
+      "code": {
+        "required": "A kód megadása kötelező",
+        "invalid": "Érvénytelen kódformátum"
+      },
+      "qr": {
+        "title": "Olvasd be ezt a QR-kódot az Authenticator alkalmazással.",
+        "label": "Add meg a 6 számjegyű kódot"
+      },
+      "setup": {
+        "title": "Kétlépcsős azonosítás beállítása",
+        "subtitle": "Kérj QR-kódot a kétlépcsős azonosításhoz (Authenticator alkalmazás).",
+        "footer": "Tartsd biztonságban a hitelesítő hozzáférésed. Ha szükséges, később újra beállíthatod."
+      },
+      "login": {
+        "title": "Kétlépcsős azonosítás",
+        "subtitle": "Azonosítsd magad az Authenticator alkalmazással.",
+        "footer": "Ha nem tudsz bejelentkezni, fordulj a rendszergazdához."
+      },
+      "countdown": "Ez az időzítő mutatja, meddig van lehetőséged a 2FA azonosítás befejezésére."
+    }
+  },
+  "messagekey": {
+    "auth": {
+      "login": {
+        "success": "Sikeres bejelentkezés! Üdv újra.",
+        "invalid-credentials": "Érvénytelen bejelentkezési adatok. Próbáld újra.",
+        "first-login": "Az első bejelentkezés még nincs befejezve, kérjük, állítsd be a fiókodat.",
+        "not-first-login": "Az első bejelentkezést már elvégezted.",
+        "password-not-match": "A jelszavak nem egyeznek. Ellenőrizd és próbáld újra.",
+        "password-setup-success": "A jelszavad sikeresen beállítva.",
+        "email-send-failed": "Nem sikerült elküldeni az e-mailt. Próbáld újra később."
+      },
+      "token-refreshed": "A munkamenet sikeresen frissítve.",
+      "invalid-token": "Érvénytelen token. Kérjük, jelentkezz be újra.",
+      "token-expired": "A munkamenet lejárt. Kérjük, jelentkezz be újra.",
+      "two-fa-already-enabled": "A kétlépcsős azonosítás már engedélyezve van.",
+      "two-fa-code-generated": "A 2FA QR-kód sikeresen létrehozva.",
+      "invalid-two-fa-code": "Érvénytelen 2FA kód. Próbáld újra.",
+      "invalid-or-expired-session": "A munkamenet érvénytelen vagy lejárt. Kérjük, jelentkezz be újra.",
+      "two-fa-setup-complete": "A kétlépcsős azonosítás sikeresen beállítva.",
+      "two-fa-not-enabled": "A kétlépcsős azonosítás nincs engedélyezve. Kérjük, állítsd be.",
+      "password-valid-needs-two-fa": "A jelszó ellenőrizve. Add meg a 2FA kódodat a folytatáshoz.",
+      "one-time-code-validation-success": "Az egyszer használatos kód sikeresen ellenőrizve.",
+      "one-time-code-sent": "Az egyszer használatos kód elküldve. Ellenőrizd a postaládádat!",
+      "one-time-code-expired": "A kód lejárt. Kérjük, kérj újat."
+    }
+  }
+}

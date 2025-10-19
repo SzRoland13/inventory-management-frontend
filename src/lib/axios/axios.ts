@@ -31,21 +31,20 @@ axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && originalRequest._retry) {
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
         const refreshToken = getRefreshToken();
 
         const response = await axios.post<ApiResponse<TokensDetails>>(
-          baseURL + '/auth/refresh',
+          `${baseURL}/auth/refresh`,
           {
             refreshToken,
           },
         );
 
         const { accessToken } = response.data.data;
-
         useUserStore.getState().setUser({ accessToken });
 
         axiosClient.defaults.headers.common[

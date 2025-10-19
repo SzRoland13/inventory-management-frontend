@@ -1,5 +1,5 @@
-import axiosClient from '../axios/axios';
-import { BaseService } from './BaseService';
+import { BaseService } from '@/lib/services/BaseService';
+import axiosClient from '@/lib/axios/axios';
 import {
   CheckFirstLoginResponse,
   EmailRequest,
@@ -9,8 +9,8 @@ import {
   PasswordSetupRequest,
   ShortLifeTokenResponse,
   TwoFactorVerifyRequest,
-} from './dtos/authDtos';
-import { ApiResponse } from './dtos/genericDtos';
+} from '@/lib/services/dtos/authDtos';
+import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 
 export class AuthService extends BaseService {
   private static _instance: AuthService | null = null;
@@ -68,12 +68,6 @@ export class AuthService extends BaseService {
   async twoFaSetup(req: EmailRequest): Promise<ApiResponse<string>> {
     return this.handleRequest(
       axiosClient.post<ApiResponse<string>>('/auth/2fa/setup', req),
-    );
-  }
-
-  async twoFaVerify(req: TwoFactorVerifyRequest): Promise<ApiResponse<void>> {
-    return this.handleRequest(
-      axiosClient.post<ApiResponse<void>>('/auth/2fa/verify', req),
     );
   }
 

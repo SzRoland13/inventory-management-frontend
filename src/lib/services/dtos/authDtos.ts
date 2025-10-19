@@ -37,6 +37,7 @@ export type TokensDetails = {
 export type LoginResponse = {
   user: UserDetails;
   tokens: TokensDetails;
+  firstTime2FAEnabled: boolean;
 };
 
 export type ShortLifeTokenResponse = {

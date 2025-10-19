@@ -23,6 +23,7 @@ export const useAuthStore = create(
         set(() => ({
           email: null,
           shortLifeToken: null,
+          shortLifeTokenExpiry: null,
         })),
       getRemainingSessionSeconds: () => {
         const expiry = get().shortLifeTokenExpiry;
@@ -36,7 +37,7 @@ export const useAuthStore = create(
       },
     })),
     {
-      name: 'user-storage',
+      name: 'auth-storage',
     },
   ),
 );

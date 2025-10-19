@@ -1,4 +1,4 @@
-import { ApiResponse } from './dtos/genericDtos';
+import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 
 export abstract class BaseService {
   protected async handleRequest<T>(
