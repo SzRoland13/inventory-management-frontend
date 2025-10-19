@@ -90,6 +90,11 @@
     }
   },
   "messagekey": {
+    "guard": {
+      "session-expired": "Session expired. Please log in again.",
+      "invalid-session": "Invalid session. Your credentials are no longer valid.",
+      "logged-in-redirect": "Already logged in. Redirected to your dashboard."
+    },
     "auth": {
       "login": {
         "success": "Login successful! Welcome back.",
@@ -114,5 +119,16 @@
       "one-time-code-sent": "One time code sent out. Please check you inbox!",
       "one-time-code-expired": "The one-time code has expired. Please request a new one."
     }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "warehouses": "Warehouses",
+    "stocks": "Stocks",
+    "documents": "Documents",
+    "reports": "Reports",
+    "sales": "Sales",
+    "settings": "Settings",
+    "users": "User Management"
   }
 }
