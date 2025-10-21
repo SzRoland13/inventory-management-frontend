@@ -2,14 +2,42 @@
   "common": {
     "submitting": "Beküldés folyamatban...",
     "continue": "Folytatás",
+    "saving": "Mentés..",
+    "save": "Mentés",
     "verifying": "Ellenőrzés folyamatban...",
     "verify": "Kód ellenőrzése",
     "back": "Vissza",
+    "cancel": "Mégse",
+    "no-results": "Nincs találat.",
+    "role": {
+      "title": "Szerepkör"
+    },
+    "username": {
+      "title": "Felhasználónév"
+    },
     "email": {
       "title": "E-mail cím",
       "required": "Az e-mail cím megadása kötelező",
       "invalid": "Érvénytelen e-mail cím"
     },
+    "two-fa-status": {
+      "title": "2FA státusz",
+      "enabled": "Beállítva",
+      "disabled": "Nincs beállítva"
+    },
+    "first-login-status": {
+      "title": "Első belépés státusz",
+      "completed": "Befejezett",
+      "not-completed": "Nem befejezett"
+    },
+    "account-status": {
+      "title": "Fiók státusz",
+      "ACTIVE": "Aktív",
+      "SUSPENDED": "Felfüggesztett"
+    },
+    "id": "Egyéni azonosító",
+    "select-all": "Összes kiválasztása",
+    "select-row": "Sor kiválasztása",
     "password": {
       "title": "Jelszó",
       "required": "A jelszó megadása kötelező",
@@ -89,7 +117,17 @@
       "countdown": "Ez az időzítő mutatja, meddig van lehetőséged a 2FA azonosítás befejezésére."
     },
     "users": {
-      "title": "Felhasználókezelés"
+      "title": "Felhasználókezelés",
+      "dialog": {
+        "edit": "Felhasználó szerkesztése",
+        "create": "Új felhasználó hozzáadása"
+      },
+      "toolbar": {
+        "add": "Hozzáadás",
+        "edit": "Szerkesztés",
+        "suspend": "Felfüggesztés",
+        "reset": "2FA visszaállítás"
+      }
     }
   },
   "messagekey": {

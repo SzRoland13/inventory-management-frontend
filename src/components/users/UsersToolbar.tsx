@@ -1,7 +1,8 @@
 'use client';
 
-import { Menubar, MenubarMenu, MenubarTrigger } from '@/components/ui/menubar';
+import { Button } from '@/components/ui/button';
 import { PlusCircle, Edit, ShieldX, RotateCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface UsersToolbarProps {
   selectedIds: number[];
@@ -18,51 +19,50 @@ export function UsersToolbar({
   onSuspend,
   onReset2FA,
 }: UsersToolbarProps) {
+  const t = useTranslations();
   const hasSelection = selectedIds.length > 0;
   const hasSelectedOnlyOne = selectedIds.length === 1;
 
   return (
-    <div className='flex justify-between items-center p-2 bg-zinc-600 rounded-t-lg'>
-      <Menubar className='bg-(--muted-background) w-full'>
-        <MenubarMenu>
-          <MenubarTrigger
-            onClick={onAdd}
-            className='cursor-pointer flex items-center gap-2'
-          >
-            <PlusCircle className='h-4 w-4' /> Add user
-          </MenubarTrigger>
-        </MenubarMenu>
+    <div className='flex gap-2 items-center p-2 bg-zinc-600 rounded-t-lg'>
+      <Button
+        variant='ghost'
+        onClick={onAdd}
+        className='flex items-center gap-2'
+      >
+        <PlusCircle className='h-4 w-4' />
+        {t('pages.users.toolbar.add')}
+      </Button>
 
-        <MenubarMenu>
-          <MenubarTrigger
-            onClick={hasSelectedOnlyOne ? onEdit : undefined}
-            disabled={!hasSelectedOnlyOne}
-            className='cursor-pointer flex items-center gap-2 data-[disabled]:opacity-50'
-          >
-            <Edit className='h-4 w-4' /> Edit
-          </MenubarTrigger>
-        </MenubarMenu>
+      <Button
+        variant='ghost'
+        disabled={!hasSelectedOnlyOne}
+        onClick={onEdit}
+        className='flex items-center gap-2'
+      >
+        <Edit className='h-4 w-4' />
+        {t('pages.users.toolbar.edit')}
+      </Button>
 
-        <MenubarMenu>
-          <MenubarTrigger
-            onClick={hasSelection ? onSuspend : undefined}
-            disabled={!hasSelection}
-            className='cursor-pointer flex items-center gap-2 data-[disabled]:opacity-50'
-          >
-            <ShieldX className='h-4 w-4' /> Suspend
-          </MenubarTrigger>
-        </MenubarMenu>
+      <Button
+        variant='ghost'
+        disabled={!hasSelection}
+        onClick={onSuspend}
+        className='flex items-center gap-2'
+      >
+        <ShieldX className='h-4 w-4' />
+        {t('pages.users.toolbar.suspend')}
+      </Button>
 
-        <MenubarMenu>
-          <MenubarTrigger
-            onClick={hasSelection ? onReset2FA : undefined}
-            disabled={!hasSelection}
-            className='cursor-pointer flex items-center gap-2 data-[disabled]:opacity-50'
-          >
-            <RotateCcw className='h-4 w-4' /> Reset 2FA
-          </MenubarTrigger>
-        </MenubarMenu>
-      </Menubar>
+      <Button
+        variant='ghost'
+        disabled={!hasSelection}
+        onClick={onReset2FA}
+        className='flex items-center gap-2'
+      >
+        <RotateCcw className='h-4 w-4' />
+        {t('pages.users.toolbar.reset')}
+      </Button>
     </div>
   );
 }

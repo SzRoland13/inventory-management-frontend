@@ -2,7 +2,7 @@
 
 import { UsersTable } from '@/components/users/UsersTable';
 import useScreenSizeWatcher from '@/lib/hooks/useScreenSizeWatcher';
-import { USER_ROLE, USER_STATUS } from '@/lib/utils/enums';
+import { USER_ROLE, ACCOUNT_STATUS } from '@/lib/utils/enums';
 import { User } from '@/lib/utils/types';
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -16,45 +16,45 @@ export default function UsersPage() {
       username: 'admin_user',
       email: 'admin@example.com',
       role: USER_ROLE.ADMIN,
-      is2FaEnabled: true,
-      isOtcSetupCompleted: true,
-      userStatus: USER_STATUS.ACTIVE,
+      twoFaStatus: true,
+      firstLoginStatus: true,
+      accountStatus: ACCOUNT_STATUS.ACTIVE,
     },
     {
       id: 2,
       username: 'manager_john',
       email: 'john.manager@example.com',
       role: USER_ROLE.MANAGER,
-      is2FaEnabled: false,
-      isOtcSetupCompleted: true,
-      userStatus: USER_STATUS.ACTIVE,
+      twoFaStatus: false,
+      firstLoginStatus: true,
+      accountStatus: ACCOUNT_STATUS.ACTIVE,
     },
     {
       id: 3,
       username: 'sales_emma',
       email: 'emma.sales@example.com',
       role: USER_ROLE.SALES,
-      is2FaEnabled: true,
-      isOtcSetupCompleted: false,
-      userStatus: USER_STATUS.SUSPENDED,
+      twoFaStatus: true,
+      firstLoginStatus: false,
+      accountStatus: ACCOUNT_STATUS.SUSPENDED,
     },
     {
       id: 4,
       username: 'manager_sophia',
       email: 'sophia.manager@example.com',
       role: USER_ROLE.MANAGER,
-      is2FaEnabled: false,
-      isOtcSetupCompleted: false,
-      userStatus: USER_STATUS.ACTIVE,
+      twoFaStatus: false,
+      firstLoginStatus: false,
+      accountStatus: ACCOUNT_STATUS.ACTIVE,
     },
     {
       id: 5,
       username: 'sales_liam',
       email: 'liam.sales@example.com',
       role: USER_ROLE.SALES,
-      is2FaEnabled: true,
-      isOtcSetupCompleted: true,
-      userStatus: USER_STATUS.ACTIVE,
+      twoFaStatus: true,
+      firstLoginStatus: true,
+      accountStatus: ACCOUNT_STATUS.ACTIVE,
     },
   ];
   return (

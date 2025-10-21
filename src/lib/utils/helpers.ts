@@ -10,9 +10,19 @@ export function castToEnum<T extends Record<string, string | number>>(
   return values.includes(value) ? (value as T[keyof T]) : undefined;
 }
 
+import { ModificationUser, User } from '@/lib/utils/types';
 import { Routes } from './enums';
 
 export function localizedRoute(locale: string | undefined, route: Routes) {
   const activeLocale = locale ?? 'en';
   return `/${activeLocale}${route}`;
 }
+
+export const mapUserToModificationUser = (user: User): ModificationUser => {
+  return {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    role: user.role,
+  };
+};

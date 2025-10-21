@@ -11,14 +11,15 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils/utils';
 import { flexRender, Table as ReactTable } from '@tanstack/react-table';
-import { User } from '@/lib/utils/types';
+import { useTranslations } from 'next-intl';
 
-interface DataTableProps {
-  table: ReactTable<User>;
+interface DataTableProps<T> {
+  table: ReactTable<T>;
   className?: string;
 }
 
-export function DataTable({ table, className }: DataTableProps) {
+export function DataTable<T>({ table, className }: DataTableProps<T>) {
+  const t = useTranslations();
   return (
     <div className={cn('w-full overflow-x-auto bg-zinc-800', className)}>
       <Table>
@@ -64,7 +65,7 @@ export function DataTable({ table, className }: DataTableProps) {
                 colSpan={table.getAllColumns().length}
                 className='h-24 text-center text-zinc-400'
               >
-                No results.
+                {t('common.no-results')}
               </TableCell>
             </TableRow>
           )}

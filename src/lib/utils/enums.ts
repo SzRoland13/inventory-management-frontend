@@ -14,7 +14,7 @@ export enum USER_ROLE {
   SALES = 'SALES',
 }
 
-export enum USER_STATUS {
+export enum ACCOUNT_STATUS {
   ACTIVE = 'ACTIVE',
   SUSPENDED = 'SUSPENDED',
 }

@@ -7,20 +7,23 @@ import {
   getCoreRowModel,
   RowSelectionState,
 } from '@tanstack/react-table';
-import { User } from '@/lib/utils/types';
-import { userColumns } from '@/components/users/UsersColumns';
+import { ModificationUser, User } from '@/lib/utils/types';
+import { useUserColumns } from '@/components/users/UsersColumns';
 import { UsersToolbar } from '@/components/users/UsersToolbar';
 import { EditUserDialog } from '@/components/users/EditUserDialog';
-import { DataTable } from '@/components/users/UserDataTable';
+import { DataTable } from '@/components/common/DataTable';
+import { mapUserToModificationUser } from '@/lib/utils/helpers';
 
 export function UsersTable({ data }: { data: User[] }) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | undefined>();
+  const [editingUser, setEditingUser] = useState<
+    ModificationUser | undefined
+  >();
 
   const table = useReactTable<User>({
     data,
-    columns: userColumns,
+    columns: useUserColumns(),
     getCoreRowModel: getCoreRowModel(),
     state: { rowSelection },
     onRowSelectionChange: setRowSelection,
@@ -42,12 +45,12 @@ export function UsersTable({ data }: { data: User[] }) {
   const handleEdit = () => {
     const selectedUser = data.find((u) => u.id === selectedIds[0]);
     if (selectedUser) {
-      setEditingUser(selectedUser);
+      setEditingUser(mapUserToModificationUser(selectedUser));
       setDialogOpen(true);
     }
   };
 
-  const handleSave = (updated: User) => {
+  const handleSave = (updated: ModificationUser) => {
     console.log('Save user', updated);
     setDialogOpen(false);
   };

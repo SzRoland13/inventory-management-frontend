@@ -2,14 +2,42 @@
   "common": {
     "submitting": "Submitting...",
     "continue": "Continue",
+    "saving": "Saving..",
+    "save": "Save",
     "verifying": "Verifying...",
     "verify": "Verify code",
     "back": "Back",
+    "cancel": "Cancel",
+    "no-results": "No results.",
+    "role": {
+      "title": "Role"
+    },
+    "username": {
+      "title": "Username"
+    },
     "email": {
       "title": "Email",
       "required": "Email is required",
       "invalid": "Invalid email address"
     },
+    "two-fa-status": {
+      "title": "2FA status",
+      "enabled": "Enabled",
+      "disabled": "Not enabled"
+    },
+    "first-login-status": {
+      "title": "First login status",
+      "completed": "Completed",
+      "not-completed": "Not completed"
+    },
+    "account-status": {
+      "title": "Account status",
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended"
+    },
+    "id": "ID",
+    "select-all": "Select all",
+    "select-row": "Select row",
     "password": {
       "title": "Password",
       "required": "Password is required",
@@ -89,7 +117,17 @@
       "countdown": "This countdown shows how long you have to complete 2FA verification."
     },
     "users": {
-      "title": "User Management"
+      "title": "User Management",
+      "dialog": {
+        "edit": "Edit User",
+        "create": "Add New User"
+      },
+      "toolbar": {
+        "add": "Add",
+        "edit": "Edit",
+        "suspend": "Suspend",
+        "reset": "2FA reset"
+      }
     }
   },
   "messagekey": {
