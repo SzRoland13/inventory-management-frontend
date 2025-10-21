@@ -87,6 +87,9 @@
         "footer": "Ha nem tudsz bejelentkezni, fordulj a rendszergazdához."
       },
       "countdown": "Ez az időzítő mutatja, meddig van lehetőséged a 2FA azonosítás befejezésére."
+    },
+    "users": {
+      "title": "Felhasználókezelés"
     }
   },
   "messagekey": {

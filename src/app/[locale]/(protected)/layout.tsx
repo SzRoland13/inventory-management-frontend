@@ -22,7 +22,7 @@ export default function ProtectedLayout({
   return (
     <div className='flex min-h-screen bg-muted/10'>
       <Sidebar />
-      <main className='flex-1 p-6 lg:ml-[15vw] transition-all duration-300'>
+      <main className='flex-1 lg:ml-[15vw] transition-all duration-300'>
         {children}
       </main>
     </div>

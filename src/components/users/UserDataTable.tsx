@@ -1,6 +1,6 @@
+/* eslint-disable indent */
 'use client';
 
-import React from 'react';
 import {
   Table,
   TableBody,
@@ -10,22 +10,23 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils/utils';
-import { flexRender } from '@tanstack/react-table';
+import { flexRender, Table as ReactTable } from '@tanstack/react-table';
+import { User } from '@/lib/utils/types';
 
 interface DataTableProps {
-  table: any;
+  table: ReactTable<User>;
   className?: string;
 }
 
 export function DataTable({ table, className }: DataTableProps) {
   return (
-    <div className={cn('w-full overflow-auto', className)}>
+    <div className={cn('w-full overflow-x-auto bg-zinc-800', className)}>
       <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((hg: any) => (
+        <TableHeader className='bg-gradient-to-b from-zinc-600 to-zinc-600/80 text-zinc-100'>
+          {table.getHeaderGroups().map((hg) => (
             <TableRow key={hg.id}>
-              {hg.headers.map((header: any) => (
-                <TableHead key={header.id}>
+              {hg.headers.map((header) => (
+                <TableHead key={header.id} className='text-zinc-100'>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -40,12 +41,17 @@ export function DataTable({ table, className }: DataTableProps) {
 
         <TableBody>
           {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row: any) => (
+            table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() ? 'selected' : ''}
+                className={cn(
+                  'data-[state=selected]:bg-zinc-750',
+                  'hover:bg-zinc-700/60 cursor-pointer transition-colors',
+                  row.getIsSelected() && 'bg-zinc-700',
+                )}
               >
-                {row.getVisibleCells().map((cell: any) => (
+                {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
@@ -56,7 +62,7 @@ export function DataTable({ table, className }: DataTableProps) {
             <TableRow>
               <TableCell
                 colSpan={table.getAllColumns().length}
-                className='h-24 text-center'
+                className='h-24 text-center text-zinc-400'
               >
                 No results.
               </TableCell>

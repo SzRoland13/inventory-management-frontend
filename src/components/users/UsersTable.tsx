@@ -2,7 +2,11 @@
 
 import * as React from 'react';
 import { useState } from 'react';
-import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
+import {
+  useReactTable,
+  getCoreRowModel,
+  RowSelectionState,
+} from '@tanstack/react-table';
 import { User } from '@/lib/utils/types';
 import { userColumns } from '@/components/users/UsersColumns';
 import { UsersToolbar } from '@/components/users/UsersToolbar';
@@ -10,22 +14,25 @@ import { EditUserDialog } from '@/components/users/EditUserDialog';
 import { DataTable } from '@/components/users/UserDataTable';
 
 export function UsersTable({ data }: { data: User[] }) {
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | undefined>();
 
-  const table = useReactTable({
+  const table = useReactTable<User>({
     data,
     columns: userColumns,
     getCoreRowModel: getCoreRowModel(),
-    state: { rowSelection: {} },
-    onRowSelectionChange: (updater) => {
-      const selected = Object.keys(
-        typeof updater === 'function' ? updater({}) : updater,
-      );
-      setSelectedIds(selected);
-    },
+    state: { rowSelection },
+    onRowSelectionChange: setRowSelection,
   });
+
+  const selectedIds = React.useMemo(
+    () =>
+      Object.keys(rowSelection)
+        .map((id) => Number(table.getRow(id)?.original.id))
+        .filter((v) => !isNaN(v)),
+    [rowSelection, table],
+  );
 
   const handleAdd = () => {
     setEditingUser(undefined);
@@ -54,7 +61,7 @@ export function UsersTable({ data }: { data: User[] }) {
   };
 
   return (
-    <div className='w-full'>
+    <div className='w-full overflow-x-auto rounded-lg bg-zinc-900'>
       <UsersToolbar
         selectedIds={selectedIds}
         onAdd={handleAdd}
@@ -62,7 +69,9 @@ export function UsersTable({ data }: { data: User[] }) {
         onSuspend={handleSuspend}
         onReset2FA={handleReset2FA}
       />
-      <DataTable table={table} />
+      <div className='w-full overflow-x-auto bg-zinc-900'>
+        <DataTable table={table} />
+      </div>
       <EditUserDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}

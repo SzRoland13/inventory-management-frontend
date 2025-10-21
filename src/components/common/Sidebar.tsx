@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useUserStore } from '@/lib/stores/userStore';
 import { sidebarItems } from '@/lib/config/sidebarConfig';
@@ -12,9 +12,10 @@ import { Menu } from 'lucide-react';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { useLocaleStore } from '@/lib/stores/localeStore';
 import { useTranslations } from 'next-intl';
+import useScreenSizeWatcher from '@/lib/hooks/useScreenSizeWatcher';
 
 export default function Sidebar() {
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const { isLargeScreen } = useScreenSizeWatcher();
   const router = useRouter();
   const t = useTranslations();
   const pathname = usePathname();
@@ -25,14 +26,6 @@ export default function Sidebar() {
   const visibleItems = sidebarItems.filter(
     (item) => !item.roles || item.roles.includes(role!),
   );
-
-  // Detect screen size
-  useEffect(() => {
-    const updateScreen = () => setIsLargeScreen(window.innerWidth >= 1024);
-    updateScreen();
-    window.addEventListener('resize', updateScreen);
-    return () => window.removeEventListener('resize', updateScreen);
-  }, []);
 
   const getPath = () => {
     return `/${pathname.split('/')[2]}`;
@@ -79,16 +72,16 @@ export default function Sidebar() {
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
             <Button
-              variant='ghost'
+              variant='secondary'
               size='icon'
-              className='fixed top-4 left-4 z-50'
+              className='fixed top-4 left-2 z-50'
             >
               <Menu className='h-5 w-5' />
             </Button>
           </SheetTrigger>
           <SheetContent
             side='left'
-            className='p-0 w-[90%] max-w-sm bg-(--muted-background)'
+            className='p-0 w-[90%] max-w-sm bg-zinc-900'
           >
             <DialogTitle className='sr-only'>Menu</DialogTitle>
             <DialogDescription className='sr-only'>
@@ -100,7 +93,7 @@ export default function Sidebar() {
       )}
 
       {isLargeScreen && (
-        <aside className='fixed left-0 top-0 h-screen w-[15vw] bg-(--muted-background) border-r shadow-sm'>
+        <aside className='fixed left-0 top-0 h-screen w-[15vw] bg-zinc-900 border-r shadow-sm'>
           {SidebarContent}
         </aside>
       )}

@@ -87,6 +87,9 @@
         "footer": "If you cannot authenticate yourself, please contact your administrator."
       },
       "countdown": "This countdown shows how long you have to complete 2FA verification."
+    },
+    "users": {
+      "title": "User Management"
     }
   },
   "messagekey": {

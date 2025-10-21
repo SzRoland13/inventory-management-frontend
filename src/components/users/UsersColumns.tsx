@@ -32,7 +32,7 @@ export const userColumns: ColumnDef<User>[] = [
   { accessorKey: 'email', header: 'Email' },
   { accessorKey: 'role', header: 'Role' },
   {
-    accessorKey: 'is2FAEnabled',
+    accessorKey: 'is2FaEnabled',
     header: '2FA Enabled',
     cell: ({ row }) =>
       row.original.is2FaEnabled ? (
@@ -42,7 +42,7 @@ export const userColumns: ColumnDef<User>[] = [
       ),
   },
   {
-    accessorKey: 'isOTCSetupCompleted',
+    accessorKey: 'isOtcSetupCompleted',
     header: 'OTC Completed',
     cell: ({ row }) =>
       row.original.isOtcSetupCompleted ? (
@@ -52,7 +52,7 @@ export const userColumns: ColumnDef<User>[] = [
       ),
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'userStatus',
     header: 'Status',
     cell: ({ row }) => {
       const status = row.original.userStatus;
