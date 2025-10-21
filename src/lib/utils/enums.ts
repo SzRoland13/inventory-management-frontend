@@ -13,3 +13,8 @@ export enum USER_ROLE {
   MANAGER = 'MANAGER',
   SALES = 'SALES',
 }
+
+export enum USER_STATUS {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
