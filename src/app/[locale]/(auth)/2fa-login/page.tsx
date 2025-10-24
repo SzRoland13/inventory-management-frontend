@@ -79,7 +79,9 @@ export default function TwoFaLoginPage() {
         });
 
         useAuthStore.getState().clearAuthData();
-        pushLocalized(Routes.Dashboard);
+
+        toast.loading('Finalizing login...');
+        pushLocalized(Routes.Loading);
       }
     }
   };

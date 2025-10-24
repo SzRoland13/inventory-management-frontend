@@ -1,6 +1,7 @@
 export enum Routes {
   Login = '/login',
   Login_Start = '/login-start',
+  Loading = '/loading',
   First_Login = '/first-login',
   Setup_Password = '/setup-password',
   Two_Fa_Login = '/2fa-login',

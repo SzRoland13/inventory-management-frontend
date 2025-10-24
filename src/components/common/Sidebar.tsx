@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useUserStore } from '@/lib/stores/userStore';
 import { sidebarItems } from '@/lib/config/sidebarConfig';
@@ -21,6 +21,10 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { role } = useUserStore();
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    setSheetOpen(false);
+  }, []);
 
   // Filter sidebar items by user role
   const visibleItems = sidebarItems.filter(
