@@ -33,39 +33,29 @@ export function useSessionGuard(type: GuardType) {
     if (!hydrated || redirecting) return;
 
     const check = async () => {
-      // If no tokens
-      if (type === 'protected') {
-        if (!hydrated) return;
+      if (type === 'protected' && (!accessToken || !refreshToken)) {
+        setRedirecting(true);
+        toast(t('messagekey.guard.session-expired'));
+        pushLocalized(Routes.Login_Start);
 
-        if (!accessToken && !refreshToken) {
-          setRedirecting(true);
-          toast(t('messagekey.guard.session-expired'));
-          pushLocalized(Routes.Login_Start);
-          return;
-        }
-      }
-
-      try {
-        if (type === 'protected' && (accessToken || refreshToken)) {
+        return;
+      } else if (type === 'protected' && (accessToken || refreshToken)) {
+        try {
           await userService.checkSession();
-        } else if (type === 'auth' && (accessToken || refreshToken)) {
-          setRedirecting(true);
-          toast(t('messagekey.guard.logged-in-redirect'));
-          pushLocalized(Routes.Dashboard);
+        } catch (err) {
+          console.error('Session invalid:', err);
+          clearUser();
 
-          return;
-        }
-      } catch (err) {
-        console.error('Session invalid:', err);
-        clearUser();
-
-        if (type === 'protected') {
           setRedirecting(true);
           toast(t('messagekey.guard.session-expired'));
           pushLocalized(Routes.Login_Start);
-        } else {
-          toast(t('messagekey.guard.invalid-session'));
+
+          return;
         }
+      } else if (type === 'auth' && (accessToken || refreshToken)) {
+        setRedirecting(true);
+        toast(t('messagekey.guard.logged-in-redirect'));
+        pushLocalized(Routes.Dashboard);
 
         return;
       }
