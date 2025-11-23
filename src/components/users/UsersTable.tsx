@@ -64,7 +64,7 @@ export function UsersTable({ data }: { data: User[] }) {
   };
 
   return (
-    <div className='w-full overflow-x-auto rounded-lg bg-zinc-900'>
+    <div className='flex flex-col w-full rounded-lg bg-zinc-900'>
       <UsersToolbar
         selectedIds={selectedIds}
         onAdd={handleAdd}
@@ -72,7 +72,7 @@ export function UsersTable({ data }: { data: User[] }) {
         onSuspend={handleSuspend}
         onReset2FA={handleReset2FA}
       />
-      <div className='w-full overflow-x-auto bg-zinc-900'>
+      <div className='flex w-full bg-zinc-900'>
         <DataTable table={table} />
       </div>
       <EditUserDialog

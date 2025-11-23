@@ -66,22 +66,25 @@ export default function TwoFaLoginPage() {
         shortLifeToken,
       });
 
-      const { user, tokens } = response.data;
+      if (response.success && response.data) {
+        const { user, tokens } = response.data;
 
-      toast(t(`messagekey.${response.messageKey}`));
-      if (response.success) {
-        useUserStore.getState().setUser({
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          username: user.username,
-          email: user.email,
-          role: castToEnum(USER_ROLE, user.role),
-        });
+        toast(t(`messagekey.${response.messageKey}`));
+        if (response.success) {
+          useUserStore.getState().setUser({
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            username: user.username,
+            email: user.email,
+            role: castToEnum(USER_ROLE, user.role),
+          });
 
-        useAuthStore.getState().clearAuthData();
+          useAuthStore.getState().clearAuthData();
 
-        toast.loading('Finalizing login...');
-        pushLocalized(Routes.Loading);
+          toast.loading('Finalizing login...');
+        }
+      } else {
+        toast.error(t(`${response.messageKey}`));
       }
     }
   };

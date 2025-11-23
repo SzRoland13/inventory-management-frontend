@@ -24,7 +24,7 @@ export function UsersToolbar({
   const hasSelectedOnlyOne = selectedIds.length === 1;
 
   return (
-    <div className='flex gap-2 items-center p-2 bg-zinc-600 rounded-t-lg'>
+    <div className='flex flex-wrap gap-2 items-center p-2 bg-zinc-600 rounded-t-lg'>
       <Button
         variant='ghost'
         onClick={onAdd}

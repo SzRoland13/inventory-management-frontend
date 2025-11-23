@@ -21,7 +21,7 @@ export default async function LocaleLayout({
   }
 
   return (
-    <div className='flex-1'>
+    <div className='w-full'>
       <NextIntlClientProvider locale={locale} messages={messages}>
         <LocaleSetter locale={locale} />
         {children}

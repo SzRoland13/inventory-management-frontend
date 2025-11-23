@@ -21,8 +21,8 @@ interface DataTableProps<T> {
 export function DataTable<T>({ table, className }: DataTableProps<T>) {
   const t = useTranslations();
   return (
-    <div className={cn('w-full overflow-x-auto bg-zinc-800', className)}>
-      <Table>
+    <div className={cn('w-full bg-zinc-800', className)}>
+      <Table className='w-full'>
         <TableHeader className='bg-gradient-to-b from-zinc-600 to-zinc-600/80 text-zinc-100'>
           {table.getHeaderGroups().map((hg) => (
             <TableRow key={hg.id}>

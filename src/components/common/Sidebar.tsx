@@ -13,6 +13,7 @@ import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { useLocaleStore } from '@/lib/stores/localeStore';
 import { useTranslations } from 'next-intl';
 import useScreenSizeWatcher from '@/lib/hooks/useScreenSizeWatcher';
+import Image from 'next/image';
 
 export default function Sidebar() {
   const { isLargeScreen } = useScreenSizeWatcher();
@@ -37,10 +38,13 @@ export default function Sidebar() {
 
   const SidebarContent = (
     <div className='flex flex-col h-full w-full'>
-      <div className='border-b p-4'>
-        <h2 className='text-xl font-semibold text-center'>
-          Inventory Management App
-        </h2>
+      <div className='flex items-center justify-center border-b p-4'>
+        <Image
+          src='/icon.png'
+          width={100}
+          height={100}
+          alt='Inventory Management App logo'
+        />
       </div>
 
       <ScrollArea className='flex-1'>
@@ -70,37 +74,28 @@ export default function Sidebar() {
     </div>
   );
 
-  return (
-    <>
-      {!isLargeScreen && (
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant='secondary'
-              size='icon'
-              className='fixed top-4 left-2 z-50'
-            >
-              <Menu className='h-5 w-5' />
-            </Button>
-          </SheetTrigger>
-          <SheetContent
-            side='left'
-            className='p-0 w-[90%] max-w-sm bg-zinc-900'
-          >
-            <DialogTitle className='sr-only'>Menu</DialogTitle>
-            <DialogDescription className='sr-only'>
-              Navigation menu with links to all pages.
-            </DialogDescription>
-            {SidebarContent}
-          </SheetContent>
-        </Sheet>
-      )}
-
-      {isLargeScreen && (
-        <aside className='fixed left-0 top-0 h-screen w-[15vw] bg-zinc-900 border-r shadow-sm'>
-          {SidebarContent}
-        </aside>
-      )}
-    </>
+  return !isLargeScreen ? (
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+      <SheetTrigger asChild>
+        <Button
+          variant='secondary'
+          size='icon'
+          className='fixed top-4 left-2 z-50'
+        >
+          <Menu className='h-5 w-5' />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side='left' className='p-0 w-[90%] max-w-sm bg-zinc-900'>
+        <DialogTitle className='sr-only'>Menu</DialogTitle>
+        <DialogDescription className='sr-only'>
+          <Image src='./icon.png' alt='Inventory Management App logo' />
+        </DialogDescription>
+        {SidebarContent}
+      </SheetContent>
+    </Sheet>
+  ) : (
+    <aside className='h-screen w-1/6 bg-zinc-900 border-r shadow-sm'>
+      {SidebarContent}
+    </aside>
   );
 }
