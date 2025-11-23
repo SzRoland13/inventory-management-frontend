@@ -1,31 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useUserStore } from '@/lib/stores/userStore';
 import { sidebarItems } from '@/lib/config/sidebarConfig';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils/utils';
-import { Menu } from 'lucide-react';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { useLocaleStore } from '@/lib/stores/localeStore';
 import { useTranslations } from 'next-intl';
 import useScreenSizeWatcher from '@/lib/hooks/useScreenSizeWatcher';
 import Image from 'next/image';
+import { useSidebar } from '@/lib/providers/SidebarContext';
 
 export default function Sidebar() {
   const { isLargeScreen } = useScreenSizeWatcher();
+  const { isOpen: sheetOpen, setOpen: setSheetOpen } = useSidebar();
   const router = useRouter();
   const t = useTranslations();
   const pathname = usePathname();
   const { role } = useUserStore();
-  const [sheetOpen, setSheetOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setSheetOpen(false);
-  }, []);
+  }, [setSheetOpen]);
 
   // Filter sidebar items by user role
   const visibleItems = sidebarItems.filter(
@@ -76,19 +76,15 @@ export default function Sidebar() {
 
   return !isLargeScreen ? (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-      <SheetTrigger asChild>
-        <Button
-          variant='secondary'
-          size='icon'
-          className='fixed top-4 left-2 z-50'
-        >
-          <Menu className='h-5 w-5' />
-        </Button>
-      </SheetTrigger>
       <SheetContent side='left' className='p-0 w-[90%] max-w-sm bg-zinc-900'>
         <DialogTitle className='sr-only'>Menu</DialogTitle>
         <DialogDescription className='sr-only'>
-          <Image src='./icon.png' alt='Inventory Management App logo' />
+          <Image
+            src='/icon.png'
+            width={100}
+            height={100}
+            alt='Inventory Management App logo'
+          />
         </DialogDescription>
         {SidebarContent}
       </SheetContent>

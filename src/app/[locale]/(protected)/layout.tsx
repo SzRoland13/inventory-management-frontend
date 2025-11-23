@@ -3,6 +3,7 @@
 import { Loader2 } from 'lucide-react';
 import Sidebar from '@/components/common/Sidebar';
 import { useSessionGuard } from '@/lib/hooks/useSessionGuard';
+import { SidebarProvider } from '@/lib/providers/SidebarContext';
 
 export default function ProtectedLayout({
   children,
@@ -21,10 +22,12 @@ export default function ProtectedLayout({
 
   return (
     <div className='w-full flex min-h-screen bg-muted/10'>
-      <Sidebar />
-      <main className='flex w-full transition-all duration-300'>
-        {children}
-      </main>
+      <SidebarProvider>
+        <Sidebar />
+        <main className='flex w-full transition-all duration-300'>
+          {children}
+        </main>
+      </SidebarProvider>
     </div>
   );
 }
