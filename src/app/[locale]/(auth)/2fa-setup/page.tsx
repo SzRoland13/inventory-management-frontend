@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthService } from '@/lib/services/AuthService';
-import { Routes, USER_ROLE } from '@/lib/utils/enums';
+import { Routes, UserRole } from '@/lib/utils/enums';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
 import { useUserStore } from '@/lib/stores/userStore';
@@ -107,7 +107,7 @@ export default function TwoFaSetupPage() {
           refreshToken: tokens.refreshToken,
           username: user.username,
           email: user.email,
-          role: castToEnum(USER_ROLE, user.role),
+          role: castToEnum(UserRole, user.role),
         });
 
         useAuthStore.getState().clearAuthData();

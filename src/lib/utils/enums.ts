@@ -9,13 +9,14 @@ export enum Routes {
   Dashboard = '/dashboard',
 }
 
-export enum USER_ROLE {
+export enum UserRole {
   ADMIN = 'ADMIN',
   MANAGER = 'MANAGER',
   SALES = 'SALES',
 }
 
-export enum ACCOUNT_STATUS {
+export enum UserStatus {
   ACTIVE = 'ACTIVE',
   SUSPENDED = 'SUSPENDED',
+  PENDING_VERIFICATION = 'PENDING_VERIFICATION',
 }

@@ -2,7 +2,7 @@
 
 import MobileSidebarToggle from '@/components/common/MobileSidebarToggle';
 import { UsersTable } from '@/components/users/UsersTable';
-import { USER_ROLE, ACCOUNT_STATUS } from '@/lib/utils/enums';
+import { UserRole, UserStatus } from '@/lib/utils/enums';
 import { User } from '@/lib/utils/types';
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -14,73 +14,73 @@ export default function UsersPage() {
       id: 1,
       username: 'admin_user',
       email: 'admin@example.com',
-      role: USER_ROLE.ADMIN,
+      role: UserRole.ADMIN,
       twoFaStatus: true,
       firstLoginStatus: true,
-      accountStatus: ACCOUNT_STATUS.ACTIVE,
+      accountStatus: UserStatus.ACTIVE,
     },
     {
       id: 2,
       username: 'manager_john',
       email: 'john.manager@example.com',
-      role: USER_ROLE.MANAGER,
+      role: UserRole.MANAGER,
       twoFaStatus: false,
       firstLoginStatus: true,
-      accountStatus: ACCOUNT_STATUS.ACTIVE,
+      accountStatus: UserStatus.ACTIVE,
     },
     {
       id: 3,
       username: 'sales_emma',
       email: 'emma.sales@example.com',
-      role: USER_ROLE.SALES,
+      role: UserRole.SALES,
       twoFaStatus: true,
       firstLoginStatus: false,
-      accountStatus: ACCOUNT_STATUS.SUSPENDED,
+      accountStatus: UserStatus.SUSPENDED,
     },
     {
       id: 4,
       username: 'manager_sophia',
       email: 'sophia.manager@example.com',
-      role: USER_ROLE.MANAGER,
+      role: UserRole.MANAGER,
       twoFaStatus: false,
       firstLoginStatus: false,
-      accountStatus: ACCOUNT_STATUS.ACTIVE,
+      accountStatus: UserStatus.ACTIVE,
     },
     {
       id: 5,
       username: 'sales_liam',
       email: 'liam.sales@example.com',
-      role: USER_ROLE.SALES,
+      role: UserRole.SALES,
       twoFaStatus: true,
       firstLoginStatus: true,
-      accountStatus: ACCOUNT_STATUS.ACTIVE,
+      accountStatus: UserStatus.ACTIVE,
     },
     {
       id: 6,
       username: 'sales_liam',
       email: 'liam.sales@example.com',
-      role: USER_ROLE.SALES,
+      role: UserRole.SALES,
       twoFaStatus: true,
       firstLoginStatus: true,
-      accountStatus: ACCOUNT_STATUS.ACTIVE,
+      accountStatus: UserStatus.ACTIVE,
     },
     {
       id: 7,
       username: 'sales_liam',
       email: 'liam.sales@example.com',
-      role: USER_ROLE.SALES,
+      role: UserRole.SALES,
       twoFaStatus: true,
       firstLoginStatus: true,
-      accountStatus: ACCOUNT_STATUS.ACTIVE,
+      accountStatus: UserStatus.ACTIVE,
     },
     {
       id: 8,
       username: 'sales_liam',
       email: 'liam.sales@example.com',
-      role: USER_ROLE.SALES,
+      role: UserRole.SALES,
       twoFaStatus: true,
       firstLoginStatus: true,
-      accountStatus: ACCOUNT_STATUS.ACTIVE,
+      accountStatus: UserStatus.ACTIVE,
     },
   ];
   return (

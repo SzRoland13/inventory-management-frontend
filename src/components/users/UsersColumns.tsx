@@ -5,7 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { User } from '@/lib/utils/types';
-import { ACCOUNT_STATUS } from '@/lib/utils/enums';
+import { UserStatus } from '@/lib/utils/enums';
 import { useTranslations } from 'next-intl';
 
 export const useUserColumns = (): ColumnDef<User>[] => {
@@ -67,9 +67,9 @@ export const useUserColumns = (): ColumnDef<User>[] => {
       cell: ({ row }) => {
         const status = row.original.accountStatus;
         const variant =
-          status === ACCOUNT_STATUS.ACTIVE
+          status === UserStatus.ACTIVE
             ? 'default'
-            : status === ACCOUNT_STATUS.SUSPENDED
+            : status === UserStatus.SUSPENDED
             ? 'destructive'
             : 'secondary';
         return (

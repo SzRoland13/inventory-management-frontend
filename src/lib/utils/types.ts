@@ -1,18 +1,18 @@
-import { USER_ROLE, ACCOUNT_STATUS } from '@/lib/utils/enums';
+import { UserRole, UserStatus } from '@/lib/utils/enums';
 
 export type User = {
   id: number;
   username: string;
   email: string;
-  role: USER_ROLE;
+  role: UserRole;
   twoFaStatus: boolean;
   firstLoginStatus: boolean;
-  accountStatus: ACCOUNT_STATUS;
+  accountStatus: UserStatus;
 };
 
 export type ModificationUser = {
   id: number | undefined;
   username: string;
   email: string;
-  role: USER_ROLE | undefined;
+  role: UserRole | undefined;
 };
