@@ -1,27 +1,39 @@
-import { ApiResponse } from '@/lib/services/dtos/genericDtos';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import axiosClient from '@/lib/services/axios';
+import { AxiosRequestConfig } from 'axios';
 
-export abstract class BaseService {
-  protected async handleRequest<T>(
-    promise: Promise<{ data: ApiResponse<T> }>,
-  ): Promise<ApiResponse<T>> {
-    try {
-      const { data } = await promise;
-      return data;
-    } catch (error: any) {
-      console.error(error);
-      if (error.response?.data?.messageKey) {
-        return {
-          success: false,
-          messageKey: error.response.data.messageKey,
-          data: error.response?.data?.data ?? null,
-        };
-      }
+type QueryParams = Record<string, any>;
 
-      return {
-        success: false,
-        messageKey: 'error.unexpected',
-        data: error.response?.data?.data ?? null,
-      };
-    }
-  }
-}
+export const BaseService = {
+  get: async <T>(
+    url: string,
+    params?: QueryParams,
+    config?: AxiosRequestConfig,
+  ): Promise<T> => {
+    const response = await axiosClient.get<T>(url, { params, ...config });
+    return response.data;
+  },
+
+  post: async <T>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<T> => {
+    const response = await axiosClient.post<T>(url, data, config);
+    return response.data;
+  },
+
+  put: async <T>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<T> => {
+    const response = await axiosClient.put<T>(url, data, config);
+    return response.data;
+  },
+
+  delete: async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
+    const response = await axiosClient.delete<T>(url, config);
+    return response.data;
+  },
+};

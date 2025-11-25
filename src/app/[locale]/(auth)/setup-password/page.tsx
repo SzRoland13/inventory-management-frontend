@@ -35,7 +35,6 @@ type SetupPasswordFormData = {
 
 export default function SetupPasswordPage() {
   const t = useTranslations();
-  const authService = AuthService.instance();
   const { pushLocalized } = useLocalizedRouter();
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -66,7 +65,7 @@ export default function SetupPasswordPage() {
   const password = watch('password');
 
   const onSubmit = async (data: SetupPasswordFormData) => {
-    const response = await authService.setupNewPassword(data);
+    const response = await AuthService.setupNewPassword(data);
 
     toast(t(`messagekey.${response.messageKey}`));
     if (response.success) {

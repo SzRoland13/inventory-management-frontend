@@ -13,7 +13,6 @@ export function useSessionGuard(type: GuardType) {
   const { accessToken, refreshToken, clearUser } = useUserStore();
   const { shortLifeToken } = useAuthStore();
   const { pushLocalized } = useLocalizedRouter();
-  const userService = UserService.instance();
   const t = useTranslations();
 
   const [hydrated, setHydrated] = useState(false);
@@ -46,7 +45,7 @@ export function useSessionGuard(type: GuardType) {
 
         if (hasTokens) {
           try {
-            await userService.checkSession();
+            await UserService.checkSession();
           } catch (err) {
             console.error(err);
             clearUser();

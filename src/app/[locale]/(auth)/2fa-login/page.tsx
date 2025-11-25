@@ -31,7 +31,6 @@ type TwoFaForm = {
 export default function TwoFaLoginPage() {
   const t = useTranslations();
   const { pushLocalized } = useLocalizedRouter();
-  const authService = AuthService.instance();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -60,7 +59,7 @@ export default function TwoFaLoginPage() {
   const onVerifyTotp = async (data: TwoFaForm) => {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
     if (data.email && data.code && shortLifeToken) {
-      const response = await authService.twoFaLogin({
+      const response = await AuthService.twoFaLogin({
         email: data.email,
         code: data.code,
         shortLifeToken,

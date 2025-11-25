@@ -10,7 +10,7 @@ import {
 import { ModificationUser, User } from '@/lib/utils/types';
 import { useUserColumns } from '@/components/users/UsersColumns';
 import { UsersToolbar } from '@/components/users/UsersToolbar';
-import { EditUserDialog } from '@/components/users/EditUserDialog';
+import { AddEditUserDialog } from '@/components/users/AddEditUserDialog';
 import { DataTable } from '@/components/common/DataTable';
 import { mapUserToModificationUser } from '@/lib/utils/helpers';
 
@@ -50,8 +50,14 @@ export function UsersTable({ data }: { data: User[] }) {
     }
   };
 
-  const handleSave = (updated: ModificationUser) => {
-    console.log('Save user', updated);
+  const handleSave = (user: ModificationUser) => {
+    if (user.id) {
+      console.log('updating user: ', user);
+    } else {
+      console.log('saving new user: ', user);
+    }
+
+    setRowSelection({});
     setDialogOpen(false);
   };
 
@@ -80,7 +86,7 @@ export function UsersTable({ data }: { data: User[] }) {
       <div className='flex w-full bg-zinc-900'>
         <DataTable table={table} />
       </div>
-      <EditUserDialog
+      <AddEditUserDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         user={editingUser}

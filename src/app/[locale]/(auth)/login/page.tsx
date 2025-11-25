@@ -27,7 +27,6 @@ type LoginFormData = {
 };
 
 export default function LoginPage() {
-  const authService = AuthService.instance();
   const { pushLocalized } = useLocalizedRouter();
   const t = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +42,7 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    const response = await authService.login({
+    const response = await AuthService.login({
       email: data.email,
       password: data.password,
     });

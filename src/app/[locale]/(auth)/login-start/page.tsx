@@ -25,7 +25,6 @@ type LoginStartFormData = {
 
 export default function LoginStartPage() {
   const t = useTranslations();
-  const authService = AuthService.instance();
   const { pushLocalized } = useLocalizedRouter();
 
   const {
@@ -38,7 +37,7 @@ export default function LoginStartPage() {
   });
 
   const onSubmit = async (data: LoginStartFormData) => {
-    const response = await authService.checkIfFirstLogin({ email: data.email });
+    const response = await AuthService.checkIfFirstLogin({ email: data.email });
     useAuthStore.getState().setAuthData({ email: data.email });
 
     if (response.success && response.data.firstLogin) {

@@ -36,7 +36,6 @@ type TotpForm = {
 export default function TwoFaSetupPage() {
   const t = useTranslations();
   const { pushLocalized } = useLocalizedRouter();
-  const authService = AuthService.instance();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
 
   const [qrCode, setQrCode] = useState<string | null>(null);
@@ -76,7 +75,7 @@ export default function TwoFaSetupPage() {
 
   const onRequestQr = async (data: EmailForm) => {
     if (data.email) {
-      const response = await authService.twoFaSetup({ email: data.email });
+      const response = await AuthService.twoFaSetup({ email: data.email });
 
       toast(t(`messagekey.${response.messageKey}`));
       if (response.success && response.data) {
@@ -92,7 +91,7 @@ export default function TwoFaSetupPage() {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
 
     if (loginEmail && shortLifeToken) {
-      const response = await authService.twoFaLogin({
+      const response = await AuthService.twoFaLogin({
         email: loginEmail,
         code: data.code,
         shortLifeToken,
@@ -198,7 +197,7 @@ export default function TwoFaSetupPage() {
                 className='flex flex-col gap-2'
               >
                 <Label htmlFor='code' className='text-zinc-300'>
-                  {t('pages.2fa.setup.qr.label')}
+                  {t('pages.2fa.qr.label')}
                 </Label>
                 <Input
                   id='code'
