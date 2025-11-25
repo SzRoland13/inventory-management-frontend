@@ -9,6 +9,7 @@ interface UsersToolbarProps {
   onAdd: () => void;
   onEdit: () => void;
   onSuspend: () => void;
+  onActivate: () => void;
   onReset2FA: () => void;
 }
 
@@ -17,6 +18,7 @@ export function UsersToolbar({
   onAdd,
   onEdit,
   onSuspend,
+  onActivate,
   onReset2FA,
 }: UsersToolbarProps) {
   const t = useTranslations();
@@ -52,6 +54,16 @@ export function UsersToolbar({
       >
         <ShieldX className='h-4 w-4' />
         {t('pages.users.toolbar.suspend')}
+      </Button>
+
+      <Button
+        variant='ghost'
+        disabled={!hasSelection}
+        onClick={onActivate}
+        className='flex items-center gap-2'
+      >
+        <ShieldX className='h-4 w-4' />
+        {t('pages.users.toolbar.activate')}
       </Button>
 
       <Button

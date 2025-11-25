@@ -126,6 +126,7 @@
         "add": "Add",
         "edit": "Edit",
         "suspend": "Suspend",
+        "activate": "Activate",
         "reset": "2FA reset"
       }
     }

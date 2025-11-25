@@ -59,6 +59,10 @@ export function UsersTable({ data }: { data: User[] }) {
     console.log('Suspend users:', selectedIds);
   };
 
+  const handleActivate = () => {
+    console.log('Activate users:', selectedIds);
+  };
+
   const handleReset2FA = () => {
     console.log('Reset 2FA for users:', selectedIds);
   };
@@ -70,6 +74,7 @@ export function UsersTable({ data }: { data: User[] }) {
         onAdd={handleAdd}
         onEdit={handleEdit}
         onSuspend={handleSuspend}
+        onActivate={handleActivate}
         onReset2FA={handleReset2FA}
       />
       <div className='flex w-full bg-zinc-900'>

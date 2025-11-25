@@ -126,6 +126,7 @@
         "add": "Hozzáadás",
         "edit": "Szerkesztés",
         "suspend": "Felfüggesztés",
+        "activate": "Aktiválás",
         "reset": "2FA visszaállítás"
       }
     }
