@@ -100,12 +100,19 @@ export function AddEditUserDialog({
             rules={{ required: true }}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value ?? ''}>
-                <SelectTrigger className='bg-zinc-800 border-zinc-700 text-zinc-100 w-full'>
-                  <SelectValue placeholder={t('common.role.title')} />
+                <SelectTrigger className='border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-sm text-zinc-100 shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 placeholder:text-zinc-500'>
+                  <SelectValue
+                    placeholder={t('common.role.title')}
+                    className='text-zinc-500'
+                  />
                 </SelectTrigger>
-                <SelectContent className='bg-zinc-800 border-zinc-700 text-zinc-100'>
+                <SelectContent className='bg-zinc-600 border-zinc-700 text-zinc-100'>
                   {Object.values(UserRole).map((role) => (
-                    <SelectItem key={role} value={role}>
+                    <SelectItem
+                      key={role}
+                      value={role}
+                      className='text-zinc-100 focus:bg-zinc-700 focus:text-zinc-100'
+                    >
                       {role}
                     </SelectItem>
                   ))}
