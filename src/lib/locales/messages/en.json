@@ -33,7 +33,8 @@
     "account-status": {
       "title": "Account status",
       "ACTIVE": "Active",
-      "SUSPENDED": "Suspended"
+      "SUSPENDED": "Suspended",
+      "PENDING_VERIFICATION": "Pending Verification"
     },
     "id": "ID",
     "select-all": "Select all",

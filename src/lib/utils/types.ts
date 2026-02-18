@@ -4,5 +4,5 @@ export type ModificationUser = {
   id: number | undefined;
   username: string;
   email: string;
-  role: UserRole | undefined;
+  role: UserRole;
 };

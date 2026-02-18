@@ -1,7 +1,7 @@
 import { ModificationUser } from '@/lib/utils/types';
 import { Routes } from './enums';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
-import { UserDto } from '@/lib/services/dtos/userDtos';
+import { AddEditUserRequest, UserDto } from '@/lib/services/dtos/userDtos';
 
 /**
  * Safely casts a string (or number) to an enum value.
@@ -20,12 +20,24 @@ export const localizedRoute = (locale: string | undefined, route: Routes) => {
   return `/${activeLocale}${route}`;
 };
 
-export const mapUserToModificationUser = (user: UserDto): ModificationUser => {
+export const mapUserDtoToModificationUser = (
+  user: UserDto,
+): ModificationUser => {
   return {
     id: user.id,
     username: user.username,
     email: user.email,
     role: user.role,
+  };
+};
+
+export const mapModificationUserToAddEditUserRequest = (
+  modificationUser: ModificationUser,
+): AddEditUserRequest => {
+  return {
+    username: modificationUser.username,
+    email: modificationUser.email,
+    role: modificationUser.role,
   };
 };
 

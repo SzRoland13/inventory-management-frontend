@@ -33,7 +33,8 @@
     "account-status": {
       "title": "Fiók státusz",
       "ACTIVE": "Aktív",
-      "SUSPENDED": "Felfüggesztett"
+      "SUSPENDED": "Felfüggesztett",
+      "PENDING_VERIFICATION": "Beállítás Függőben"
     },
     "id": "Egyéni azonosító",
     "select-all": "Összes kiválasztása",

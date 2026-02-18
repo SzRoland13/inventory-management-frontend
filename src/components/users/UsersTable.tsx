@@ -12,10 +12,18 @@ import { useUserColumns } from '@/components/users/UsersColumns';
 import { UsersToolbar } from '@/components/users/UsersToolbar';
 import { AddEditUserDialog } from '@/components/users/AddEditUserDialog';
 import { DataTable } from '@/components/common/DataTable';
-import { mapUserToModificationUser } from '@/lib/utils/helpers';
+import {
+  mapModificationUserToAddEditUserRequest,
+  mapUserDtoToModificationUser,
+} from '@/lib/utils/helpers';
 import { UserDto } from '@/lib/services/dtos/userDtos';
+import { UserService } from '@/lib/services/UserService';
 
-export function UsersTable({ data }: { data: UserDto[] }) {
+type UsersTableProps = {
+  data: UserDto[];
+};
+
+export function UsersTable({ data }: UsersTableProps) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<
@@ -46,16 +54,18 @@ export function UsersTable({ data }: { data: UserDto[] }) {
   const handleEdit = () => {
     const selectedUser = data.find((u) => u.id === selectedIds[0]);
     if (selectedUser) {
-      setEditingUser(mapUserToModificationUser(selectedUser));
+      setEditingUser(mapUserDtoToModificationUser(selectedUser));
       setDialogOpen(true);
     }
   };
 
   const handleSave = (user: ModificationUser) => {
+    const userRequest = mapModificationUserToAddEditUserRequest(user);
+
     if (user.id) {
-      console.log('updating user: ', user);
+      UserService.updateUser(user.id, userRequest);
     } else {
-      console.log('saving new user: ', user);
+      UserService.registerUser(userRequest);
     }
 
     setRowSelection({});
