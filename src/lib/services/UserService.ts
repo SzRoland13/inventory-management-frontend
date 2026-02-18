@@ -1,6 +1,10 @@
 import { BaseService } from '@/lib/services/BaseService';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
-import { RegisterUserRequest, UserDto } from '@/lib/services/dtos/userDtos';
+import {
+  AddEditUserRequest,
+  AllUserResponse,
+  UserDto,
+} from '@/lib/services/dtos/userDtos';
 import { handleRequest } from '@/lib/utils/helpers';
 
 export const UserService = {
@@ -9,8 +13,19 @@ export const UserService = {
   },
 
   registerUser: async (
-    data: RegisterUserRequest,
+    data: AddEditUserRequest,
   ): Promise<ApiResponse<UserDto>> => {
     return handleRequest(BaseService.post('/user/register', data));
+  },
+
+  updateUser: async (
+    id: number,
+    data: AddEditUserRequest,
+  ): Promise<ApiResponse<UserDto>> => {
+    return handleRequest(BaseService.post(`/user/${id}`, data));
+  },
+
+  getAllUsers: async (): Promise<ApiResponse<AllUserResponse>> => {
+    return handleRequest(BaseService.get('/user/all'));
   },
 };

@@ -65,8 +65,8 @@ export default function TwoFaLoginPage() {
         shortLifeToken,
       });
 
-      if (response.success && response.data) {
-        const { user, tokens } = response.data;
+      if (response.success && response.payload) {
+        const { user, tokens } = response.payload;
 
         toast(t(`messagekey.${response.messageKey}`));
         if (response.success) {

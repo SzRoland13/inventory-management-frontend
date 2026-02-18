@@ -7,21 +7,22 @@ import {
   getCoreRowModel,
   RowSelectionState,
 } from '@tanstack/react-table';
-import { ModificationUser, User } from '@/lib/utils/types';
+import { ModificationUser } from '@/lib/utils/types';
 import { useUserColumns } from '@/components/users/UsersColumns';
 import { UsersToolbar } from '@/components/users/UsersToolbar';
 import { AddEditUserDialog } from '@/components/users/AddEditUserDialog';
 import { DataTable } from '@/components/common/DataTable';
 import { mapUserToModificationUser } from '@/lib/utils/helpers';
+import { UserDto } from '@/lib/services/dtos/userDtos';
 
-export function UsersTable({ data }: { data: User[] }) {
+export function UsersTable({ data }: { data: UserDto[] }) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<
     ModificationUser | undefined
   >();
 
-  const table = useReactTable<User>({
+  const table = useReactTable<UserDto>({
     data,
     columns: useUserColumns(),
     getCoreRowModel: getCoreRowModel(),

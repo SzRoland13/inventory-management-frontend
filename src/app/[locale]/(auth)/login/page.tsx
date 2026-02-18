@@ -47,11 +47,11 @@ export default function LoginPage() {
       password: data.password,
     });
 
-    if (response.data?.shortLifeToken && response.data?.expiresAt) {
-      const expiresAt = new Date(response.data.expiresAt);
+    if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
+      const expiresAt = new Date(response.payload.expiresAt);
 
       useAuthStore.getState().setAuthData({
-        shortLifeToken: response.data.shortLifeToken,
+        shortLifeToken: response.payload.shortLifeToken,
         shortLifeTokenExpiry: expiresAt,
       });
     }

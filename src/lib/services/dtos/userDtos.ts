@@ -1,6 +1,6 @@
 import { UserRole, UserStatus } from '@/lib/utils/enums';
 
-export type RegisterUserRequest = {
+export type AddEditUserRequest = {
   username: string;
   email: string;
   role: UserRole;
@@ -18,4 +18,8 @@ export type UserDto = {
 
 export type Reset2FaRequest = {
   ids: number[];
+};
+
+export type AllUserResponse = {
+  users: UserDto[];
 };

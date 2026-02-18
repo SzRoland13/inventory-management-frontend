@@ -78,8 +78,8 @@ export default function TwoFaSetupPage() {
       const response = await AuthService.twoFaSetup({ email: data.email });
 
       toast(t(`messagekey.${response.messageKey}`));
-      if (response.success && response.data) {
-        setQrCode(response.data);
+      if (response.success && response.payload) {
+        setQrCode(response.payload);
       }
     } else {
       toast(t('messagekey.auth.invalid-or-expired-session"'));
@@ -97,7 +97,7 @@ export default function TwoFaSetupPage() {
         shortLifeToken,
       });
 
-      const { user, tokens, firstTime2FAEnabled } = response.data;
+      const { user, tokens, firstTime2FAEnabled } = response.payload;
 
       toast(t(`messagekey.${response.messageKey}`));
 

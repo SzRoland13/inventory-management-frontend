@@ -2,87 +2,30 @@
 
 import MobileSidebarToggle from '@/components/common/MobileSidebarToggle';
 import { UsersTable } from '@/components/users/UsersTable';
-import { UserRole, UserStatus } from '@/lib/utils/enums';
-import { User } from '@/lib/utils/types';
+import { ApiResponse } from '@/lib/services/dtos/genericDtos';
+import { AllUserResponse, UserDto } from '@/lib/services/dtos/userDtos';
+import { UserService } from '@/lib/services/UserService';
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function UsersPage() {
   const t = useTranslations();
-  const mockUsers: User[] = [
-    {
-      id: 1,
-      username: 'admin_user',
-      email: 'admin@example.com',
-      role: UserRole.ADMIN,
-      twoFaStatus: true,
-      firstLoginStatus: true,
-      accountStatus: UserStatus.ACTIVE,
-    },
-    {
-      id: 2,
-      username: 'manager_john',
-      email: 'john.manager@example.com',
-      role: UserRole.MANAGER,
-      twoFaStatus: false,
-      firstLoginStatus: true,
-      accountStatus: UserStatus.ACTIVE,
-    },
-    {
-      id: 3,
-      username: 'sales_emma',
-      email: 'emma.sales@example.com',
-      role: UserRole.SALES,
-      twoFaStatus: true,
-      firstLoginStatus: false,
-      accountStatus: UserStatus.SUSPENDED,
-    },
-    {
-      id: 4,
-      username: 'manager_sophia',
-      email: 'sophia.manager@example.com',
-      role: UserRole.MANAGER,
-      twoFaStatus: false,
-      firstLoginStatus: false,
-      accountStatus: UserStatus.ACTIVE,
-    },
-    {
-      id: 5,
-      username: 'sales_liam',
-      email: 'liam.sales@example.com',
-      role: UserRole.SALES,
-      twoFaStatus: true,
-      firstLoginStatus: true,
-      accountStatus: UserStatus.ACTIVE,
-    },
-    {
-      id: 6,
-      username: 'sales_liam',
-      email: 'liam.sales@example.com',
-      role: UserRole.SALES,
-      twoFaStatus: true,
-      firstLoginStatus: true,
-      accountStatus: UserStatus.ACTIVE,
-    },
-    {
-      id: 7,
-      username: 'sales_liam',
-      email: 'liam.sales@example.com',
-      role: UserRole.SALES,
-      twoFaStatus: true,
-      firstLoginStatus: true,
-      accountStatus: UserStatus.ACTIVE,
-    },
-    {
-      id: 8,
-      username: 'sales_liam',
-      email: 'liam.sales@example.com',
-      role: UserRole.SALES,
-      twoFaStatus: true,
-      firstLoginStatus: true,
-      accountStatus: UserStatus.ACTIVE,
-    },
-  ];
+
+  const [users, setUsers] = useState<UserDto[]>([]);
+
+  useEffect(() => {
+    UserService.getAllUsers()
+      .then((response) => {
+        setUsers(response.payload.users);
+      })
+      .catch((error: ApiResponse<AllUserResponse>) => {
+        console.log(error);
+        toast(t(`messagekey.${error.messageKey}`));
+      });
+  }, [t]);
+
   return (
     <div className='flex flex-col w-full'>
       <div className='flex w-full bg-gradient-to-r from-zinc-800 to-zinc-900 p-4 rounded-t-lg border-b border-zinc-700 items-center justify-between'>
@@ -97,7 +40,7 @@ export default function UsersPage() {
         </h1>
       </div>
       <div className='flex m-3 border-1 rounded-lg bg-zinc-900 overflow-hidden'>
-        <UsersTable data={mockUsers} />
+        <UsersTable data={users} />
       </div>
     </div>
   );
