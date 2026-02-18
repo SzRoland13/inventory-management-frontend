@@ -21,9 +21,10 @@ import { UserService } from '@/lib/services/UserService';
 
 type UsersTableProps = {
   data: UserDto[];
+  onSave: () => void;
 };
 
-export function UsersTable({ data }: UsersTableProps) {
+export function UsersTable({ data, onSave }: UsersTableProps) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<
@@ -70,6 +71,7 @@ export function UsersTable({ data }: UsersTableProps) {
 
     setRowSelection({});
     setDialogOpen(false);
+    onSave();
   };
 
   const handleSuspend = () => {

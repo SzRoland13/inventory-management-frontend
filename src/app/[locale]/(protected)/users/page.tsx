@@ -7,7 +7,7 @@ import { AllUserResponse, UserDto } from '@/lib/services/dtos/userDtos';
 import { UserService } from '@/lib/services/UserService';
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function UsersPage() {
@@ -15,16 +15,18 @@ export default function UsersPage() {
 
   const [users, setUsers] = useState<UserDto[]>([]);
 
-  useEffect(() => {
+  const fetchUsers = useCallback(() => {
     UserService.getAllUsers()
-      .then((response) => {
-        setUsers(response.payload.users);
-      })
+      .then((response) => setUsers(response.payload.users))
       .catch((error: ApiResponse<AllUserResponse>) => {
         console.log(error);
         toast(t(`messagekey.${error.messageKey}`));
       });
   }, [t]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   return (
     <div className='flex flex-col w-full'>
@@ -40,7 +42,7 @@ export default function UsersPage() {
         </h1>
       </div>
       <div className='flex m-3 border-1 rounded-lg bg-zinc-900 overflow-hidden'>
-        <UsersTable data={users} />
+        <UsersTable data={users} onSave={fetchUsers} />
       </div>
     </div>
   );
