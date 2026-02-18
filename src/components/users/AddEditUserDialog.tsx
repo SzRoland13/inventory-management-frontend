@@ -8,11 +8,19 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { ModificationUser } from '@/lib/utils/types';
 import { ThemedDialogContent } from '@/components/common/ThemedDialogWrapper';
 import { useTranslations } from 'next-intl';
+import { UserRole } from '@/lib/utils/enums';
 
 interface EditUserDialogProps {
   open: boolean;
@@ -32,6 +40,7 @@ export function AddEditUserDialog({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { isSubmitting },
   } = useForm<ModificationUser>({
     defaultValues: user ?? {
@@ -84,9 +93,25 @@ export function AddEditUserDialog({
             placeholder={t('common.email.title')}
             type='email'
           />
-          <Input
-            {...register('role', { required: true })}
-            placeholder={t('common.role.title')}
+
+          <Controller
+            name='role'
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                <SelectTrigger className='bg-zinc-800 border-zinc-700 text-zinc-100 w-full'>
+                  <SelectValue placeholder={t('common.role.title')} />
+                </SelectTrigger>
+                <SelectContent className='bg-zinc-800 border-zinc-700 text-zinc-100'>
+                  {Object.values(UserRole).map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           />
 
           <DialogFooter className='mt-4'>
