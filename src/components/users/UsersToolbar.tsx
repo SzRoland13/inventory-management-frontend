@@ -35,8 +35,8 @@ export function UsersToolbar({
 
   const canReset2FA = hasSelection && (selectedUser?.twoFaEnabled ?? false);
   const isSuspended = selectedUser?.userStatus === UserStatus.SUSPENDED;
-  const isActive = selectedUser?.userStatus === UserStatus.ACTIVE;
-  const canToggleSuspend = hasSelection && (isSuspended || isActive);
+
+  const canToggleSuspend = hasSelection;
 
   // Determine button state for suspend/activate
   const suspendButtonIcon = !hasSelection ? (

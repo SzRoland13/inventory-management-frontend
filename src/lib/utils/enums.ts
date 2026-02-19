@@ -18,5 +18,5 @@ export enum UserRole {
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
   SUSPENDED = 'SUSPENDED',
-  PENDING_VERIFICATION = 'PENDING_VERIFICATION',
+  SETUP_REQUIRED = 'SETUP_REQUIRED',
 }

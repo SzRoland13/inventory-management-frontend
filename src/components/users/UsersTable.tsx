@@ -21,6 +21,7 @@ import { UserService } from '@/lib/services/UserService';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
+import { UserStatus } from '@/lib/utils/enums';
 
 type UsersTableProps = {
   data: UserDto[];
@@ -90,10 +91,12 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
   const handleToggleSuspend = () => {
     if (selectedIds.length !== 1 || !selectedUser) return;
 
-    const isSuspended = selectedUser.userStatus === 'SUSPENDED';
+    const isSuspended = selectedUser.userStatus === UserStatus.SUSPENDED;
+
     const action = isSuspended
       ? UserService.activateUser(selectedIds[0])
       : UserService.suspendUser(selectedIds[0]);
+
     const successMessage = isSuspended
       ? 'messages.user-activated'
       : 'messages.user-suspended';
