@@ -1,24 +1,47 @@
-import axiosClient from '@/lib/axios/axios';
 import { BaseService } from '@/lib/services/BaseService';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
+import {
+  AddEditUserRequest,
+  AllUserResponse,
+  UserDto,
+} from '@/lib/services/dtos/userDtos';
+import { handleRequest } from '@/lib/utils/helpers';
 
-export class UserService extends BaseService {
-  private static _instance: UserService | null = null;
+export const UserService = {
+  checkSession: async (): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.get('/user/check-session'));
+  },
 
-  private constructor() {
-    super();
-  }
+  registerUser: async (
+    data: AddEditUserRequest,
+  ): Promise<ApiResponse<UserDto>> => {
+    return handleRequest(BaseService.post('/user/register', data));
+  },
 
-  public static instance(): UserService {
-    if (!this._instance) {
-      this._instance = new UserService();
-    }
-    return this._instance;
-  }
+  updateUser: async (
+    id: number,
+    data: AddEditUserRequest,
+  ): Promise<ApiResponse<UserDto>> => {
+    return handleRequest(BaseService.put(`/user/${id}`, data));
+  },
 
-  async checkSession(): Promise<ApiResponse<void>> {
-    return this.handleRequest(
-      axiosClient.get<ApiResponse<void>>('/user/check-session'),
-    );
-  }
-}
+  getAllUsers: async (): Promise<ApiResponse<AllUserResponse>> => {
+    return handleRequest(BaseService.get('/user/all'));
+  },
+
+  reset2fa: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/reset-2fa/${id}`));
+  },
+
+  suspendUser: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/suspend/${id}`));
+  },
+
+  activateUser: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/activate/${id}`));
+  },
+
+  resetPassword: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/reset-password/${id}`));
+  },
+};

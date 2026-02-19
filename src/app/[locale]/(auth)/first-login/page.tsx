@@ -36,7 +36,6 @@ enum Step {
 
 export default function FirstLoginPage() {
   const t = useTranslations();
-  const authService = AuthService.instance();
   const { pushLocalized } = useLocalizedRouter();
   const [step, setStep] = useState<Step>(Step.STEP1);
   const codeInputRef = useRef<HTMLInputElement | null>(null);
@@ -75,7 +74,7 @@ export default function FirstLoginPage() {
 
   const onOneTimeCodeRequest = async (data: EmailForm) => {
     if (data.email) {
-      const response = await authService.requestOneTimeCode({
+      const response = await AuthService.requestOneTimeCode({
         email: data.email,
       });
 
@@ -88,7 +87,7 @@ export default function FirstLoginPage() {
   };
 
   const onVerifyTotp = async (data: OneTimeCodeForm) => {
-    const response = await authService.validateOneTimeCode({
+    const response = await AuthService.validateOneTimeCode({
       email: data.email,
       oneTimeCode: data.oneTimeCode,
     });
@@ -195,7 +194,7 @@ export default function FirstLoginPage() {
               </div>
               <div className='flex flex-col gap-2'>
                 <Label htmlFor='code' className='text-zinc-300'>
-                  {t('pages.setup-password.otc.title')}
+                  {t('pages.first-login.otc.title')}
                 </Label>
                 <Input
                   id='code'

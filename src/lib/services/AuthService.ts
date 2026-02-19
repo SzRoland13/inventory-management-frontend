@@ -1,5 +1,4 @@
 import { BaseService } from '@/lib/services/BaseService';
-import axiosClient from '@/lib/axios/axios';
 import {
   CheckFirstLoginResponse,
   EmailRequest,
@@ -11,71 +10,44 @@ import {
   TwoFactorVerifyRequest,
 } from '@/lib/services/dtos/authDtos';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
+import { handleRequest } from '@/lib/utils/helpers';
 
-export class AuthService extends BaseService {
-  private static _instance: AuthService | null = null;
-
-  private constructor() {
-    super();
-  }
-
-  public static instance(): AuthService {
-    if (!this._instance) {
-      this._instance = new AuthService();
-    }
-    return this._instance;
-  }
-
-  async checkIfFirstLogin(
+export const AuthService = {
+  checkIfFirstLogin: async (
     req: EmailRequest,
-  ): Promise<ApiResponse<CheckFirstLoginResponse>> {
-    return this.handleRequest(
-      axiosClient.post<ApiResponse<CheckFirstLoginResponse>>(
-        '/auth/check-first-login',
-        req,
-      ),
-    );
-  }
+  ): Promise<ApiResponse<CheckFirstLoginResponse>> => {
+    return handleRequest(BaseService.post('/auth/check-first-login', req));
+  },
 
-  async requestOneTimeCode(req: EmailRequest): Promise<ApiResponse<void>> {
-    return this.handleRequest(
-      axiosClient.post<ApiResponse<void>>('/auth/send-one-time-code', req),
-    );
-  }
+  requestOneTimeCode: async (req: EmailRequest): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post('/auth/send-one-time-code', req));
+  },
 
-  async validateOneTimeCode(
+  validateOneTimeCode: async (
     req: FirstLoginValidationRequest,
-  ): Promise<ApiResponse<void>> {
-    return this.handleRequest(
-      axiosClient.post<ApiResponse<void>>('/auth/validate-one-time-code', req),
-    );
-  }
+  ): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post('/auth/validate-one-time-code', req));
+  },
 
-  async setupNewPassword(
+  setupNewPassword: async (
     req: PasswordSetupRequest,
-  ): Promise<ApiResponse<void>> {
-    return this.handleRequest(
-      axiosClient.post<ApiResponse<void>>('/auth/setup-password', req),
-    );
-  }
+  ): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post('/auth/setup-password', req));
+  },
 
-  async login(req: LoginRequest): Promise<ApiResponse<ShortLifeTokenResponse>> {
-    return this.handleRequest(
-      axiosClient.post<ApiResponse<ShortLifeTokenResponse>>('/auth/login', req),
-    );
-  }
+  login: async (
+    req: LoginRequest,
+  ): Promise<ApiResponse<ShortLifeTokenResponse>> => {
+    return handleRequest(BaseService.post('/auth/login', req));
+  },
 
-  async twoFaSetup(req: EmailRequest): Promise<ApiResponse<string>> {
-    return this.handleRequest(
-      axiosClient.post<ApiResponse<string>>('/auth/2fa/setup', req),
-    );
-  }
+  twoFaSetup: async (req: EmailRequest): Promise<ApiResponse<string>> => {
+    return handleRequest(BaseService.post('/auth/2fa/setup', req));
+  },
 
-  async twoFaLogin(
+  twoFaLogin: async (
     req: TwoFactorVerifyRequest,
-  ): Promise<ApiResponse<LoginResponse>> {
-    return this.handleRequest(
-      axiosClient.post<ApiResponse<LoginResponse>>('/auth/2fa/login', req),
-    );
-  }
-}
+  ): Promise<ApiResponse<LoginResponse>> => {
+    return handleRequest(BaseService.post('/auth/2fa/login', req));
+  },
+};

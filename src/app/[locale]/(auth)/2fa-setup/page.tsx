@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthService } from '@/lib/services/AuthService';
-import { Routes, USER_ROLE } from '@/lib/utils/enums';
+import { Routes, UserRole } from '@/lib/utils/enums';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
 import { useUserStore } from '@/lib/stores/userStore';
@@ -36,7 +36,6 @@ type TotpForm = {
 export default function TwoFaSetupPage() {
   const t = useTranslations();
   const { pushLocalized } = useLocalizedRouter();
-  const authService = AuthService.instance();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
 
   const [qrCode, setQrCode] = useState<string | null>(null);
@@ -44,11 +43,15 @@ export default function TwoFaSetupPage() {
   useEffect(() => {
     const storeState = useAuthStore.getState();
 
+    console.log('mi a geci van bazdmeg?', storeState);
+
     if (
       !storeState.email ||
       !storeState.shortLifeToken ||
       !storeState.shortLifeTokenExpiry
     ) {
+      console.log('mi a faszért jössz be ide?');
+
       toast(t('messagekey.auth.invalid-or-expired-session'));
       pushLocalized(Routes.Login_Start);
     }
@@ -76,11 +79,11 @@ export default function TwoFaSetupPage() {
 
   const onRequestQr = async (data: EmailForm) => {
     if (data.email) {
-      const response = await authService.twoFaSetup({ email: data.email });
+      const response = await AuthService.twoFaSetup({ email: data.email });
 
       toast(t(`messagekey.${response.messageKey}`));
-      if (response.success && response.data) {
-        setQrCode(response.data);
+      if (response.success && response.payload) {
+        setQrCode(response.payload);
       }
     } else {
       toast(t('messagekey.auth.invalid-or-expired-session"'));
@@ -92,13 +95,13 @@ export default function TwoFaSetupPage() {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
 
     if (loginEmail && shortLifeToken) {
-      const response = await authService.twoFaLogin({
+      const response = await AuthService.twoFaLogin({
         email: loginEmail,
         code: data.code,
         shortLifeToken,
       });
 
-      const { user, tokens, firstTime2FAEnabled } = response.data;
+      const { user, tokens, firstTime2FAEnabled } = response.payload;
 
       toast(t(`messagekey.${response.messageKey}`));
 
@@ -108,7 +111,7 @@ export default function TwoFaSetupPage() {
           refreshToken: tokens.refreshToken,
           username: user.username,
           email: user.email,
-          role: castToEnum(USER_ROLE, user.role),
+          role: castToEnum(UserRole, user.role),
         });
 
         useAuthStore.getState().clearAuthData();
@@ -198,7 +201,7 @@ export default function TwoFaSetupPage() {
                 className='flex flex-col gap-2'
               >
                 <Label htmlFor='code' className='text-zinc-300'>
-                  {t('pages.2fa.setup.qr.label')}
+                  {t('pages.2fa.qr.label')}
                 </Label>
                 <Input
                   id='code'

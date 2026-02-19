@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { USER_ROLE } from '../utils/enums';
+import { UserRole } from '../utils/enums';
 import { immer } from 'zustand/middleware/immer';
 
 interface UserState {
   username: string | null;
   email: string | null;
-  role: USER_ROLE | null;
+  role: UserRole | null;
   accessToken: string | null;
   refreshToken: string | null;
   setUser: (data: Partial<UserState>) => void;

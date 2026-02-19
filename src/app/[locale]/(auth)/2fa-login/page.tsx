@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthService } from '@/lib/services/AuthService';
-import { Routes, USER_ROLE } from '@/lib/utils/enums';
+import { Routes, UserRole } from '@/lib/utils/enums';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
 import { useUserStore } from '@/lib/stores/userStore';
@@ -31,7 +31,6 @@ type TwoFaForm = {
 export default function TwoFaLoginPage() {
   const t = useTranslations();
   const { pushLocalized } = useLocalizedRouter();
-  const authService = AuthService.instance();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -60,26 +59,31 @@ export default function TwoFaLoginPage() {
   const onVerifyTotp = async (data: TwoFaForm) => {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
     if (data.email && data.code && shortLifeToken) {
-      const response = await authService.twoFaLogin({
+      const response = await AuthService.twoFaLogin({
         email: data.email,
         code: data.code,
         shortLifeToken,
       });
 
-      const { user, tokens } = response.data;
+      if (response.success && response.payload) {
+        const { user, tokens } = response.payload;
 
-      toast(t(`messagekey.${response.messageKey}`));
-      if (response.success) {
-        useUserStore.getState().setUser({
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          username: user.username,
-          email: user.email,
-          role: castToEnum(USER_ROLE, user.role),
-        });
+        toast(t(`messagekey.${response.messageKey}`));
+        if (response.success) {
+          useUserStore.getState().setUser({
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            username: user.username,
+            email: user.email,
+            role: castToEnum(UserRole, user.role),
+          });
 
-        useAuthStore.getState().clearAuthData();
-        pushLocalized(Routes.Dashboard);
+          useAuthStore.getState().clearAuthData();
+
+          toast.loading('Finalizing login...');
+        }
+      } else {
+        toast.error(t(`${response.messageKey}`));
       }
     }
   };

@@ -2,14 +2,43 @@
   "common": {
     "submitting": "Submitting...",
     "continue": "Continue",
+    "saving": "Saving..",
+    "save": "Save",
     "verifying": "Verifying...",
     "verify": "Verify code",
     "back": "Back",
+    "cancel": "Cancel",
+    "no-results": "No results.",
+    "role": {
+      "title": "Role"
+    },
+    "username": {
+      "title": "Username"
+    },
     "email": {
       "title": "Email",
       "required": "Email is required",
       "invalid": "Invalid email address"
     },
+    "two-fa-status": {
+      "title": "2FA status",
+      "enabled": "Enabled",
+      "disabled": "Not enabled"
+    },
+    "first-login-status": {
+      "title": "First login status",
+      "completed": "Completed",
+      "not-completed": "Not completed"
+    },
+    "account-status": {
+      "title": "Account status",
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "SETUP_REQUIRED": "Setup Required"
+    },
+    "id": "ID",
+    "select-all": "Select all",
+    "select-row": "Select row",
     "password": {
       "title": "Password",
       "required": "Password is required",
@@ -87,6 +116,22 @@
         "footer": "If you cannot authenticate yourself, please contact your administrator."
       },
       "countdown": "This countdown shows how long you have to complete 2FA verification."
+    },
+    "users": {
+      "title": "User Management",
+      "dialog": {
+        "edit": "Edit User",
+        "create": "Add New User"
+      },
+      "toolbar": {
+        "add": "Add",
+        "edit": "Edit",
+        "suspend": "Suspend",
+        "activate": "Activate",
+        "suspend-activate": "Suspend/Activate",
+        "reset-2fa": "Reset 2FA",
+        "reset-password": "Reset password"
+      }
     }
   },
   "messagekey": {
@@ -116,8 +161,25 @@
       "two-fa-not-enabled": "Two-factor authentication is not enabled on your account. Please set it up.",
       "password-valid-needs-two-fa": "Password verified. Please enter your 2FA code next.",
       "one-time-code-validation-success": "One-time code validated successfully.",
-      "one-time-code-sent": "One time code sent out. Please check you inbox!",
-      "one-time-code-expired": "The one-time code has expired. Please request a new one."
+      "one-time-code-sent": "One time code sent out. Please check your inbox!",
+      "one-time-code-expired": "The one-time code has expired. Please request a new one.",
+      "one-time-code": {
+        "validate-before-two-fa": "Please validate your one-time code before setting up 2FA."
+      }
+    },
+    "user": {
+      "registration-successful": "User registered successfully.",
+      "two-fa-setup-reset-complete": "2FA has been reset successfully.",
+      "invalid-role": "Invalid role specified. Please select a valid role.",
+      "update-success": "User updated successfully.",
+      "not-found": "User not found.",
+      "already-suspended": "User is already suspended.",
+      "not-suspended": "User is not suspended.",
+      "suspended": "User has been suspended successfully.",
+      "activated": "User has been activated successfully.",
+      "password-reset-complete": "Password has been reset successfully.",
+      "two-fa-not-enabled": "Two-factor authentication is not enabled for this user.",
+      "password": "User has not set up a password yet."
     }
   },
   "sidebar": {
