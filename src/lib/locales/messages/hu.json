@@ -128,7 +128,8 @@
         "edit": "Szerkesztés",
         "suspend": "Felfüggesztés",
         "activate": "Aktiválás",
-        "reset": "2FA visszaállítás"
+        "reset-2fa": "2FA visszaállítás",
+        "reset-password": "Jelszó visszaállítás"
       }
     }
   },

@@ -54,14 +54,14 @@ export const handleRequest = async <T>(
       return {
         success: false,
         messageKey: error.response.data.messageKey,
-        payload: error.response?.data?.data ?? null,
+        payload: error.response?.data?.payload ?? null,
       };
     }
 
     return {
       success: false,
       messageKey: 'error.unexpected',
-      payload: error.response?.data?.data ?? null,
+      payload: error.response?.data?.payload ?? null,
     };
   }
 };

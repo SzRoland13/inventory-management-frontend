@@ -22,10 +22,26 @@ export const UserService = {
     id: number,
     data: AddEditUserRequest,
   ): Promise<ApiResponse<UserDto>> => {
-    return handleRequest(BaseService.post(`/user/${id}`, data));
+    return handleRequest(BaseService.put(`/user/${id}`, data));
   },
 
   getAllUsers: async (): Promise<ApiResponse<AllUserResponse>> => {
     return handleRequest(BaseService.get('/user/all'));
+  },
+
+  reset2fa: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/reset-2fa/${id}`));
+  },
+
+  suspendUser: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/reset-2fa/${id}`));
+  },
+
+  activateUser: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/reset-2fa/${id}`));
+  },
+
+  resetPassword: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/reset-2fa/${id}`));
   },
 };

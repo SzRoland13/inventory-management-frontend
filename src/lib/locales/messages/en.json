@@ -128,7 +128,8 @@
         "edit": "Edit",
         "suspend": "Suspend",
         "activate": "Activate",
-        "reset": "2FA reset"
+        "reset-2fa": "Reset 2FA",
+        "reset-password": "Reset password"
       }
     }
   },

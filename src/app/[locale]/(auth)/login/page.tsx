@@ -47,6 +47,8 @@ export default function LoginPage() {
       password: data.password,
     });
 
+    console.log('login response: ', response);
+
     if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
       const expiresAt = new Date(response.payload.expiresAt);
 

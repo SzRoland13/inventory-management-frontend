@@ -43,11 +43,15 @@ export default function TwoFaSetupPage() {
   useEffect(() => {
     const storeState = useAuthStore.getState();
 
+    console.log('mi a geci van bazdmeg?', storeState);
+
     if (
       !storeState.email ||
       !storeState.shortLifeToken ||
       !storeState.shortLifeTokenExpiry
     ) {
+      console.log('mi a faszért jössz be ide?');
+
       toast(t('messagekey.auth.invalid-or-expired-session'));
       pushLocalized(Routes.Login_Start);
     }
