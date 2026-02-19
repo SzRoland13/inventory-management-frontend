@@ -34,7 +34,7 @@
       "title": "Account status",
       "ACTIVE": "Active",
       "SUSPENDED": "Suspended",
-      "PENDING_VERIFICATION": "Pending Verification"
+      "SETUP_REQUIRED": "Setup Required"
     },
     "id": "ID",
     "select-all": "Select all",
@@ -134,6 +134,12 @@
       }
     }
   },
+  "messages": {
+    "user-suspended": "User has been suspended successfully.",
+    "user-activated": "User has been activated successfully.",
+    "password-reset": "Password has been reset successfully.",
+    "2fa-reset": "2FA has been reset successfully."
+  },
   "messagekey": {
     "guard": {
       "session-expired": "Session expired. Please log in again.",
@@ -161,8 +167,25 @@
       "two-fa-not-enabled": "Two-factor authentication is not enabled on your account. Please set it up.",
       "password-valid-needs-two-fa": "Password verified. Please enter your 2FA code next.",
       "one-time-code-validation-success": "One-time code validated successfully.",
-      "one-time-code-sent": "One time code sent out. Please check you inbox!",
-      "one-time-code-expired": "The one-time code has expired. Please request a new one."
+      "one-time-code-sent": "One time code sent out. Please check your inbox!",
+      "one-time-code-expired": "The one-time code has expired. Please request a new one.",
+      "one-time-code": {
+        "validate-before-two-fa": "Please validate your one-time code before setting up 2FA."
+      }
+    },
+    "user": {
+      "registration-successful": "User registered successfully.",
+      "two-fa-setup-reset-complete": "2FA has been reset successfully.",
+      "invalid-role": "Invalid role specified. Please select a valid role.",
+      "update-success": "User updated successfully.",
+      "not-found": "User not found.",
+      "already-suspended": "User is already suspended.",
+      "not-suspended": "User is not suspended.",
+      "suspended": "User has been suspended successfully.",
+      "activated": "User has been activated successfully.",
+      "password-reset-complete": "Password has been reset successfully.",
+      "two-fa-not-enabled": "Two-factor authentication is not enabled for this user.",
+      "password": "User has not set up a password yet."
     }
   },
   "sidebar": {

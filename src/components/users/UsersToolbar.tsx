@@ -34,6 +34,8 @@ export function UsersToolbar({
   const hasSelection = !!selectedUser;
 
   const canReset2FA = hasSelection && (selectedUser?.twoFaEnabled ?? false);
+  const canResetPassword =
+    hasSelection && (selectedUser?.otcSetupCompleted ?? false);
   const isSuspended = selectedUser?.userStatus === UserStatus.SUSPENDED;
 
   const canToggleSuspend = hasSelection;
@@ -76,7 +78,7 @@ export function UsersToolbar({
 
       <Button
         variant='ghost'
-        disabled={!hasSelection}
+        disabled={!canResetPassword}
         onClick={onResetPassword}
         className='flex items-center gap-2'
       >

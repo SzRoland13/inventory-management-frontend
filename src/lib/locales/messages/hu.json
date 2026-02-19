@@ -34,7 +34,7 @@
       "title": "Fiók státusz",
       "ACTIVE": "Aktív",
       "SUSPENDED": "Felfüggesztett",
-      "PENDING_VERIFICATION": "Beállítás Függőben"
+      "SETUP_REQUIRED": "Beállítás szükséges"
     },
     "id": "Egyéni azonosító",
     "select-all": "Összes kiválasztása",
@@ -134,6 +134,12 @@
       }
     }
   },
+  "messages": {
+    "user-suspended": "A felhasználó sikeresen felfüggesztve.",
+    "user-activated": "A felhasználó sikeresen aktiválva.",
+    "password-reset": "A jelszó sikeresen visszaállítva.",
+    "2fa-reset": "A 2FA sikeresen visszaállítva."
+  },
   "messagekey": {
     "guard": {
       "session-expired": "Lejárt munkamenet. Kérlek lépj be újra.",
@@ -162,7 +168,24 @@
       "password-valid-needs-two-fa": "A jelszó ellenőrizve. Add meg a 2FA kódodat a folytatáshoz.",
       "one-time-code-validation-success": "Az egyszer használatos kód sikeresen ellenőrizve.",
       "one-time-code-sent": "Az egyszer használatos kód elküldve. Ellenőrizd a postaládádat!",
-      "one-time-code-expired": "A kód lejárt. Kérjük, kérj újat."
+      "one-time-code-expired": "A kód lejárt. Kérjük, kérj újat.",
+      "one-time-code": {
+        "validate-before-two-fa": "Kérjük, először ellenőrizd az egyszer használatos kódot a 2FA beállítása előtt."
+      }
+    },
+    "user": {
+      "registration-successful": "A felhasználó sikeresen regisztrálva.",
+      "two-fa-setup-reset-complete": "A 2FA sikeresen visszaállítva.",
+      "invalid-role": "Érvénytelen szerepkör. Kérjük, válassz egy érvényes szerepkört.",
+      "update-success": "A felhasználó sikeresen frissítve.",
+      "not-found": "A felhasználó nem található.",
+      "already-suspended": "A felhasználó már felfüggesztett állapotban van.",
+      "not-suspended": "A felhasználó nincs felfüggesztett állapotban.",
+      "suspended": "A felhasználó sikeresen felfüggesztve.",
+      "activated": "A felhasználó sikeresen aktiválva.",
+      "password-reset-complete": "A jelszó sikeresen visszaállítva.",
+      "two-fa-not-enabled": "A kétlépcsős azonosítás nincs engedélyezve ennél a felhasználónál.",
+      "password": "A felhasználó még nem állított be jelszót."
     }
   },
   "sidebar": {
