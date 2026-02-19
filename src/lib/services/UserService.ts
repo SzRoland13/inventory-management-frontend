@@ -34,14 +34,14 @@ export const UserService = {
   },
 
   suspendUser: async (id: number): Promise<ApiResponse<void>> => {
-    return handleRequest(BaseService.post(`/user/reset-2fa/${id}`));
+    return handleRequest(BaseService.post(`/user/suspend/${id}`));
   },
 
   activateUser: async (id: number): Promise<ApiResponse<void>> => {
-    return handleRequest(BaseService.post(`/user/reset-2fa/${id}`));
+    return handleRequest(BaseService.post(`/user/activate/${id}`));
   },
 
   resetPassword: async (id: number): Promise<ApiResponse<void>> => {
-    return handleRequest(BaseService.post(`/user/reset-2fa/${id}`));
+    return handleRequest(BaseService.post(`/user/reset-password/${id}`));
   },
 };

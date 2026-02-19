@@ -134,12 +134,6 @@
       }
     }
   },
-  "messages": {
-    "user-suspended": "A felhasználó sikeresen felfüggesztve.",
-    "user-activated": "A felhasználó sikeresen aktiválva.",
-    "password-reset": "A jelszó sikeresen visszaállítva.",
-    "2fa-reset": "A 2FA sikeresen visszaállítva."
-  },
   "messagekey": {
     "guard": {
       "session-expired": "Lejárt munkamenet. Kérlek lépj be újra.",

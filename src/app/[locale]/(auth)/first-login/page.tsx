@@ -194,7 +194,7 @@ export default function FirstLoginPage() {
               </div>
               <div className='flex flex-col gap-2'>
                 <Label htmlFor='code' className='text-zinc-300'>
-                  {t('pages.setup-password.otc.title')}
+                  {t('pages.first-login.otc.title')}
                 </Label>
                 <Input
                   id='code'

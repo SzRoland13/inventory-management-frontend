@@ -78,14 +78,29 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
     const userRequest = mapModificationUserToAddEditUserRequest(user);
 
     if (user.id) {
-      UserService.updateUser(user.id, userRequest);
+      UserService.updateUser(user.id, userRequest)
+        .then(() => {
+          toast.success(t('messagekey.user.update-success'));
+          setRowSelection({});
+          setDialogOpen(false);
+          onSave();
+        })
+        .catch((error: ApiResponse<void>) => {
+          toast.error(t(`messagekey.${error.messageKey}`));
+        });
     } else {
-      UserService.registerUser(userRequest);
+      // Register new user
+      UserService.registerUser(userRequest)
+        .then(() => {
+          toast.success(t('messagekey.user.registration-successful'));
+          setRowSelection({});
+          setDialogOpen(false);
+          onSave();
+        })
+        .catch((error: ApiResponse<void>) => {
+          toast.error(t(`messagekey.${error.messageKey}`));
+        });
     }
-
-    setRowSelection({});
-    setDialogOpen(false);
-    onSave();
   };
 
   const handleToggleSuspend = () => {
@@ -98,8 +113,8 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
       : UserService.suspendUser(selectedIds[0]);
 
     const successMessage = isSuspended
-      ? 'messages.user-activated'
-      : 'messages.user-suspended';
+      ? 'messagekey.user.activated'
+      : 'messagekey.user.suspended';
 
     action
       .then(() => {
@@ -117,7 +132,7 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
 
     UserService.resetPassword(selectedIds[0])
       .then(() => {
-        toast.success(t('messages.password-reset'));
+        toast.success(t('messagekey.user.password-reset-complete'));
         setRowSelection({});
         onSave();
       })
@@ -131,7 +146,7 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
 
     UserService.reset2fa(selectedIds[0])
       .then(() => {
-        toast.success(t('messages.2fa-reset'));
+        toast.success(t('messagekey.user.two-fa-setup-reset-complete'));
         setRowSelection({});
         onSave();
       })

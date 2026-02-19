@@ -134,12 +134,6 @@
       }
     }
   },
-  "messages": {
-    "user-suspended": "User has been suspended successfully.",
-    "user-activated": "User has been activated successfully.",
-    "password-reset": "Password has been reset successfully.",
-    "2fa-reset": "2FA has been reset successfully."
-  },
   "messagekey": {
     "guard": {
       "session-expired": "Session expired. Please log in again.",
