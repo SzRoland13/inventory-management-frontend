@@ -14,35 +14,44 @@ import { UserDto } from '@/lib/services/dtos/userDtos';
 import { UserStatus } from '@/lib/utils/enums';
 
 interface UsersToolbarProps {
-  selectedIds: number[];
   selectedUser: UserDto | null | undefined;
   onAdd: () => void;
   onEdit: () => void;
-  onSuspend: () => void;
-  onActivate: () => void;
+  onToggleSuspend: () => void;
   onReset2FA: () => void;
   onResetPassword: () => void;
 }
 
 export function UsersToolbar({
-  selectedIds,
   selectedUser,
   onAdd,
   onEdit,
-  onSuspend,
-  onActivate,
+  onToggleSuspend,
   onReset2FA,
   onResetPassword,
 }: UsersToolbarProps) {
   const t = useTranslations();
-  const hasSelectedOnlyOne = selectedIds.length === 1;
+  const hasSelection = !!selectedUser;
 
-  const canReset2FA =
-    hasSelectedOnlyOne && (selectedUser?.twoFaEnabled ?? false);
-  const canActivate =
-    hasSelectedOnlyOne && selectedUser?.userStatus === UserStatus.SUSPENDED;
-  const canSuspend =
-    hasSelectedOnlyOne && selectedUser?.userStatus === UserStatus.ACTIVE;
+  const canReset2FA = hasSelection && (selectedUser?.twoFaEnabled ?? false);
+  const isSuspended = selectedUser?.userStatus === UserStatus.SUSPENDED;
+  const isActive = selectedUser?.userStatus === UserStatus.ACTIVE;
+  const canToggleSuspend = hasSelection && (isSuspended || isActive);
+
+  // Determine button state for suspend/activate
+  const suspendButtonIcon = !hasSelection ? (
+    <ShieldX className='h-4 w-4' />
+  ) : isSuspended ? (
+    <ShieldCheck className='h-4 w-4' />
+  ) : (
+    <ShieldX className='h-4 w-4' />
+  );
+
+  const suspendButtonText = !hasSelection
+    ? t('pages.users.toolbar.suspend-activate')
+    : isSuspended
+      ? t('pages.users.toolbar.activate')
+      : t('pages.users.toolbar.suspend');
 
   return (
     <div className='flex flex-wrap gap-2 items-center p-2 bg-zinc-600 rounded-t-lg'>
@@ -57,7 +66,7 @@ export function UsersToolbar({
 
       <Button
         variant='ghost'
-        disabled={!hasSelectedOnlyOne}
+        disabled={!hasSelection}
         onClick={onEdit}
         className='flex items-center gap-2'
       >
@@ -67,27 +76,7 @@ export function UsersToolbar({
 
       <Button
         variant='ghost'
-        disabled={!canSuspend}
-        onClick={onSuspend}
-        className='flex items-center gap-2'
-      >
-        <ShieldX className='h-4 w-4' />
-        {t('pages.users.toolbar.suspend')}
-      </Button>
-
-      <Button
-        variant='ghost'
-        disabled={!canActivate}
-        onClick={onActivate}
-        className='flex items-center gap-2'
-      >
-        <ShieldCheck className='h-4 w-4' />
-        {t('pages.users.toolbar.activate')}
-      </Button>
-
-      <Button
-        variant='ghost'
-        disabled={!hasSelectedOnlyOne}
+        disabled={!hasSelection}
         onClick={onResetPassword}
         className='flex items-center gap-2'
       >
@@ -103,6 +92,16 @@ export function UsersToolbar({
       >
         <RotateCcw className='h-4 w-4' />
         {t('pages.users.toolbar.reset-2fa')}
+      </Button>
+
+      <Button
+        variant='ghost'
+        disabled={!canToggleSuspend}
+        onClick={onToggleSuspend}
+        className='flex items-center gap-2'
+      >
+        {suspendButtonIcon}
+        {suspendButtonText}
       </Button>
     </div>
   );

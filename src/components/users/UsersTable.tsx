@@ -41,6 +41,7 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
     getCoreRowModel: getCoreRowModel(),
     state: { rowSelection },
     onRowSelectionChange: setRowSelection,
+    enableMultiRowSelection: false, // Only allow single selection
   });
 
   const selectedIds = React.useMemo(
@@ -86,26 +87,20 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
     onSave();
   };
 
-  const handleSuspend = () => {
-    if (selectedIds.length !== 1) return;
+  const handleToggleSuspend = () => {
+    if (selectedIds.length !== 1 || !selectedUser) return;
 
-    UserService.suspendUser(selectedIds[0])
+    const isSuspended = selectedUser.userStatus === 'SUSPENDED';
+    const action = isSuspended
+      ? UserService.activateUser(selectedIds[0])
+      : UserService.suspendUser(selectedIds[0]);
+    const successMessage = isSuspended
+      ? 'messages.user-activated'
+      : 'messages.user-suspended';
+
+    action
       .then(() => {
-        toast.success(t('messages.user-suspended'));
-        setRowSelection({});
-        onSave();
-      })
-      .catch((error: ApiResponse<void>) => {
-        toast.error(t(`messagekey.${error.messageKey}`));
-      });
-  };
-
-  const handleActivate = () => {
-    if (selectedIds.length !== 1) return;
-
-    UserService.activateUser(selectedIds[0])
-      .then(() => {
-        toast.success(t('messages.user-activated'));
+        toast.success(t(successMessage));
         setRowSelection({});
         onSave();
       })
@@ -145,12 +140,10 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
   return (
     <div className='flex flex-col w-full rounded-lg bg-zinc-900'>
       <UsersToolbar
-        selectedIds={selectedIds}
         selectedUser={selectedUser}
         onAdd={handleAdd}
         onEdit={handleEdit}
-        onSuspend={handleSuspend}
-        onActivate={handleActivate}
+        onToggleSuspend={handleToggleSuspend}
         onReset2FA={handleReset2FA}
         onResetPassword={handleResetPassword}
       />

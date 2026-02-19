@@ -13,13 +13,7 @@ export const useUserColumns = (): ColumnDef<UserDto>[] => {
   return [
     {
       id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label={t('common.select-all')}
-        />
-      ),
+      header: () => null,
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
