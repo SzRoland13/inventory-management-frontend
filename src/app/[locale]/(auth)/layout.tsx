@@ -19,7 +19,7 @@ export default function AuthLayout({
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      toast.info(t('auth.already-logged-in'));
+      toast.info(t('messagekey.guard.logged-in-redirect'));
       replaceLocalized(Routes.Dashboard);
     }
   }, [loading, isAuthenticated, replaceLocalized, t]);

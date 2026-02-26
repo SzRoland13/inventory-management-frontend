@@ -28,20 +28,20 @@ axiosClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await axiosClient.post('/api/v1/auth/refresh');
+        await axiosClient.post('/auth/refresh');
 
         return axiosClient(originalRequest);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         if (e.response?.status === 400 || e.response?.status === 401) {
-          await axiosClient.post('api/v1/auth/logout').catch(() => {});
+          await axiosClient.post('/auth/logout').catch(() => {});
 
           useUserStore.getState().clearUser();
 
           const locale = useLocaleStore.getState().locale || 'en';
 
-          if (window.location.pathname !== `/${locale}/login`) {
-            window.location.href = `/${locale}/login`;
+          if (window.location.pathname !== `/${locale}/login-start`) {
+            window.location.href = `/${locale}/login-start`;
           }
 
           return Promise.reject(null);

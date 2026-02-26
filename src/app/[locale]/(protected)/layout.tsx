@@ -21,7 +21,7 @@ export default function ProtectedLayout({
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      toast.info(t('auth.login-first'));
+      toast.info(t('messagekey.guard.session-expired'));
       replaceLocalized(Routes.Login_Start);
     }
   }, [loading, isAuthenticated, replaceLocalized, t]);

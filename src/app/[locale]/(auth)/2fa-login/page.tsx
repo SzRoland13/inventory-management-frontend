@@ -32,8 +32,13 @@ export default function TwoFaLoginPage() {
   const t = useTranslations();
   const { pushLocalized } = useLocalizedRouter();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
+  const initialCheck = useRef(false);
 
   useEffect(() => {
+    if (!initialCheck.current) return;
+
+    initialCheck.current = true;
+
     const storeState = useAuthStore.getState();
 
     if (
@@ -42,6 +47,7 @@ export default function TwoFaLoginPage() {
       !storeState.shortLifeTokenExpiry
     ) {
       toast(t('messagekey.auth.invalid-or-expired-session'));
+      console.log('ez fut le?');
       pushLocalized(Routes.Login_Start);
     } else {
       setTimeout(() => codeInputRef.current?.focus(), 250);
