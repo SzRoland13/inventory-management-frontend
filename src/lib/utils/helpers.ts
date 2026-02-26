@@ -48,20 +48,18 @@ export const handleRequest = async <T>(
     return await promise;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.error(error);
-
-    if (error.response?.data?.messageKey) {
+    if (error && error.response?.data?.messageKey) {
       return {
         success: false,
         messageKey: error.response.data.messageKey,
         payload: error.response?.data?.payload ?? null,
       };
+    } else {
+      return {
+        success: false,
+        messageKey: 'error.unexpected',
+        payload: error.response?.data?.payload ?? null,
+      };
     }
-
-    return {
-      success: false,
-      messageKey: 'error.unexpected',
-      payload: error.response?.data?.payload ?? null,
-    };
   }
 };

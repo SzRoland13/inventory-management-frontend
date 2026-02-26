@@ -8,10 +8,6 @@ import {
 import { handleRequest } from '@/lib/utils/helpers';
 
 export const UserService = {
-  checkSession: async (): Promise<ApiResponse<void>> => {
-    return handleRequest(BaseService.get('/user/check-session'));
-  },
-
   registerUser: async (
     data: AddEditUserRequest,
   ): Promise<ApiResponse<UserDto>> => {

@@ -32,8 +32,13 @@ export default function TwoFaLoginPage() {
   const t = useTranslations();
   const { pushLocalized } = useLocalizedRouter();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
+  const initialCheck = useRef(false);
 
   useEffect(() => {
+    if (!initialCheck.current) return;
+
+    initialCheck.current = true;
+
     const storeState = useAuthStore.getState();
 
     if (
@@ -42,6 +47,7 @@ export default function TwoFaLoginPage() {
       !storeState.shortLifeTokenExpiry
     ) {
       toast(t('messagekey.auth.invalid-or-expired-session'));
+      console.log('ez fut le?');
       pushLocalized(Routes.Login_Start);
     } else {
       setTimeout(() => codeInputRef.current?.focus(), 250);
@@ -58,6 +64,7 @@ export default function TwoFaLoginPage() {
 
   const onVerifyTotp = async (data: TwoFaForm) => {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
+
     if (data.email && data.code && shortLifeToken) {
       const response = await AuthService.twoFaLogin({
         email: data.email,
@@ -66,13 +73,12 @@ export default function TwoFaLoginPage() {
       });
 
       if (response.success && response.payload) {
-        const { user, tokens } = response.payload;
+        const { user } = response.payload;
 
         toast(t(`messagekey.${response.messageKey}`));
+
         if (response.success) {
           useUserStore.getState().setUser({
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
             username: user.username,
             email: user.email,
             role: castToEnum(UserRole, user.role),
@@ -80,7 +86,9 @@ export default function TwoFaLoginPage() {
 
           useAuthStore.getState().clearAuthData();
 
-          toast.loading('Finalizing login...');
+          toast.info('Finalizing login...');
+
+          pushLocalized(Routes.Dashboard);
         }
       } else {
         toast.error(t(`${response.messageKey}`));
