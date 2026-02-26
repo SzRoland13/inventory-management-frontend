@@ -80,7 +80,7 @@ export default function TwoFaLoginPage() {
 
           useAuthStore.getState().clearAuthData();
 
-          toast.loading('Finalizing login...');
+          toast.info('Finalizing login...');
 
           pushLocalized(Routes.Dashboard);
         }

@@ -40,8 +40,6 @@ export default function LoginStartPage() {
     const response = await AuthService.checkIfFirstLogin({ email: data.email });
     useAuthStore.getState().setAuthData({ email: data.email });
 
-    console.log(response);
-
     if (response.success && response.payload.firstLogin) {
       toast(t(`messagekey.${response.messageKey}`));
       pushLocalized(Routes.First_Login);

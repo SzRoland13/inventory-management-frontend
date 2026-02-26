@@ -58,15 +58,9 @@ export default function LoginPage() {
 
     toast(t(`messagekey.${response.messageKey}`));
 
-    console.log(response.payload);
-
     if (response.payload.twoFactorEnabled) {
       pushLocalized(Routes.Two_Fa_Login);
     } else {
-      console.log(
-        'miért ide jössz be ha a 2fa fel van setupolva?? ',
-        response.payload.twoFactorEnabled,
-      );
       pushLocalized(Routes.Two_Fa_Setup);
     }
   };
