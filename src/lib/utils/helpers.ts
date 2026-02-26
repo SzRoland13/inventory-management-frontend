@@ -48,8 +48,6 @@ export const handleRequest = async <T>(
     return await promise;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.error(error);
-
     if (error.response?.data?.messageKey) {
       return {
         success: false,

@@ -58,6 +58,7 @@ export default function TwoFaLoginPage() {
 
   const onVerifyTotp = async (data: TwoFaForm) => {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
+
     if (data.email && data.code && shortLifeToken) {
       const response = await AuthService.twoFaLogin({
         email: data.email,
@@ -66,13 +67,12 @@ export default function TwoFaLoginPage() {
       });
 
       if (response.success && response.payload) {
-        const { user, tokens } = response.payload;
+        const { user } = response.payload;
 
         toast(t(`messagekey.${response.messageKey}`));
+
         if (response.success) {
           useUserStore.getState().setUser({
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
             username: user.username,
             email: user.email,
             role: castToEnum(UserRole, user.role),
@@ -81,6 +81,8 @@ export default function TwoFaLoginPage() {
           useAuthStore.getState().clearAuthData();
 
           toast.loading('Finalizing login...');
+
+          pushLocalized(Routes.Dashboard);
         }
       } else {
         toast.error(t(`${response.messageKey}`));

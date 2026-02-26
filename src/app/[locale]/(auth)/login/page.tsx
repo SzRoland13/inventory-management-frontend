@@ -47,8 +47,6 @@ export default function LoginPage() {
       password: data.password,
     });
 
-    console.log('login response: ', response);
-
     if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
       const expiresAt = new Date(response.payload.expiresAt);
 
@@ -59,12 +57,16 @@ export default function LoginPage() {
     }
 
     toast(t(`messagekey.${response.messageKey}`));
-    if (response.success) {
+
+    console.log(response.payload);
+
+    if (response.payload.twoFactorEnabled) {
       pushLocalized(Routes.Two_Fa_Login);
-    } else if (
-      !response.success &&
-      response.messageKey === 'auth.two-fa-not-enabled'
-    ) {
+    } else {
+      console.log(
+        'miért ide jössz be ha a 2fa fel van setupolva?? ',
+        response.payload.twoFactorEnabled,
+      );
       pushLocalized(Routes.Two_Fa_Setup);
     }
   };

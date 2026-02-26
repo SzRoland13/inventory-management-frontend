@@ -29,18 +29,13 @@ export type UserDetails = {
   role: string;
 };
 
-export type TokensDetails = {
-  accessToken: string;
-  refreshToken: string;
-};
-
 export type LoginResponse = {
   user: UserDetails;
-  tokens: TokensDetails;
   firstTime2FAEnabled: boolean;
 };
 
 export type ShortLifeTokenResponse = {
+  twoFactorEnabled: boolean;
   shortLifeToken: string;
   expiresAt: Date;
 };

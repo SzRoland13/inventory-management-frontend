@@ -43,15 +43,11 @@ export default function TwoFaSetupPage() {
   useEffect(() => {
     const storeState = useAuthStore.getState();
 
-    console.log('mi a geci van bazdmeg?', storeState);
-
     if (
       !storeState.email ||
       !storeState.shortLifeToken ||
       !storeState.shortLifeTokenExpiry
     ) {
-      console.log('mi a faszért jössz be ide?');
-
       toast(t('messagekey.auth.invalid-or-expired-session'));
       pushLocalized(Routes.Login_Start);
     }
@@ -86,7 +82,7 @@ export default function TwoFaSetupPage() {
         setQrCode(response.payload);
       }
     } else {
-      toast(t('messagekey.auth.invalid-or-expired-session"'));
+      toast(t('messagekey.auth.invalid-or-expired-session'));
     }
   };
 
@@ -101,14 +97,12 @@ export default function TwoFaSetupPage() {
         shortLifeToken,
       });
 
-      const { user, tokens, firstTime2FAEnabled } = response.payload;
+      const { user, firstTime2FAEnabled } = response.payload;
 
       toast(t(`messagekey.${response.messageKey}`));
 
       if (response.success && firstTime2FAEnabled) {
         useUserStore.getState().setUser({
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
           username: user.username,
           email: user.email,
           role: castToEnum(UserRole, user.role),

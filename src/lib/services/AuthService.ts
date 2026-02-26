@@ -10,9 +10,14 @@ import {
   TwoFactorVerifyRequest,
 } from '@/lib/services/dtos/authDtos';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
+import { UserDto } from '@/lib/services/dtos/userDtos';
 import { handleRequest } from '@/lib/utils/helpers';
 
 export const AuthService = {
+  checkSession: async (): Promise<ApiResponse<UserDto>> => {
+    return handleRequest(BaseService.get('/auth/check-session'));
+  },
+
   checkIfFirstLogin: async (
     req: EmailRequest,
   ): Promise<ApiResponse<CheckFirstLoginResponse>> => {

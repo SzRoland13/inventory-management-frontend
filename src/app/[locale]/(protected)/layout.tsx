@@ -2,17 +2,31 @@
 
 import { Loader2 } from 'lucide-react';
 import Sidebar from '@/components/common/Sidebar';
-import { useSessionGuard } from '@/lib/hooks/useSessionGuard';
+import useSessionGuard from '@/lib/hooks/useSessionGuard';
 import { SidebarProvider } from '@/lib/providers/SidebarContext';
+import { useTranslations } from 'next-intl';
+import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
+import { Routes } from '@/lib/utils/enums';
 
 export default function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { hydrated, loading } = useSessionGuard('protected');
+  const t = useTranslations();
+  const { loading, isAuthenticated } = useSessionGuard();
+  const { replaceLocalized } = useLocalizedRouter();
 
-  if (!hydrated || loading) {
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      toast.info(t('auth.login-first'));
+      replaceLocalized(Routes.Login_Start);
+    }
+  }, [loading, isAuthenticated, replaceLocalized, t]);
+
+  if (loading) {
     return (
       <div className='flex min-h-screen items-center justify-center bg-zinc-950'>
         <Loader2 className='w-6 h-6 animate-spin text-zinc-300' />
