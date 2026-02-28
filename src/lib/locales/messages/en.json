@@ -132,6 +132,30 @@
         "reset-2fa": "Reset 2FA",
         "reset-password": "Reset password"
       }
+    },
+    "dashboard": {
+      "title": "Dashboard"
+    },
+    "products": {
+      "title": "Product Management"
+    },
+    "warehouses": {
+      "title": "Warehouse Management"
+    },
+    "stocks": {
+      "title": "Stock Management"
+    },
+    "documents": {
+      "title": "Document Managemet"
+    },
+    "reports": {
+      "title": "Report Management"
+    },
+    "sales": {
+      "title": "Sale Management"
+    },
+    "settings": {
+      "title": "Settings"
     }
   },
   "messagekey": {

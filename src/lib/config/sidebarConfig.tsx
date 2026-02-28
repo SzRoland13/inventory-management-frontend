@@ -53,7 +53,7 @@ export const sidebarItems: SidebarItem[] = [
     label: 'sidebar.reports',
     path: '/reports',
     icon: <Clipboard className='w-4 h-4' />,
-    roles: [UserRole.MANAGER, UserRole.SALES, UserRole.ADMIN],
+    roles: [UserRole.MANAGER, UserRole.ADMIN],
   },
   {
     label: 'sidebar.sales',
@@ -65,7 +65,7 @@ export const sidebarItems: SidebarItem[] = [
     label: 'sidebar.users',
     path: '/users',
     icon: <Users className='w-4 h-4' />,
-    roles: [UserRole.MANAGER, UserRole.SALES, UserRole.ADMIN],
+    roles: [UserRole.ADMIN],
   },
   {
     label: 'sidebar.settings',

@@ -11,12 +11,10 @@ import { cn } from '@/lib/utils/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { useLocaleStore } from '@/lib/stores/localeStore';
 import { useTranslations } from 'next-intl';
-import useScreenSizeWatcher from '@/lib/hooks/useScreenSizeWatcher';
 import Image from 'next/image';
 import { useSidebar } from '@/lib/providers/SidebarContext';
 
 export default function Sidebar() {
-  const { isLargeScreen } = useScreenSizeWatcher();
   const { isOpen: sheetOpen, setOpen: setSheetOpen } = useSidebar();
   const router = useRouter();
   const t = useTranslations();
@@ -36,45 +34,72 @@ export default function Sidebar() {
     return `/${pathname.split('/')[2]}`;
   };
 
+  const activePath = getPath();
+
   const SidebarContent = (
-    <div className='flex flex-col h-full w-full'>
-      <div className='flex items-center justify-center border-b p-4'>
-        <Image
-          src='/icon.png'
-          width={100}
-          height={100}
-          alt='Inventory Management App logo'
-        />
+    <div className='flex flex-col h-full w-full bg-gradient-to-b from-zinc-900 to-zinc-950 text-zinc-200'>
+      {/* Header with company icon and company name */}
+      <div className='flex flex-col items-center gap-3 border-b border-zinc-800 p-6'>
+        <div className='p-3 rounded-2xl bg-zinc-800 shadow-inner'>
+          <Image
+            src='/icon.png'
+            width={80}
+            height={80}
+            alt='Inventory Management App logo'
+          />
+        </div>
+        <span className='text-lg font-semibold text-center tracking-wide text-zinc-100'>
+          Inventory Management System
+        </span>
       </div>
 
-      <ScrollArea className='flex-1'>
-        <nav className='flex flex-col py-2'>
-          {visibleItems.map((item) => (
-            <Button
-              key={item.path}
-              variant='ghost'
-              disabled={getPath() === item.path}
-              className={cn(
-                'justify-start w-full gap-3 rounded-none px-6 py-4 text-base font-medium transition-colors',
-                getPath() === item.path
-                  ? null
-                  : 'hover:text-primary hover:bg-muted',
-              )}
-              onClick={() => {
-                router.push(`/${useLocaleStore.getState().locale}${item.path}`);
-                setSheetOpen(false);
-              }}
-            >
-              {item.icon}
-              {t(item.label)}
-            </Button>
-          ))}
+      {/* Navigation */}
+      <ScrollArea className='flex-1 px-3 py-4'>
+        <nav className='flex flex-col gap-1'>
+          {visibleItems.map((item) => {
+            const isActive = activePath === item.path;
+
+            return (
+              <Button
+                key={item.path}
+                variant='ghost'
+                onClick={() => {
+                  router.push(
+                    `/${useLocaleStore.getState().locale}${item.path}`,
+                  );
+                  setSheetOpen(false);
+                }}
+                className={cn(
+                  'relative justify-start w-full gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200',
+                  isActive
+                    ? 'bg-zinc-800 text-white shadow-md'
+                    : 'hover:bg-zinc-800/60 hover:text-white text-zinc-400',
+                )}
+              >
+                <span
+                  className={cn(
+                    'transition-colors',
+                    isActive ? 'text-primary' : 'text-zinc-400',
+                  )}
+                >
+                  {item.icon}
+                </span>
+
+                {t(item.label)}
+              </Button>
+            );
+          })}
         </nav>
       </ScrollArea>
+
+      {/* Footer with version, avatar, and username */}
+      <div className='border-t border-zinc-800 p-4 text-xs text-zinc-500'>
+        v0.0.1
+      </div>
     </div>
   );
 
-  return !isLargeScreen ? (
+  return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetContent side='left' className='p-0 w-[90%] max-w-sm bg-zinc-900'>
         <DialogTitle className='sr-only'>Menu</DialogTitle>
@@ -89,9 +114,5 @@ export default function Sidebar() {
         {SidebarContent}
       </SheetContent>
     </Sheet>
-  ) : (
-    <aside className='h-screen w-1/6 bg-zinc-900 border-r shadow-sm'>
-      {SidebarContent}
-    </aside>
   );
 }

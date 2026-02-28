@@ -1,6 +1,6 @@
 'use client';
 
-import MobileSidebarToggle from '@/components/common/MobileSidebarToggle';
+import MainHeader from '@/components/common/MainHeader';
 import { UsersTable } from '@/components/users/UsersTable';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 import { AllUserResponse, UserDto } from '@/lib/services/dtos/userDtos';
@@ -30,17 +30,10 @@ export default function UsersPage() {
 
   return (
     <div className='flex flex-col w-full'>
-      <div className='flex w-full bg-gradient-to-r from-zinc-800 to-zinc-900 p-4 rounded-t-lg border-b border-zinc-700 items-center justify-between'>
-        <h1
-          className={
-            'text-2xl font-semibold text-zinc-100 tracking-tight align-center flex flex-row gap-2'
-          }
-        >
-          <MobileSidebarToggle />
-          <Users className='w-6 h-6 self-center' />
-          {t('pages.users.title')}
-        </h1>
-      </div>
+      <MainHeader
+        title={t('pages.users.title')}
+        icon={<Users className='w-6 h-6 self-center' />}
+      />
       <div className='flex m-3 border-1 rounded-lg bg-zinc-900 overflow-hidden'>
         <UsersTable data={users} onSave={fetchUsers} />
       </div>

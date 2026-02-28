@@ -132,6 +132,30 @@
         "reset-2fa": "2FA visszaállítás",
         "reset-password": "Jelszó visszaállítás"
       }
+    },
+    "dashboard": {
+      "title": "Irányítópult"
+    },
+    "products": {
+      "title": "Termékkezelés"
+    },
+    "warehouses": {
+      "title": "Raktárkezelés"
+    },
+    "stocks": {
+      "title": "Készletkezelés"
+    },
+    "documents": {
+      "title": "Dokumentumkezelés"
+    },
+    "reports": {
+      "title": "Riportkezelés"
+    },
+    "sales": {
+      "title": "Akciókezelés"
+    },
+    "settings": {
+      "title": "Beállítások"
     }
   },
   "messagekey": {
