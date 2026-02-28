@@ -7,6 +7,14 @@ export enum Routes {
   Two_Fa_Login = '/2fa-login',
   Two_Fa_Setup = '/2fa-setup',
   Dashboard = '/dashboard',
+  Products = '/products',
+  Warehouses = '/warehouses',
+  Stocks = '/stocks',
+  Documents = '/documents',
+  Reports = '/reports',
+  Sales = '/sales',
+  Users = '/users',
+  Settings = '/settings',
 }
 
 export enum UserRole {

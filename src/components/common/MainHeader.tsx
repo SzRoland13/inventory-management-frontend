@@ -1,4 +1,4 @@
-import SidebarButton from '@/components/common/SidebarButton';
+import SidebarButton from '@/components/sidebar/SidebarButton';
 import { ReactNode } from 'react';
 
 type Props = {

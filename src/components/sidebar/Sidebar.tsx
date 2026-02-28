@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useUserStore } from '@/lib/stores/userStore';
 import { sidebarItems } from '@/lib/config/sidebarConfig';
 import { Button } from '@/components/ui/button';
@@ -9,17 +9,19 @@ import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { useLocaleStore } from '@/lib/stores/localeStore';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useSidebar } from '@/lib/providers/SidebarContext';
+import SidebarHeader from '@/components/sidebar/SidebarHeader';
+import SidebarFooter from '@/components/sidebar/SidebarFooter';
+import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 
 export default function Sidebar() {
   const { isOpen: sheetOpen, setOpen: setSheetOpen } = useSidebar();
-  const router = useRouter();
+  const { pushLocalized } = useLocalizedRouter();
   const t = useTranslations();
   const pathname = usePathname();
   const { role } = useUserStore();
+  const { username } = useUserStore();
 
   useEffect(() => {
     setSheetOpen(false);
@@ -38,21 +40,7 @@ export default function Sidebar() {
 
   const SidebarContent = (
     <div className='flex flex-col h-full w-full bg-gradient-to-b from-zinc-900 to-zinc-950 text-zinc-200'>
-      {/* Header with company icon and company name */}
-      <div className='flex flex-col items-center gap-3 border-b border-zinc-800 p-6'>
-        <div className='p-3 rounded-2xl bg-zinc-800 shadow-inner'>
-          <Image
-            src='/icon.png'
-            width={80}
-            height={80}
-            alt='Inventory Management App logo'
-          />
-        </div>
-        <span className='text-lg font-semibold text-center tracking-wide text-zinc-100'>
-          Inventory Management System
-        </span>
-      </div>
-
+      <SidebarHeader />
       {/* Navigation */}
       <ScrollArea className='flex-1 px-3 py-4'>
         <nav className='flex flex-col gap-1'>
@@ -64,9 +52,7 @@ export default function Sidebar() {
                 key={item.path}
                 variant='ghost'
                 onClick={() => {
-                  router.push(
-                    `/${useLocaleStore.getState().locale}${item.path}`,
-                  );
+                  pushLocalized(item.path);
                   setSheetOpen(false);
                 }}
                 className={cn(
@@ -91,26 +77,15 @@ export default function Sidebar() {
           })}
         </nav>
       </ScrollArea>
-
-      {/* Footer with version, avatar, and username */}
-      <div className='border-t border-zinc-800 p-4 text-xs text-zinc-500'>
-        v0.0.1
-      </div>
+      <SidebarFooter userAvatarUrl={''} username={username} />
     </div>
   );
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetContent side='left' className='p-0 w-[90%] max-w-sm bg-zinc-900'>
-        <DialogTitle className='sr-only'>Menu</DialogTitle>
-        <DialogDescription className='sr-only'>
-          <Image
-            src='/icon.png'
-            width={100}
-            height={100}
-            alt='Inventory Management App logo'
-          />
-        </DialogDescription>
+        <DialogTitle className='sr-only'>Sidebar</DialogTitle>
+        <DialogDescription className='sr-only'></DialogDescription>
         {SidebarContent}
       </SheetContent>
     </Sheet>

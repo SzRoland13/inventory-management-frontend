@@ -215,6 +215,12 @@
     "reports": "Riportok",
     "sales": "Akciók",
     "users": "Felhasználók",
-    "settings": "Beállítások"
+    "settings": "Beállítások",
+    "header": {
+      "company-fallback": "Cég neve"
+    },
+    "footer": {
+      "logout": "Kijelentkezés"
+    }
   }
 }

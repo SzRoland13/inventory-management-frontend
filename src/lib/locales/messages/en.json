@@ -215,6 +215,12 @@
     "reports": "Reports",
     "sales": "Sales",
     "settings": "Settings",
-    "users": "User Management"
+    "users": "Users",
+    "header": {
+      "company-fallback": "Company name"
+    },
+    "footer": {
+      "logout": "Logout"
+    }
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import Sidebar from '@/components/common/Sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import useSessionGuard from '@/lib/hooks/useSessionGuard';
 import { SidebarProvider } from '@/lib/providers/SidebarContext';
 import { useTranslations } from 'next-intl';

@@ -55,4 +55,8 @@ export const AuthService = {
   ): Promise<ApiResponse<LoginResponse>> => {
     return handleRequest(BaseService.post('/auth/2fa/login', req));
   },
+
+  logout: async (): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post('/auth/logout'));
+  },
 };
