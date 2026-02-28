@@ -22,6 +22,7 @@ export const useUserStore = create(
       clearUser: () =>
         set(() => ({
           username: null,
+          email: null,
           role: [],
         })),
     })),

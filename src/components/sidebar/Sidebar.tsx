@@ -39,9 +39,8 @@ export default function Sidebar() {
   const activePath = getPath();
 
   const SidebarContent = (
-    <div className='flex flex-col h-full w-full bg-gradient-to-b from-zinc-900 to-zinc-950 text-zinc-200'>
+    <div className='flex flex-col h-full w-full bg-zinc-800 text-zinc-200 rounded-tr-md rounded-br-md'>
       <SidebarHeader />
-      {/* Navigation */}
       <ScrollArea className='flex-1 px-3 py-4'>
         <nav className='flex flex-col gap-1'>
           {visibleItems.map((item) => {
@@ -58,14 +57,14 @@ export default function Sidebar() {
                 className={cn(
                   'relative justify-start w-full gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200',
                   isActive
-                    ? 'bg-zinc-800 text-white shadow-md'
-                    : 'hover:bg-zinc-800/60 hover:text-white text-zinc-400',
+                    ? 'bg-zinc-700 text-white hover:text-zinc-800 shadow-md'
+                    : 'hover:bg-zinc-900/60 hover:text-white text-zinc-400',
                 )}
               >
                 <span
                   className={cn(
                     'transition-colors',
-                    isActive ? 'text-primary' : 'text-zinc-400',
+                    !isActive ? 'text-zinc-400' : '',
                   )}
                 >
                   {item.icon}
