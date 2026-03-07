@@ -2,7 +2,7 @@
 
 import { AuthService } from '@/lib/services/AuthService';
 import { useUserStore } from '@/lib/stores/userStore';
-import { UserRole } from '@/lib/utils/enums/user';
+import { UserRole } from '@/lib/enums/user';
 import { castToEnum } from '@/lib/utils/helpers';
 import { useEffect, useState } from 'react';
 

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { MediaService } from '@/lib/services/MediaService';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { SettingsTab } from '@/lib/utils/enums/settings';
+import { SettingsTab } from '@/lib/enums/settings';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>(SettingsTab.General);

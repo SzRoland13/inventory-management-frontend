@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from '@/lib/utils/enums/user';
+import { UserRole, UserStatus } from '@/lib/enums/user';
 
 export type AddEditUserRequest = {
   username: string;

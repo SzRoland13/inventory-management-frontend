@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { AuthService } from '@/lib/services/AuthService';
 import { useAuthStore } from '@/lib/stores/authStore';
-import { Routes } from '@/lib/utils/enums/routes';
+import { Routes } from '@/lib/enums/routes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';

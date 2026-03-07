@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { AuthService } from '@/lib/services/AuthService';
 import { useAuthStore } from '@/lib/stores/authStore';
-import { Routes } from '@/lib/utils/enums/routes';
+import { Routes } from '@/lib/enums/routes';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';

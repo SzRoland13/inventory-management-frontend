@@ -15,14 +15,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthService } from '@/lib/services/AuthService';
-import { Routes } from '@/lib/utils/enums/routes';
+import { Routes } from '@/lib/enums/routes';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
 import { useUserStore } from '@/lib/stores/userStore';
 import { castToEnum } from '@/lib/utils/helpers';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useTranslations } from 'next-intl';
-import { UserRole } from '@/lib/utils/enums/user';
+import { UserRole } from '@/lib/enums/user';
 
 type TwoFaForm = {
   email: string;

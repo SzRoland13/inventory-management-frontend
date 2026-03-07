@@ -1,5 +1,5 @@
-import { Routes } from '@/lib/utils/enums/routes';
-import { UserRole } from '@/lib/utils/enums/user';
+import { Routes } from '@/lib/enums/routes';
+import { UserRole } from '@/lib/enums/user';
 import {
   Barcode,
   Home,

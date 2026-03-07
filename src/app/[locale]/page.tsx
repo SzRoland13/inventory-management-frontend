@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
-import { Routes } from '@/lib/utils/enums/routes';
+import { Routes } from '@/lib/enums/routes';
 import { useEffect } from 'react';
 
 export default function Home({ locale }: { locale: string }) {

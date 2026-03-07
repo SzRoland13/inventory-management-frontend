@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UserRole } from '@/lib/utils/enums/user';
+import { UserRole } from '@/lib/enums/user';
 import { immer } from 'zustand/middleware/immer';
 
 interface UserState {

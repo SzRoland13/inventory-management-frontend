@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { UserStatus } from '@/lib/utils/enums/user';
+import { UserStatus } from '@/lib/enums/user';
 import { useTranslations } from 'next-intl';
 import { UserDto } from '@/lib/services/dtos/userDtos';
 

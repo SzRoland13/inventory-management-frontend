@@ -20,7 +20,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { ModificationUser } from '@/lib/utils/types';
 import { ThemedDialogContent } from '@/components/common/ThemedDialogWrapper';
 import { useTranslations } from 'next-intl';
-import { UserRole } from '@/lib/utils/enums/user';
+import { UserRole } from '@/lib/enums/user';
 
 interface EditUserDialogProps {
   open: boolean;
