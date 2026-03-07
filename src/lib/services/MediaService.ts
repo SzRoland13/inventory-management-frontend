@@ -17,6 +17,6 @@ export const MediaService = {
   getPreview: async (
     id: number,
   ): Promise<ApiResponse<MediaPreviewResponse>> => {
-    return handleRequest(BaseService.get(`/media/${id}`));
+    return handleRequest(BaseService.get(`/media/${id}/preview`));
   },
 };

@@ -21,6 +21,8 @@ import { toast } from 'sonner';
 export default function UserTab() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [mediaAssetId, setMediaAssetId] = useState<number | null>(null);
+  const avatarUrl = useUserStore((state) => state.avatarUrl);
+  const imageSrc = previewUrl ?? avatarUrl ?? undefined;
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const t = useTranslations();
@@ -33,6 +35,7 @@ export default function UserTab() {
     const initResp = await MediaService.initializeUpload({
       filename: file.name,
       mimeType: file.type,
+      fileSize: file.size,
     });
 
     setMediaAssetId(initResp.payload.id);
@@ -60,43 +63,44 @@ export default function UserTab() {
   };
 
   return (
-    <Card className='w-full h-full bg-zinc-800 border-zinc-700 shadow-xl'>
-      <CardHeader className='flex flex-col gap-2'>
-        <CardTitle className='text-xl font-semibold text-zinc-100'>
-          {t('pages.settings.tabs.user.profile.title')}
-        </CardTitle>
-        <CardDescription className='text-zinc-400'>
-          {t('pages.settings.tabs.user.profile.description')}
-        </CardDescription>
-      </CardHeader>
+    <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mx-6'>
+      {/* Avatar Card */}
+      <Card className='bg-zinc-800 border-zinc-700 shadow-xl'>
+        <CardHeader className='flex flex-col gap-2'>
+          <CardTitle className='text-xl font-semibold text-zinc-100'>
+            {t('pages.settings.tabs.user.profile.title')}
+          </CardTitle>
+          <CardDescription className='text-zinc-400'>
+            {t('pages.settings.tabs.user.profile.description')}
+          </CardDescription>
+        </CardHeader>
 
-      <CardContent className='flex flex-col items-start'>
-        <div className='flex flex-col items-center gap-6'>
+        <CardContent className='flex flex-col items-center gap-6'>
           {/* Avatar Upload */}
           <div
             className='relative group cursor-pointer'
             onClick={() => fileInputRef.current?.click()}
           >
             <Avatar className='w-32 h-32 border border-zinc-700'>
-              {previewUrl && (
-                <AvatarImage src={previewUrl} alt='Avatar preview' />
-              )}
+              {imageSrc && <AvatarImage src={imageSrc} alt='Avatar preview' />}
 
-              <AvatarFallback className='bg-zinc-800 text-zinc-400'>
-                {t('pages.settings.tabs.user.profile.upload')}
-              </AvatarFallback>
+              {!imageSrc && (
+                <AvatarFallback className='bg-zinc-800 text-zinc-400'>
+                  {t('pages.settings.tabs.user.profile.upload')}
+                </AvatarFallback>
+              )}
             </Avatar>
 
             <div
               className='absolute inset-0 flex items-center justify-center
-                       bg-black/40 opacity-0 group-hover:opacity-100
-                       transition rounded-full'
+                bg-black/40 opacity-0 group-hover:opacity-100
+                transition rounded-full'
             >
               <Upload size={20} className='text-white' />
             </div>
           </div>
 
-          {/* Hidden file input */}
+          {/* Hidden input */}
           <input
             ref={fileInputRef}
             type='file'
@@ -105,7 +109,6 @@ export default function UserTab() {
             onChange={handleFileChange}
           />
 
-          {/* Save button */}
           <Button
             onClick={handleSaveAvatar}
             disabled={!mediaAssetId}
@@ -113,8 +116,18 @@ export default function UserTab() {
           >
             {t('pages.settings.tabs.user.profile.save')}
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Placeholder for next user setting */}
+      <Card className='bg-zinc-800 border-zinc-700 shadow-xl'>
+        <CardHeader>
+          <CardTitle className='text-xl text-zinc-100'></CardTitle>
+          <CardDescription className='text-zinc-400'></CardDescription>
+        </CardHeader>
+
+        <CardContent className='text-zinc-400 text-sm'></CardContent>
+      </Card>
+    </div>
   );
 }

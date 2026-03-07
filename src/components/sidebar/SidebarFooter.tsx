@@ -10,20 +10,16 @@ import { Routes } from '@/lib/enums/routes';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-type Props = {
-  userAvatarUrl: string;
-  username: string | null;
-};
-
-export default function SidebarFooter({ userAvatarUrl, username }: Props) {
+export default function SidebarFooter() {
   const t = useTranslations();
   const { pushLocalized } = useLocalizedRouter();
+  const { username, avatarUrl } = useUserStore();
 
   return (
     <div className='border-t border-zinc-800 p-4 space-y-3'>
       <div className='flex items-center gap-3'>
         <Avatar>
-          <AvatarImage src={userAvatarUrl} />
+          <AvatarImage src={avatarUrl ?? ''} />
           <AvatarFallback>{username?.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
 

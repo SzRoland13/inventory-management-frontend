@@ -24,9 +24,12 @@ export type CheckFirstLoginResponse = {
 };
 
 export type UserDetails = {
+  id: number;
   email: string;
   username: string;
   role: string;
+  avatarUrl: string | null;
+  avatarUrlExpiry: number | null;
 };
 
 export type LoginResponse = {

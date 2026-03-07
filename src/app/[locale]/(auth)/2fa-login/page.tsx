@@ -80,14 +80,15 @@ export default function TwoFaLoginPage() {
 
         if (response.success) {
           useUserStore.getState().setUser({
+            id: user.id,
             username: user.username,
             email: user.email,
             role: castToEnum(UserRole, user.role),
+            avatarUrl: user.avatarUrl,
+            avatarUrlExpiry: user.avatarUrlExpiry,
           });
 
           useAuthStore.getState().clearAuthData();
-
-          toast.info('Finalizing login...');
 
           pushLocalized(Routes.Dashboard);
         }

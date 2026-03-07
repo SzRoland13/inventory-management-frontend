@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const ObjectStorageService = {
   putImage: async (data: FileUpload): Promise<void> => {
-    axios.post(data.url, data.file, {
+    axios.put(data.url, data.file, {
       headers: { 'Content-Type': data.file.type },
     });
   },

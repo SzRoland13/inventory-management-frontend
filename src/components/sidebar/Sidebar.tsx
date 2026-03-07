@@ -21,7 +21,6 @@ export default function Sidebar() {
   const t = useTranslations();
   const pathname = usePathname();
   const { role } = useUserStore();
-  const { username } = useUserStore();
 
   useEffect(() => {
     setSheetOpen(false);
@@ -76,7 +75,7 @@ export default function Sidebar() {
           })}
         </nav>
       </ScrollArea>
-      <SidebarFooter userAvatarUrl={''} username={username} />
+      <SidebarFooter />
     </div>
   );
 

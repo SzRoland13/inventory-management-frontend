@@ -1,6 +1,7 @@
 export type MediaUploadRequest = {
   filename: string;
   mimeType: string;
+  fileSize: number;
 };
 
 export type MediaUploadInitResponse = {
