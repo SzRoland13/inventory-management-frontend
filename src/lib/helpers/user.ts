@@ -1,5 +1,8 @@
-import { ModificationUser } from '@/lib/utils/types';
-import { AddEditUserRequest, UserDto } from '@/lib/services/dtos/userDtos';
+import {
+  AddEditUserRequest,
+  UserDto,
+  ModificationUser,
+} from '@/lib/services/dtos/userDtos';
 
 export const mapUserDtoToModificationUser = (
   user: UserDto,

@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   RowSelectionState,
 } from '@tanstack/react-table';
-import { ModificationUser } from '@/lib/utils/types';
+import { ModificationUser } from '@/lib/services/dtos/userDtos';
 import { useUserColumns } from '@/components/users/UsersColumns';
 import { UsersToolbar } from '@/components/users/UsersToolbar';
 import { AddEditUserDialog } from '@/components/users/AddEditUserDialog';

@@ -23,3 +23,10 @@ export type Reset2FaRequest = {
 export type AllUserResponse = {
   users: UserDto[];
 };
+
+export type ModificationUser = {
+  id: number | undefined;
+  username: string;
+  email: string;
+  role: UserRole;
+};
