@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { cn } from '@/lib/utils/utils';
+import { cn } from '@/lib/utils/css';
 import { flexRender, Table as ReactTable } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { DialogContent } from '@/components/ui/dialog';
-import { cn } from '@/lib/utils/utils';
+import { cn } from '@/lib/utils/css';
 
 /**
  * A reusable wrapper for DialogContent that applies
