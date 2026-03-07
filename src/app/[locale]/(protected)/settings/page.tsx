@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MainHeader from '@/components/common/MainHeader';
 import { Settings } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -12,15 +12,38 @@ import CompanyTab from '@/components/settings/CompanyTab';
 import { castToEnum } from '@/lib/helpers/enum';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<SettingsTab>(SettingsTab.General);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const t = useTranslations();
 
+  const initialTab =
+    castToEnum(SettingsTab, searchParams.get('tab') ?? '') ??
+    SettingsTab.General;
+
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
+
+  useEffect(() => {
+    const tabFromUrl =
+      castToEnum(SettingsTab, searchParams.get('tab') ?? '') ??
+      SettingsTab.General;
+
+    setActiveTab(tabFromUrl);
+  }, [searchParams]);
+
   const onValueChange = (value: string) => {
-    const enumValue = castToEnum(SettingsTab, value);
-    setActiveTab(enumValue ?? SettingsTab.General);
+    const enumValue = castToEnum(SettingsTab, value) ?? SettingsTab.General;
+
+    setActiveTab(enumValue);
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', enumValue);
+
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   const triggerStyle = `
@@ -50,18 +73,21 @@ export default function SettingsPage() {
               <TabsTrigger value={SettingsTab.General} className={triggerStyle}>
                 {t('pages.settings.tabs.general.title')}
               </TabsTrigger>
+
               <TabsTrigger value={SettingsTab.User} className={triggerStyle}>
                 {t('pages.settings.tabs.user.title')}
               </TabsTrigger>
+
               <TabsTrigger value={SettingsTab.Product} className={triggerStyle}>
                 {t('pages.settings.tabs.product.title')}
               </TabsTrigger>
+
               <TabsTrigger value={SettingsTab.Company} className={triggerStyle}>
                 {t('pages.settings.tabs.company.title')}
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value={SettingsTab.General} className='w-full h-full'>
+            <TabsContent value={SettingsTab.General}>
               <GeneralTab />
             </TabsContent>
 
