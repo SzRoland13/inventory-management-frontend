@@ -84,6 +84,7 @@ export default function TwoFaLoginPage() {
             username: user.username,
             email: user.email,
             role: castToEnum(UserRole, user.role),
+            avatarId: user.avatarId,
             avatarUrl: user.avatarUrl,
             avatarUrlExpiry: user.avatarUrlExpiry,
           });

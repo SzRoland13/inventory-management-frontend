@@ -28,6 +28,7 @@ export type UserDetails = {
   email: string;
   username: string;
   role: string;
+  avatarId: number | null;
   avatarUrl: string | null;
   avatarUrlExpiry: number | null;
 };

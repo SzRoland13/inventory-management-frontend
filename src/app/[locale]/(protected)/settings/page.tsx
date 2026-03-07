@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import MainHeader from '@/components/common/MainHeader';
 import { Settings } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -21,28 +20,14 @@ export default function SettingsPage() {
 
   const t = useTranslations();
 
-  const initialTab =
+  const currentTab =
     castToEnum(SettingsTab, searchParams.get('tab') ?? '') ??
     SettingsTab.General;
 
-  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
-
-  useEffect(() => {
-    const tabFromUrl =
-      castToEnum(SettingsTab, searchParams.get('tab') ?? '') ??
-      SettingsTab.General;
-
-    setActiveTab(tabFromUrl);
-  }, [searchParams]);
-
-  const onValueChange = (value: string) => {
-    const enumValue = castToEnum(SettingsTab, value) ?? SettingsTab.General;
-
-    setActiveTab(enumValue);
-
+  const onTabChange = (tab: string) => {
+    const enumValue = castToEnum(SettingsTab, tab) ?? SettingsTab.General;
     const params = new URLSearchParams(searchParams.toString());
     params.set('tab', enumValue);
-
     router.replace(`${pathname}?${params.toString()}`);
   };
 
@@ -65,8 +50,8 @@ export default function SettingsPage() {
       <Card className='bg-zinc-750 border-zinc-700 shadow-xl h-full rounded-none border-0 p-0 m-0'>
         <CardContent className='p-0 m-0 rounded-none w-full h-full'>
           <Tabs
-            value={activeTab}
-            onValueChange={onValueChange}
+            value={currentTab}
+            onValueChange={onTabChange}
             className='py-0 rounded-none w-full h-full'
           >
             <TabsList className='mb-6 grid rounded-none w-full grid-cols-4 bg-zinc-700 py-0 data-[state=active]:bg-zinc-500'>

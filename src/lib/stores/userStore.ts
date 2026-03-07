@@ -8,6 +8,7 @@ interface UserState {
   username: string | null;
   email: string | null;
   role: UserRole | null;
+  avatarId: number | null;
   avatarUrl: string | null;
   avatarUrlExpiry: number | null;
   setUser: (data: Partial<UserState>) => void;
@@ -21,6 +22,7 @@ export const useUserStore = create(
       username: null,
       email: null,
       role: null,
+      avatarId: null,
       avatarUrl: null,
       avatarUrlExpiry: null,
 
@@ -31,6 +33,7 @@ export const useUserStore = create(
           username: null,
           email: null,
           role: null,
+          avatarId: null,
           avatarUrl: null,
           avatarUrlExpiry: null,
         })),

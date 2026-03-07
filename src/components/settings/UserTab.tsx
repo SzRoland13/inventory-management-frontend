@@ -17,12 +17,14 @@ import { useUserStore } from '@/lib/stores/userStore';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { MediaPreviewResponse } from '@/lib/services/dtos/mediaDtos';
 
 export default function UserTab() {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState<MediaPreviewResponse | null>(null);
   const [mediaAssetId, setMediaAssetId] = useState<number | null>(null);
   const avatarUrl = useUserStore((state) => state.avatarUrl);
-  const imageSrc = previewUrl ?? avatarUrl ?? undefined;
+  const imageSrc = avatar?.getUrl ?? avatarUrl ?? undefined;
+  const setUser = useUserStore((state) => state.setUser);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const t = useTranslations();
@@ -46,7 +48,7 @@ export default function UserTab() {
     });
 
     const previewResp = await MediaService.getPreview(initResp.payload.id);
-    setPreviewUrl(previewResp.payload.getUrl);
+    setAvatar(previewResp.payload);
   };
 
   const handleSaveAvatar = async () => {
@@ -58,6 +60,14 @@ export default function UserTab() {
     const response = await UserService.uploadUserAvatar(userId, {
       mediaAssetId,
     });
+
+    if (avatar?.getUrl && avatar.expiry && avatar.id) {
+      setUser({
+        avatarId: avatar.id,
+        avatarUrl: avatar?.getUrl,
+        avatarUrlExpiry: avatar?.expiry,
+      });
+    }
 
     toast(t(`messageKey.${response.messageKey}`));
   };
