@@ -155,7 +155,27 @@
       "title": "Akciókezelés"
     },
     "settings": {
-      "title": "Beállítások"
+      "title": "Beállítások",
+      "tabs": {
+        "general": {
+          "title": "Általános"
+        },
+        "user": {
+          "title": "Felhasználó",
+          "profile": {
+            "title": "Profilkép",
+            "description": "Tölts fel egy új profilképet a fiókodhoz.",
+            "upload": "Feltöltés",
+            "save": "Profilkép mentése"
+          }
+        },
+        "product": {
+          "title": "Termék"
+        },
+        "company": {
+          "title": "Vállalat"
+        }
+      }
     }
   },
   "messagekey": {

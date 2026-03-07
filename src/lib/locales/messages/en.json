@@ -155,7 +155,27 @@
       "title": "Sale Management"
     },
     "settings": {
-      "title": "Settings"
+      "title": "Settings",
+      "tabs": {
+        "general": {
+          "title": "General"
+        },
+        "user": {
+          "title": "User",
+          "profile": {
+            "title": "Profile Picture",
+            "description": "Upload a new avatar for your account.",
+            "upload": "Upload",
+            "save": "Save Avatar"
+          }
+        },
+        "product": {
+          "title": "Product"
+        },
+        "company": {
+          "title": "Company"
+        }
+      }
     }
   },
   "messagekey": {
