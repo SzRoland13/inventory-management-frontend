@@ -173,7 +173,13 @@
           "title": "Product"
         },
         "company": {
-          "title": "Company"
+          "title": "Company",
+          "logo": {
+            "title": "Company Logo",
+            "description": "Upload a new logo for your company.",
+            "upload": "Upload",
+            "save": "Save Logo"
+          }
         }
       }
     }

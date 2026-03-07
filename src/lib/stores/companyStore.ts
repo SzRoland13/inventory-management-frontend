@@ -2,7 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface CompanyState {
+  id: number | null;
   name: string | null;
+  logoId: number | null;
   logoUrl: string | null;
   logoUrlExpiry: number | null;
   description: string | null;
@@ -17,7 +19,9 @@ interface CompanyState {
 export const useCompanyStore = create<CompanyState>()(
   persist(
     (set) => ({
+      id: null,
       name: null,
+      logoId: null,
       logoUrl: null,
       logoUrlExpiry: null,
       description: null,
@@ -28,7 +32,9 @@ export const useCompanyStore = create<CompanyState>()(
       setCompanyData: (data) => set((state) => Object.assign(state, data)),
       clearCompanyData: () =>
         set(() => ({
+          id: null,
           name: null,
+          logoId: null,
           logoUrl: null,
           logoUrlExpiry: null,
           description: null,

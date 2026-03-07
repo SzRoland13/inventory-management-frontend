@@ -173,7 +173,13 @@
           "title": "Termék"
         },
         "company": {
-          "title": "Vállalat"
+          "title": "Vállalat",
+          "logo": {
+            "title": "Céglogó",
+            "description": "Tölts fel egy új logót a cégednek.",
+            "upload": "Feltöltés",
+            "save": "Logó mentése"
+          }
         }
       }
     }
