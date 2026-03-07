@@ -14,3 +14,8 @@ export type MediaPreviewResponse = {
   getUrl: string;
   expiry: number;
 };
+
+export type FileUpload = {
+  url: string;
+  file: File;
+};
