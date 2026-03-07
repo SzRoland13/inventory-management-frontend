@@ -5,7 +5,7 @@ import {
   MediaUploadInitResponse,
   MediaUploadRequest,
 } from '@/lib/services/dtos/mediaDtos';
-import { handleRequest } from '@/lib/utils/helpers';
+import { handleRequest } from '@/lib/helpers/service';
 
 export const MediaService = {
   initializeUpload: async (

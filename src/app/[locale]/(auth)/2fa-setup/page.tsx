@@ -20,7 +20,7 @@ import { Routes } from '@/lib/enums/routes';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
 import { useUserStore } from '@/lib/stores/userStore';
-import { castToEnum } from '@/lib/utils/helpers';
+import { castToEnum } from '@/lib/helpers/enum';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useTranslations } from 'next-intl';

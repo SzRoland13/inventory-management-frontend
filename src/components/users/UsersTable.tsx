@@ -15,7 +15,7 @@ import { DataTable } from '@/components/common/DataTable';
 import {
   mapModificationUserToAddEditUserRequest,
   mapUserDtoToModificationUser,
-} from '@/lib/utils/helpers';
+} from '@/lib/helpers/user';
 import { UserDto } from '@/lib/services/dtos/userDtos';
 import { UserService } from '@/lib/services/UserService';
 import { toast } from 'sonner';

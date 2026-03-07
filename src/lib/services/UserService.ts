@@ -5,7 +5,7 @@ import {
   AllUserResponse,
   UserDto,
 } from '@/lib/services/dtos/userDtos';
-import { handleRequest } from '@/lib/utils/helpers';
+import { handleRequest } from '@/lib/helpers/service';
 
 export const UserService = {
   registerUser: async (
