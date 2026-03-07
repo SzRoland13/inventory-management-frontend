@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { UserDto } from '@/lib/services/dtos/userDtos';
-import { UserStatus } from '@/lib/utils/enums';
+import { UserStatus } from '@/lib/utils/enums/user';
 
 interface UsersToolbarProps {
   selectedUser: UserDto | null | undefined;

@@ -6,7 +6,7 @@ import { AuthService } from '@/lib/services/AuthService';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 import { useCompanyStore } from '@/lib/stores/companyStore';
 import { useUserStore } from '@/lib/stores/userStore';
-import { Routes } from '@/lib/utils/enums';
+import { Routes } from '@/lib/utils/enums/routes';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 

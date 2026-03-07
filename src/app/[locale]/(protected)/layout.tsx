@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { Routes } from '@/lib/utils/enums';
+import { Routes } from '@/lib/utils/enums/routes';
 
 export default function ProtectedLayout({
   children,

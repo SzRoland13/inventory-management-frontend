@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthService } from '@/lib/services/AuthService';
 import { useAuthStore } from '@/lib/stores/authStore';
-import { Routes } from '@/lib/utils/enums';
+import { Routes } from '@/lib/utils/enums/routes';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';

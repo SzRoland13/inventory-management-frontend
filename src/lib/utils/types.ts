@@ -1,4 +1,4 @@
-import { UserRole } from '@/lib/utils/enums';
+import { UserRole } from '@/lib/utils/enums/user';
 
 export type ModificationUser = {
   id: number | undefined;

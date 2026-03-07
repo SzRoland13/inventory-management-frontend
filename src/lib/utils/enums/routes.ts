@@ -16,15 +16,3 @@ export enum Routes {
   Users = '/users',
   Settings = '/settings',
 }
-
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  MANAGER = 'MANAGER',
-  SALES = 'SALES',
-}
-
-export enum UserStatus {
-  ACTIVE = 'ACTIVE',
-  SUSPENDED = 'SUSPENDED',
-  SETUP_REQUIRED = 'SETUP_REQUIRED',
-}

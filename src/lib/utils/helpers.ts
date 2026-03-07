@@ -1,5 +1,5 @@
 import { ModificationUser } from '@/lib/utils/types';
-import { Routes } from './enums';
+import { Routes } from '@/lib/utils/enums/routes';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 import { AddEditUserRequest, UserDto } from '@/lib/services/dtos/userDtos';
 

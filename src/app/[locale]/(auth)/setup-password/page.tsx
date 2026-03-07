@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { AuthService } from '@/lib/services/AuthService';
 import { useAuthStore } from '@/lib/stores/authStore';
-import { Routes } from '@/lib/utils/enums';
+import { Routes } from '@/lib/utils/enums/routes';
 import { Label } from '@radix-ui/react-label';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';

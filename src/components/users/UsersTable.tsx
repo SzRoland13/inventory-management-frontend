@@ -21,7 +21,7 @@ import { UserService } from '@/lib/services/UserService';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
-import { UserStatus } from '@/lib/utils/enums';
+import { UserStatus } from '@/lib/utils/enums/user';
 
 type UsersTableProps = {
   data: UserDto[];
