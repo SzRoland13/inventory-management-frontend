@@ -4,6 +4,7 @@ import { UserRole } from '@/lib/enums/user';
 import { immer } from 'zustand/middleware/immer';
 
 interface UserState {
+  id: number | null;
   username: string | null;
   email: string | null;
   role: UserRole | null;
@@ -14,6 +15,7 @@ interface UserState {
 export const useUserStore = create(
   persist(
     immer<UserState>((set) => ({
+      id: null,
       username: null,
       email: null,
       role: null,
@@ -21,6 +23,7 @@ export const useUserStore = create(
       setUser: (data) => set((state) => Object.assign(state, data)),
       clearUser: () =>
         set(() => ({
+          id: null,
           username: null,
           email: null,
           role: [],

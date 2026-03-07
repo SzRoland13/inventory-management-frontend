@@ -30,3 +30,7 @@ export type ModificationUser = {
   email: string;
   role: UserRole;
 };
+
+export type AvatarUploadRequest = {
+  mediaAssetId: number;
+};

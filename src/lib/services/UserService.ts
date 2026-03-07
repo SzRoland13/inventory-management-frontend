@@ -3,6 +3,7 @@ import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 import {
   AddEditUserRequest,
   AllUserResponse,
+  AvatarUploadRequest,
   UserDto,
 } from '@/lib/services/dtos/userDtos';
 import { handleRequest } from '@/lib/helpers/service';
@@ -39,5 +40,12 @@ export const UserService = {
 
   resetPassword: async (id: number): Promise<ApiResponse<void>> => {
     return handleRequest(BaseService.post(`/user/reset-password/${id}`));
+  },
+
+  uploadUserAvatar: async (
+    id: number,
+    data: AvatarUploadRequest,
+  ): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/${id}/avatar`, data));
   },
 };

@@ -3,6 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { MediaService } from '@/lib/services/MediaService';
 import { ObjectStorageService } from '@/lib/services/ObjectStorageService';
+import { UserService } from '@/lib/services/UserService';
+import { useUserStore } from '@/lib/stores/userStore';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -40,15 +42,15 @@ export default function UserTab() {
   const handleSaveAvatar = async () => {
     if (!mediaAssetId) return;
 
-    // call backend endpoint to save avatar
-    await fetch(`/api/v1/user/1/avatar`, {
-      // replace 1 with current user id
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mediaAssetId }),
+    const userId = useUserStore.getState().id;
+
+    if (!userId) return;
+
+    const response = await UserService.uploadUserAvatar(userId, {
+      mediaAssetId,
     });
 
-    toast(t(''));
+    toast(t(`messageKey.${response.messageKey}`));
   };
 
   return (
