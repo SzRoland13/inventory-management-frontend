@@ -191,6 +191,17 @@
               "address": "Address",
               "website": "Website"
             }
+          },
+          "billing": {
+            "title": "Billing information",
+            "description": "Manage the billing details that will appear on invoices and other official documents.",
+            "fields": {
+              "taxNumber": "Tax number",
+              "vatNumber": "VAT number",
+              "registrationNumber": "Company registration number",
+              "bankAccount": "Bank account number",
+              "iban": "IBAN"
+            }
           }
         }
       }

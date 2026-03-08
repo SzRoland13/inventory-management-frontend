@@ -191,6 +191,17 @@
               "address": "Székhely",
               "website": "Weboldal"
             }
+          },
+          "billing": {
+            "title": "Számlázási adatok",
+            "description": "A számlákon és egyéb hivatalos dokumentumokon megjelenő számlázási adatok kezelése.",
+            "fields": {
+              "taxNumber": "Adószám",
+              "vatNumber": "EU adószám",
+              "registrationNumber": "Cégjegyzékszám",
+              "bankAccount": "Bankszámlaszám",
+              "iban": "IBAN"
+            }
           }
         }
       }
