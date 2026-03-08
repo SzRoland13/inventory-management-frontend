@@ -7,13 +7,13 @@ export type MediaUploadRequest = {
 export type MediaUploadInitResponse = {
   id: number;
   putUrl: string;
-  expiry: number;
+  expiry: string;
 };
 
 export type MediaPreviewResponse = {
   id: number;
   getUrl: string;
-  expiry: number;
+  expiry: string;
 };
 
 export type FileUpload = {

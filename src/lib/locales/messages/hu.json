@@ -179,6 +179,18 @@
             "description": "Tölts fel egy új logót a cégednek.",
             "upload": "Feltöltés",
             "save": "Logó mentése"
+          },
+          "data": {
+            "title": "Cégadatok",
+            "description": "Frissítse a vállalatával kapcsolatos információkat.",
+            "fields": {
+              "name": "Cég neve",
+              "description": "Leírás",
+              "email": "E-mail cím",
+              "phone": "Telefonszám",
+              "address": "Székhely",
+              "website": "Weboldal"
+            }
           }
         }
       }

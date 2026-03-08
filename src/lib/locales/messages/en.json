@@ -179,6 +179,18 @@
             "description": "Upload a new logo for your company.",
             "upload": "Upload",
             "save": "Save Logo"
+          },
+          "data": {
+            "title": "Company Data",
+            "description": "Update the information about your company.",
+            "fields": {
+              "name": "Company name",
+              "description": "Description",
+              "email": "Email",
+              "phone": "Phone",
+              "address": "Address",
+              "website": "Website"
+            }
           }
         }
       }

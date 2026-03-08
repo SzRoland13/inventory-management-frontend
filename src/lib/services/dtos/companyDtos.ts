@@ -3,7 +3,7 @@ export type CompanyBaseDataResponse = {
   name: string;
   logoId: number | null;
   logoUrl: string | null;
-  logoUrlExpiry: number | null;
+  logoUrlExpiry: string | null;
   exists: boolean;
 };
 
@@ -13,6 +13,11 @@ export type CompanyExtendedResponse = CompanyBaseDataResponse & {
   phone: string;
   address: string;
   website: string;
+  taxNumber: string;
+  vatNumber: string;
+  registrationNumber: string;
+  bankAccount: string;
+  iban: string;
 };
 
 export type CompanyUpdateRequest = {
@@ -22,6 +27,11 @@ export type CompanyUpdateRequest = {
   phone: string;
   address: string;
   website: string;
+  taxNumber: string;
+  vatNumber: string;
+  registrationNumber: string;
+  bankAccount: string;
+  iban: string;
 };
 
 export type LogoUpdateRequest = {

@@ -10,7 +10,7 @@ interface UserState {
   role: UserRole | null;
   avatarId: number | null;
   avatarUrl: string | null;
-  avatarUrlExpiry: number | null;
+  avatarUrlExpiry: string | null;
   setUser: (data: Partial<UserState>) => void;
   clearUser: () => void;
 }

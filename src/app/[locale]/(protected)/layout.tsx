@@ -9,7 +9,7 @@ import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { Routes } from '@/lib/enums/routes';
-import { useAvatarRefresher } from '@/lib/hooks/useAvatarRefresher';
+import { usePresignedMediaRefresher } from '@/lib/hooks/usePresignedMediaRefresher';
 
 export default function ProtectedLayout({
   children,
@@ -19,7 +19,7 @@ export default function ProtectedLayout({
   const t = useTranslations();
   const { loading, isAuthenticated } = useSessionGuard();
   const { replaceLocalized } = useLocalizedRouter();
-  useAvatarRefresher();
+  usePresignedMediaRefresher();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {

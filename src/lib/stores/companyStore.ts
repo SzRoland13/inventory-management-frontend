@@ -6,12 +6,7 @@ interface CompanyState {
   name: string | null;
   logoId: number | null;
   logoUrl: string | null;
-  logoUrlExpiry: number | null;
-  description: string | null;
-  email: string | null;
-  phone: string | null;
-  address: string | null;
-  website: string | null;
+  logoUrlExpiry: string | null;
   setCompanyData: (data: Partial<CompanyState>) => void;
   clearCompanyData: () => void;
 }
@@ -24,11 +19,6 @@ export const useCompanyStore = create<CompanyState>()(
       logoId: null,
       logoUrl: null,
       logoUrlExpiry: null,
-      description: null,
-      email: null,
-      phone: null,
-      address: null,
-      website: null,
       setCompanyData: (data) => set((state) => Object.assign(state, data)),
       clearCompanyData: () =>
         set(() => ({
@@ -37,11 +27,6 @@ export const useCompanyStore = create<CompanyState>()(
           logoId: null,
           logoUrl: null,
           logoUrlExpiry: null,
-          description: null,
-          email: null,
-          phone: null,
-          address: null,
-          website: null,
         })),
     }),
     {

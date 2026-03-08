@@ -30,7 +30,7 @@ export type UserDetails = {
   role: string;
   avatarId: number | null;
   avatarUrl: string | null;
-  avatarUrlExpiry: number | null;
+  avatarUrlExpiry: string | null;
 };
 
 export type LoginResponse = {
