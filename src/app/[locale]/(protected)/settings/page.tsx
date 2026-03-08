@@ -52,9 +52,9 @@ export default function SettingsPage() {
           <Tabs
             value={currentTab}
             onValueChange={onTabChange}
-            className='py-0 rounded-none w-full h-full'
+            className='rounded-none w-full h-full py-0'
           >
-            <TabsList className='mb-6 grid rounded-none w-full grid-cols-4 bg-zinc-700 py-0 data-[state=active]:bg-zinc-500'>
+            <TabsList className='mb-6 grid grid-cols-2 sm:grid-cols-4 rounded-none w-full py-0 bg-zinc-700 data-[state=active]:bg-zinc-500'>
               <TabsTrigger value={SettingsTab.General} className={triggerStyle}>
                 {t('pages.settings.tabs.general.title')}
               </TabsTrigger>

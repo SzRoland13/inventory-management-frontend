@@ -72,42 +72,60 @@ export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.data.fields.name')}
             </Label>
-            <Input {...register('name')} />
+            <Input
+              {...register('name')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.data.fields.description')}
             </Label>
-            <Input {...register('description')} />
+            <Input
+              {...register('description')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.data.fields.email')}
             </Label>
-            <Input {...register('email')} />
+            <Input
+              {...register('email')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.data.fields.phone')}
             </Label>
-            <Input {...register('phone')} />
+            <Input
+              {...register('phone')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.data.fields.address')}
             </Label>
-            <Input {...register('address')} />
+            <Input
+              {...register('address')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.data.fields.website')}
             </Label>
-            <Input {...register('website')} />
+            <Input
+              {...register('website')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <Button

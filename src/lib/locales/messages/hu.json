@@ -202,6 +202,26 @@
               "bankAccount": "Bankszámlaszám",
               "iban": "IBAN"
             }
+          },
+          "prefix": {
+            "title": "Dokumentum előtagok",
+            "description": "Az automatikusan generált dokumentumszámok előtagjainak beállítása.",
+            "types": {
+              "RFQ": "Ajánlatkérés",
+              "SUPPLIER_QUOTATION": "Beszállítói ajánlat",
+              "PURCHASE_ORDER": "Beszerzési rendelés",
+              "GOODS_RECEIPT": "Áruátvétel",
+              "CUSTOMER_RFQ": "Vevői ajánlatkérés",
+              "SALES_QUOTATION": "Értékesítési ajánlat",
+              "SALES_ORDER": "Vevői rendelés",
+              "DELIVERY_NOTE": "Szállítólevél",
+              "INVOICE": "Számla",
+              "TRANSFER_REQUEST": "Készletátvezetési igény",
+              "TRANSFER_DELIVERY": "Készletátvezetési kiadás",
+              "TRANSFER_RECEIPT": "Készletátvezetési bevételezés",
+              "STOCK_ADJUSTMENT": "Készletkorrekció",
+              "RETURN": "Visszáru"
+            }
           }
         }
       }

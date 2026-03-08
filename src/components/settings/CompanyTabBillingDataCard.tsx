@@ -68,14 +68,20 @@ export default function CompanyTabBillingDataCard({
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.billing.fields.taxNumber')}
             </Label>
-            <Input {...register('taxNumber')} />
+            <Input
+              {...register('taxNumber')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.billing.fields.vatNumber')}
             </Label>
-            <Input {...register('vatNumber')} />
+            <Input
+              {...register('vatNumber')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
@@ -84,21 +90,30 @@ export default function CompanyTabBillingDataCard({
                 'pages.settings.tabs.company.billing.fields.registrationNumber',
               )}
             </Label>
-            <Input {...register('registrationNumber')} />
+            <Input
+              {...register('registrationNumber')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.billing.fields.bankAccount')}
             </Label>
-            <Input {...register('bankAccount')} />
+            <Input
+              {...register('bankAccount')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <div className='flex flex-col gap-2'>
             <Label className='text-zinc-400'>
               {t('pages.settings.tabs.company.billing.fields.iban')}
             </Label>
-            <Input {...register('iban')} />
+            <Input
+              {...register('iban')}
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+            />
           </div>
 
           <Button

@@ -202,6 +202,26 @@
               "bankAccount": "Bank account number",
               "iban": "IBAN"
             }
+          },
+          "prefix": {
+            "title": "Document prefixes",
+            "description": "Configure the prefixes used for automatically generated document numbers.",
+            "types": {
+              "RFQ": "Request for quotation",
+              "SUPPLIER_QUOTATION": "Supplier quotation",
+              "PURCHASE_ORDER": "Purchase order",
+              "GOODS_RECEIPT": "Goods receipt",
+              "CUSTOMER_RFQ": "Customer request for quotation",
+              "SALES_QUOTATION": "Sales quotation",
+              "SALES_ORDER": "Sales order",
+              "DELIVERY_NOTE": "Delivery note",
+              "INVOICE": "Invoice",
+              "TRANSFER_REQUEST": "Stock transfer request",
+              "TRANSFER_DELIVERY": "Stock transfer delivery",
+              "TRANSFER_RECEIPT": "Stock transfer receipt",
+              "STOCK_ADJUSTMENT": "Stock adjustment",
+              "RETURN": "Return"
+            }
           }
         }
       }
