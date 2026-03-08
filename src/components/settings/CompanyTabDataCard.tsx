@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { CompanyService } from '@/lib/services/CompanyService';
-import { CompanyUpdateRequest } from '@/lib/services/dtos/companyDtos';
+import { CompanyBaseDataUpdateRequest } from '@/lib/services/dtos/companyDtos';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -22,7 +22,7 @@ export default function CompanyTabDataCard() {
     handleSubmit,
     reset,
     formState: { isDirty, isSubmitting },
-  } = useForm<CompanyUpdateRequest>();
+  } = useForm<CompanyBaseDataUpdateRequest>();
   const t = useTranslations();
   const setCompanyData = useCompanyStore((state) => state.setCompanyData);
 
@@ -49,8 +49,8 @@ export default function CompanyTabDataCard() {
     loadCompany();
   }, [reset]);
 
-  const onSubmit = async (data: CompanyUpdateRequest) => {
-    const res = await CompanyService.updateCompany(data);
+  const onSubmit = async (data: CompanyBaseDataUpdateRequest) => {
+    const res = await CompanyService.updateCompanyBaseData(data);
 
     if (res.success && res.payload) {
       setCompanyData({

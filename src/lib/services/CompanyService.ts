@@ -4,13 +4,16 @@ import { handleRequest } from '@/lib/helpers/service';
 import {
   CompanyBaseDataResponse,
   CompanyExtendedResponse,
-  CompanyUpdateRequest,
+  CompanyBaseDataUpdateRequest,
   LogoUpdateRequest,
+  CompanyMinimalResponse,
+  CompanyBillingDataUpdateRequest,
+  CompanyBillingDataResponse,
 } from '@/lib/services/dtos/companyDtos';
 
 export const CompanyService = {
-  getBaseCompanyData: async (): Promise<
-    ApiResponse<CompanyBaseDataResponse>
+  getMinimalCompanyData: async (): Promise<
+    ApiResponse<CompanyMinimalResponse>
   > => {
     return handleRequest(BaseService.get('/company'));
   },
@@ -21,10 +24,16 @@ export const CompanyService = {
     return handleRequest(BaseService.get('/company/extended'));
   },
 
-  updateCompany: async (
-    data: CompanyUpdateRequest,
-  ): Promise<ApiResponse<CompanyExtendedResponse>> => {
+  updateCompanyBaseData: async (
+    data: CompanyBaseDataUpdateRequest,
+  ): Promise<ApiResponse<CompanyBaseDataResponse>> => {
     return handleRequest(BaseService.put('/company', data));
+  },
+
+  updateCompanyBillingData: async (
+    data: CompanyBillingDataUpdateRequest,
+  ): Promise<ApiResponse<CompanyBillingDataResponse>> => {
+    return handleRequest(BaseService.put('/company/billing', data));
   },
 
   updateLogo: async (data: LogoUpdateRequest): Promise<ApiResponse<void>> => {

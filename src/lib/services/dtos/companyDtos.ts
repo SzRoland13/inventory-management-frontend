@@ -1,4 +1,4 @@
-export type CompanyBaseDataResponse = {
+export type CompanyMinimalResponse = {
   id: number;
   name: string;
   logoId: number | null;
@@ -7,7 +7,17 @@ export type CompanyBaseDataResponse = {
   exists: boolean;
 };
 
-export type CompanyExtendedResponse = CompanyBaseDataResponse & {
+export type CompanyBaseDataResponse = {
+  id: number;
+  name: string;
+  description: string;
+  email: string;
+  phone: string;
+  address: string;
+  website: string;
+};
+
+export type CompanyExtendedResponse = CompanyMinimalResponse & {
   description: string;
   email: string;
   phone: string;
@@ -20,13 +30,25 @@ export type CompanyExtendedResponse = CompanyBaseDataResponse & {
   iban: string;
 };
 
-export type CompanyUpdateRequest = {
+export type CompanyBillingDataResponse = {
+  id: number;
+  taxNumber: string;
+  vatNumber: string;
+  registrationNumber: string;
+  bankAccount: string;
+  iban: string;
+};
+
+export type CompanyBaseDataUpdateRequest = {
   name: string;
   description: string;
   email: string;
   phone: string;
   address: string;
   website: string;
+};
+
+export type CompanyBillingDataUpdateRequest = {
   taxNumber: string;
   vatNumber: string;
   registrationNumber: string;
