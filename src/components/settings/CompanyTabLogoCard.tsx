@@ -1,12 +1,6 @@
+import CardWrapper from '@/components/common/CardWrapper';
 import { AvatarImage, AvatarFallback, Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '@/components/ui/card';
 import { CompanyService } from '@/lib/services/CompanyService';
 import { MediaPreviewResponse } from '@/lib/services/dtos/mediaDtos';
 import { MediaService } from '@/lib/services/MediaService';
@@ -74,58 +68,51 @@ export default function CompanyTabLogoCard() {
   };
 
   return (
-    <Card className='bg-zinc-800 border-zinc-700 shadow-xl'>
-      <CardHeader className='flex flex-col gap-2'>
-        <CardTitle className='text-xl font-semibold text-zinc-100'>
-          {t('pages.settings.tabs.company.logo.title')}
-        </CardTitle>
-        <CardDescription className='text-zinc-400'>
-          {t('pages.settings.tabs.company.logo.description')}
-        </CardDescription>
-      </CardHeader>
+    <CardWrapper
+      title={t('pages.settings.tabs.company.logo.title')}
+      description={t('pages.settings.tabs.company.logo.description')}
+      cardContentExtraClass='flex flex-col items-center gap-6'
+    >
+      {/* Logo Upload */}
+      <div
+        className='relative group cursor-pointer'
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <Avatar className='w-32 h-32 border border-zinc-700'>
+          {imageSrc && <AvatarImage src={imageSrc} alt='Company logo' />}
 
-      <CardContent className='flex flex-col items-center gap-6'>
-        {/* Logo Upload */}
+          {!imageSrc && (
+            <AvatarFallback className='bg-zinc-800 text-zinc-400'>
+              {t('pages.settings.tabs.company.logo.upload')}
+            </AvatarFallback>
+          )}
+        </Avatar>
+
         <div
-          className='relative group cursor-pointer'
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Avatar className='w-32 h-32 border border-zinc-700'>
-            {imageSrc && <AvatarImage src={imageSrc} alt='Company logo' />}
-
-            {!imageSrc && (
-              <AvatarFallback className='bg-zinc-800 text-zinc-400'>
-                {t('pages.settings.tabs.company.logo.upload')}
-              </AvatarFallback>
-            )}
-          </Avatar>
-
-          <div
-            className='absolute inset-0 flex items-center justify-center
+          className='absolute inset-0 flex items-center justify-center
                 bg-black/40 opacity-0 group-hover:opacity-100
                 transition rounded-full'
-          >
-            <Upload size={20} className='text-white' />
-          </div>
-        </div>
-
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type='file'
-          accept='image/*'
-          className='hidden'
-          onChange={handleFileChange}
-        />
-
-        <Button
-          onClick={handleSaveLogo}
-          disabled={!mediaAssetId}
-          className='bg-zinc-500'
         >
-          {t('pages.settings.tabs.company.logo.save')}
-        </Button>
-      </CardContent>
-    </Card>
+          <Upload size={20} className='text-white' />
+        </div>
+      </div>
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type='file'
+        accept='image/*'
+        className='hidden'
+        onChange={handleFileChange}
+      />
+
+      <Button
+        onClick={handleSaveLogo}
+        disabled={!mediaAssetId}
+        className='bg-zinc-500'
+      >
+        {t('pages.settings.tabs.company.logo.save')}
+      </Button>
+    </CardWrapper>
   );
 }

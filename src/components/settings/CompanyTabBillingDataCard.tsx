@@ -1,11 +1,5 @@
+import CardWrapper from '@/components/common/CardWrapper';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFormChanges } from '@/lib/hooks/useFormChanges';
@@ -36,7 +30,8 @@ export default function CompanyTabBillingDataCard({
 
   const values = watch();
 
-  const { hasChanges, setInitialValues } = useFormChanges(values);
+  const { hasChanges, setInitialValues, resetToInitial } =
+    useFormChanges(values);
 
   useEffect(() => {
     if (initialCompanyData) {
@@ -74,81 +69,88 @@ export default function CompanyTabBillingDataCard({
     }
   };
 
+  const handleReset = () => {
+    const initial = resetToInitial();
+    if (!initial) return;
+
+    reset(initial);
+  };
+
   return (
-    <Card className='bg-zinc-800 border-zinc-700 shadow-xl'>
-      <CardHeader>
-        <CardTitle className='text-xl text-zinc-100'>
-          {t('pages.settings.tabs.company.billing.title')}
-        </CardTitle>
+    <CardWrapper
+      title={t('pages.settings.tabs.company.billing.title')}
+      description={t('pages.settings.tabs.company.billing.description')}
+      headerAction={
+        <Button
+          type='button'
+          variant='outline'
+          size='sm'
+          disabled={!hasChanges}
+          onClick={handleReset}
+        >
+          {t('common.reset')}
+        </Button>
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.billing.fields.taxNumber')}
+          </Label>
+          <Input
+            {...register('taxNumber')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-        <CardDescription className='text-zinc-400'>
-          {t('pages.settings.tabs.company.billing.description')}
-        </CardDescription>
-      </CardHeader>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.billing.fields.vatNumber')}
+          </Label>
+          <Input
+            {...register('vatNumber')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.billing.fields.taxNumber')}
-            </Label>
-            <Input
-              {...register('taxNumber')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.billing.fields.registrationNumber')}
+          </Label>
+          <Input
+            {...register('registrationNumber')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.billing.fields.vatNumber')}
-            </Label>
-            <Input
-              {...register('vatNumber')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.billing.fields.bankAccount')}
+          </Label>
+          <Input
+            {...register('bankAccount')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t(
-                'pages.settings.tabs.company.billing.fields.registrationNumber',
-              )}
-            </Label>
-            <Input
-              {...register('registrationNumber')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.billing.fields.iban')}
+          </Label>
+          <Input
+            {...register('iban')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.billing.fields.bankAccount')}
-            </Label>
-            <Input
-              {...register('bankAccount')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
-
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.billing.fields.iban')}
-            </Label>
-            <Input
-              {...register('iban')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
-
-          <Button
-            type='submit'
-            disabled={!hasChanges || isSubmitting}
-            className='bg-zinc-500 mt-2'
-          >
-            {t('common.save')}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        <Button
+          type='submit'
+          disabled={!hasChanges || isSubmitting}
+          className='bg-zinc-500 mt-2'
+        >
+          {t('common.save')}
+        </Button>
+      </form>
+    </CardWrapper>
   );
 }

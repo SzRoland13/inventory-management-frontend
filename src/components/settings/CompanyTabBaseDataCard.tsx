@@ -6,19 +6,13 @@ import {
 } from '@/lib/services/dtos/companyDtos';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useCompanyStore } from '@/lib/stores/companyStore';
 import { useEffect } from 'react';
 import { useFormChanges } from '@/lib/hooks/useFormChanges';
+import CardWrapper from '@/components/common/CardWrapper';
 
 type Props = {
   initialCompanyData?: CompanyExtendedResponse | null;
@@ -35,7 +29,8 @@ export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
 
   const values = watch();
 
-  const { hasChanges, setInitialValues } = useFormChanges(values);
+  const { hasChanges, setInitialValues, resetToInitial } =
+    useFormChanges(values);
 
   useEffect(() => {
     if (initialCompanyData) {
@@ -80,89 +75,98 @@ export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
     }
   };
 
+  const handleReset = () => {
+    const initial = resetToInitial();
+    if (!initial) return;
+
+    reset(initial);
+  };
+
   return (
-    <Card className='bg-zinc-800 border-zinc-700 shadow-xl'>
-      <CardHeader>
-        <CardTitle className='text-xl text-zinc-100'>
-          {t('pages.settings.tabs.company.data.title')}
-        </CardTitle>
+    <CardWrapper
+      title={t('pages.settings.tabs.company.data.title')}
+      description={t('pages.settings.tabs.company.data.description')}
+      headerAction={
+        <Button
+          type='button'
+          variant='outline'
+          size='sm'
+          disabled={!hasChanges}
+          onClick={handleReset}
+        >
+          {t('common.reset')}
+        </Button>
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.data.fields.name')}
+          </Label>
+          <Input
+            {...register('name')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-        <CardDescription className='text-zinc-400'>
-          {t('pages.settings.tabs.company.data.description')}
-        </CardDescription>
-      </CardHeader>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.data.fields.description')}
+          </Label>
+          <Input
+            {...register('description')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.data.fields.name')}
-            </Label>
-            <Input
-              {...register('name')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.data.fields.email')}
+          </Label>
+          <Input
+            {...register('email')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.data.fields.description')}
-            </Label>
-            <Input
-              {...register('description')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.data.fields.phone')}
+          </Label>
+          <Input
+            {...register('phone')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.data.fields.email')}
-            </Label>
-            <Input
-              {...register('email')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.data.fields.address')}
+          </Label>
+          <Input
+            {...register('address')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.data.fields.phone')}
-            </Label>
-            <Input
-              {...register('phone')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-zinc-400'>
+            {t('pages.settings.tabs.company.data.fields.website')}
+          </Label>
+          <Input
+            {...register('website')}
+            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+          />
+        </div>
 
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.data.fields.address')}
-            </Label>
-            <Input
-              {...register('address')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
-
-          <div className='flex flex-col gap-2'>
-            <Label className='text-zinc-400'>
-              {t('pages.settings.tabs.company.data.fields.website')}
-            </Label>
-            <Input
-              {...register('website')}
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            />
-          </div>
-
-          <Button
-            type='submit'
-            disabled={!hasChanges || isSubmitting}
-            className='bg-zinc-500 mt-2'
-          >
-            {t('common.save')}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        <Button
+          type='submit'
+          disabled={!hasChanges || isSubmitting}
+          className='bg-zinc-500 mt-2'
+        >
+          {t('common.save')}
+        </Button>
+      </form>
+    </CardWrapper>
   );
 }
