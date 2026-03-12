@@ -1,12 +1,12 @@
 'use client';
 
-import CompanyTabLogoCard from '@/components/settings/CompanyTabLogoCard';
-import CompanyTabBaseDataCard from '@/components/settings/CompanyTabBaseDataCard';
+import CompanyTabLogoCard from '@/components/settings/company/CompanyTabLogoCard';
+import CompanyTabBaseDataCard from '@/components/settings/company/CompanyTabBaseDataCard';
 import { useEffect, useState } from 'react';
 import { CompanyService } from '@/lib/services/CompanyService';
 import { CompanyExtendedResponse } from '@/lib/services/dtos/companyDtos';
-import CompanyTabBillingDataCard from '@/components/settings/CompanyTabBillingDataCard';
-import CompanyTabDocumentPrefixCard from '@/components/settings/CompanyTabDocumentPrefixCard';
+import CompanyTabBillingDataCard from '@/components/settings/company/CompanyTabBillingDataCard';
+import CompanyTabDocumentPrefixCard from '@/components/settings/company/CompanyTabDocumentPrefixCard';
 
 export default function CompanyTab() {
   const [companyData, setCompanyData] =
