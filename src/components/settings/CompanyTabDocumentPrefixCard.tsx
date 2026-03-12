@@ -21,6 +21,7 @@ import {
   DocumentPrefixesUpdateRequest,
   DocumentPrefixDto,
 } from '@/lib/services/dtos/documentPrefixDtos';
+import { useFormChanges } from '@/lib/hooks/useFormChanges';
 
 type FormValues = {
   prefixes: DocumentPrefixDto[];
@@ -34,34 +35,45 @@ export default function CompanyTabDocumentPrefixCard() {
     handleSubmit,
     reset,
     watch,
-    formState: { dirtyFields, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
       prefixes: [],
     },
   });
 
-  const prefixes = watch('prefixes');
+  const values = watch();
+  const prefixes = values.prefixes;
+  const { hasChanges, setInitialValues } = useFormChanges(values);
 
   useEffect(() => {
     const load = async () => {
       const res = await DocumentPrefixService.getAll();
 
       if (res.success && res.payload) {
-        reset({
+        const values = {
           prefixes: res.payload.prefixes,
-        });
+        };
+
+        reset(values);
+        setInitialValues(values);
       }
     };
 
     load();
-  }, [reset]);
+  }, [reset, setInitialValues]);
 
   const onSubmit = async (data: DocumentPrefixesUpdateRequest) => {
     const res = await DocumentPrefixService.updateAll(data);
 
     if (res.success && res.payload) {
-      reset(res.payload, { keepDirtyValues: false });
+      const values = {
+        prefixes: res.payload.prefixes,
+      };
+
+      reset(values);
+      setInitialValues(values);
+
       toast(t(`messageKey.${res.messageKey}`));
     }
   };
@@ -107,7 +119,7 @@ export default function CompanyTabDocumentPrefixCard() {
 
           <Button
             type='submit'
-            disabled={!Object.keys(dirtyFields).length || isSubmitting}
+            disabled={!hasChanges || isSubmitting}
             className='bg-zinc-500 mt-2 md:col-span-2'
           >
             {t('common.save')}

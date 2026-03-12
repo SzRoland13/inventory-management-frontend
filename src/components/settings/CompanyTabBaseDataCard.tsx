@@ -33,7 +33,9 @@ export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
     formState: { isSubmitting },
   } = useForm<CompanyBaseDataUpdateRequest>();
 
-  const { hasChanges, setInitialValues } = useFormChanges(watch);
+  const values = watch();
+
+  const { hasChanges, setInitialValues } = useFormChanges(values);
 
   useEffect(() => {
     if (initialCompanyData) {

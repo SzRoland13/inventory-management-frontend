@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useFormChanges } from '@/lib/hooks/useFormChanges';
 import { CompanyService } from '@/lib/services/CompanyService';
 import {
   CompanyBillingDataUpdateRequest,
@@ -29,20 +30,28 @@ export default function CompanyTabBillingDataCard({
     register,
     handleSubmit,
     reset,
-    formState: { dirtyFields, isSubmitting },
+    watch,
+    formState: { isSubmitting },
   } = useForm<CompanyBillingDataUpdateRequest>();
+
+  const values = watch();
+
+  const { hasChanges, setInitialValues } = useFormChanges(values);
 
   useEffect(() => {
     if (initialCompanyData) {
-      reset({
+      const values = {
         taxNumber: initialCompanyData?.taxNumber,
         vatNumber: initialCompanyData?.vatNumber,
         registrationNumber: initialCompanyData?.registrationNumber,
         bankAccount: initialCompanyData?.bankAccount,
         iban: initialCompanyData?.iban,
-      });
+      };
+
+      setInitialValues(values);
+      reset(values);
     }
-  }, [initialCompanyData, reset]);
+  }, [initialCompanyData, reset, setInitialValues]);
 
   const t = useTranslations();
 
@@ -50,7 +59,17 @@ export default function CompanyTabBillingDataCard({
     const res = await CompanyService.updateCompanyBillingData(data);
 
     if (res.success && res.payload) {
-      reset(res.payload, { keepDirtyValues: false });
+      const values = {
+        taxNumber: res.payload.taxNumber,
+        vatNumber: res.payload.vatNumber,
+        registrationNumber: res.payload.registrationNumber,
+        bankAccount: res.payload.bankAccount,
+        iban: res.payload.iban,
+      };
+
+      setInitialValues(values);
+      reset(values);
+
       toast(t(`messageKey.${res.messageKey}`));
     }
   };
@@ -123,7 +142,7 @@ export default function CompanyTabBillingDataCard({
 
           <Button
             type='submit'
-            disabled={!Object.keys(dirtyFields).length || isSubmitting}
+            disabled={!hasChanges || isSubmitting}
             className='bg-zinc-500 mt-2'
           >
             {t('common.save')}
