@@ -65,6 +65,7 @@ export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
       };
 
       setCompanyData({
+        id: res.payload.id,
         name: res.payload.name,
       });
 

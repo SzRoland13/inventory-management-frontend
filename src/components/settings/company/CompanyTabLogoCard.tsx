@@ -50,7 +50,7 @@ export default function CompanyTabLogoCard() {
     if (!mediaAssetId) return;
 
     const companyId = useCompanyStore.getState().id;
-    if (!companyId) return;
+    if (!companyId) return; // this silent not saving is wrong, fix this!
 
     const response = await CompanyService.updateLogo({
       mediaAssetId,
