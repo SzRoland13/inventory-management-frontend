@@ -9,13 +9,7 @@ import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { MediaPreviewResponse } from '@/lib/services/dtos/mediaDtos';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import CardWrapper from '@/components/common/CardWrapper';
 
 export default function UserTabAvatarCard() {
   const [avatar, setAvatar] = useState<MediaPreviewResponse | null>(null);
@@ -71,58 +65,51 @@ export default function UserTabAvatarCard() {
   };
 
   return (
-    <Card className='bg-zinc-800 border-zinc-700 shadow-xl'>
-      <CardHeader className='flex flex-col gap-2'>
-        <CardTitle className='text-xl font-semibold text-zinc-100'>
-          {t('pages.settings.tabs.user.profile.title')}
-        </CardTitle>
-        <CardDescription className='text-zinc-400'>
-          {t('pages.settings.tabs.user.profile.description')}
-        </CardDescription>
-      </CardHeader>
+    <CardWrapper
+      title={t('pages.settings.tabs.user.profile.title')}
+      description={t('pages.settings.tabs.user.profile.description')}
+      cardContentExtraClass='flex flex-col items-center gap-6'
+    >
+      {/* Avatar Upload */}
+      <div
+        className='relative group cursor-pointer'
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <Avatar className='w-32 h-32 border border-zinc-700'>
+          {imageSrc && <AvatarImage src={imageSrc} alt='Avatar preview' />}
 
-      <CardContent className='flex flex-col items-center gap-6'>
-        {/* Avatar Upload */}
+          {!imageSrc && (
+            <AvatarFallback className='bg-zinc-800 text-zinc-400'>
+              {t('pages.settings.tabs.user.profile.upload')}
+            </AvatarFallback>
+          )}
+        </Avatar>
+
         <div
-          className='relative group cursor-pointer'
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Avatar className='w-32 h-32 border border-zinc-700'>
-            {imageSrc && <AvatarImage src={imageSrc} alt='Avatar preview' />}
-
-            {!imageSrc && (
-              <AvatarFallback className='bg-zinc-800 text-zinc-400'>
-                {t('pages.settings.tabs.user.profile.upload')}
-              </AvatarFallback>
-            )}
-          </Avatar>
-
-          <div
-            className='absolute inset-0 flex items-center justify-center
+          className='absolute inset-0 flex items-center justify-center
                 bg-black/40 opacity-0 group-hover:opacity-100
                 transition rounded-full'
-          >
-            <Upload size={20} className='text-white' />
-          </div>
-        </div>
-
-        {/* Hidden input */}
-        <input
-          ref={fileInputRef}
-          type='file'
-          accept='image/*'
-          className='hidden'
-          onChange={handleFileChange}
-        />
-
-        <Button
-          onClick={handleSaveAvatar}
-          disabled={!mediaAssetId}
-          className='bg-zinc-500'
         >
-          {t('pages.settings.tabs.user.profile.save')}
-        </Button>
-      </CardContent>
-    </Card>
+          <Upload size={20} className='text-white' />
+        </div>
+      </div>
+
+      {/* Hidden input */}
+      <input
+        ref={fileInputRef}
+        type='file'
+        accept='image/*'
+        className='hidden'
+        onChange={handleFileChange}
+      />
+
+      <Button
+        onClick={handleSaveAvatar}
+        disabled={!mediaAssetId}
+        className='bg-zinc-500'
+      >
+        {t('pages.settings.tabs.user.profile.save')}
+      </Button>
+    </CardWrapper>
   );
 }
