@@ -34,7 +34,7 @@ export default function CompanyTabDocumentPrefixCard() {
     handleSubmit,
     reset,
     watch,
-    formState: { isDirty, isSubmitting },
+    formState: { dirtyFields, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
       prefixes: [],
@@ -61,7 +61,7 @@ export default function CompanyTabDocumentPrefixCard() {
     const res = await DocumentPrefixService.updateAll(data);
 
     if (res.success && res.payload) {
-      reset(res.payload);
+      reset(res.payload, { keepDirtyValues: false });
       toast(t(`messageKey.${res.messageKey}`));
     }
   };
@@ -107,7 +107,7 @@ export default function CompanyTabDocumentPrefixCard() {
 
           <Button
             type='submit'
-            disabled={!isDirty || isSubmitting}
+            disabled={!Object.keys(dirtyFields).length || isSubmitting}
             className='bg-zinc-500 mt-2 md:col-span-2'
           >
             {t('common.save')}

@@ -17,9 +17,11 @@ import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useCompanyStore } from '@/lib/stores/companyStore';
+import { useEffect } from 'react';
+import { useFormChanges } from '@/lib/hooks/useFormChanges';
 
 type Props = {
-  initialCompanyData?: CompanyExtendedResponse;
+  initialCompanyData?: CompanyExtendedResponse | null;
 };
 
 export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
@@ -27,17 +29,27 @@ export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
     register,
     handleSubmit,
     reset,
-    formState: { isDirty, isSubmitting },
-  } = useForm<CompanyBaseDataUpdateRequest>({
-    defaultValues: {
-      name: initialCompanyData?.name,
-      description: initialCompanyData?.description,
-      email: initialCompanyData?.email,
-      phone: initialCompanyData?.phone,
-      address: initialCompanyData?.address,
-      website: initialCompanyData?.website,
-    },
-  });
+    watch,
+    formState: { isSubmitting },
+  } = useForm<CompanyBaseDataUpdateRequest>();
+
+  const { hasChanges, setInitialValues } = useFormChanges(watch);
+
+  useEffect(() => {
+    if (initialCompanyData) {
+      const values = {
+        name: initialCompanyData.name ?? '',
+        description: initialCompanyData.description ?? '',
+        email: initialCompanyData.email ?? '',
+        phone: initialCompanyData.phone ?? '',
+        address: initialCompanyData.address ?? '',
+        website: initialCompanyData.website ?? '',
+      };
+
+      setInitialValues(values);
+      reset(values);
+    }
+  }, [initialCompanyData, reset, setInitialValues]);
 
   const t = useTranslations();
   const setCompanyData = useCompanyStore((state) => state.setCompanyData);
@@ -46,10 +58,22 @@ export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
     const res = await CompanyService.updateCompanyBaseData(data);
 
     if (res.success && res.payload) {
+      const values = {
+        name: res.payload.name ?? '',
+        description: res.payload.description ?? '',
+        email: res.payload.email ?? '',
+        phone: res.payload.phone ?? '',
+        address: res.payload.address ?? '',
+        website: res.payload.website ?? '',
+      };
+
       setCompanyData({
         name: res.payload.name,
       });
-      reset(res.payload);
+
+      setInitialValues(values);
+      reset(values);
+
       toast(t(`messageKey.${res.messageKey}`));
     }
   };
@@ -130,7 +154,7 @@ export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
 
           <Button
             type='submit'
-            disabled={!isDirty || isSubmitting}
+            disabled={!hasChanges || isSubmitting}
             className='bg-zinc-500 mt-2'
           >
             {t('common.save')}

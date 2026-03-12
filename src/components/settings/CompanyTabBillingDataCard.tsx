@@ -14,11 +14,12 @@ import {
   CompanyExtendedResponse,
 } from '@/lib/services/dtos/companyDtos';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 type Props = {
-  initialCompanyData?: CompanyExtendedResponse;
+  initialCompanyData?: CompanyExtendedResponse | null;
 };
 
 export default function CompanyTabBillingDataCard({
@@ -28,16 +29,20 @@ export default function CompanyTabBillingDataCard({
     register,
     handleSubmit,
     reset,
-    formState: { isDirty, isSubmitting },
-  } = useForm<CompanyBillingDataUpdateRequest>({
-    defaultValues: {
-      taxNumber: initialCompanyData?.taxNumber,
-      vatNumber: initialCompanyData?.vatNumber,
-      registrationNumber: initialCompanyData?.registrationNumber,
-      bankAccount: initialCompanyData?.bankAccount,
-      iban: initialCompanyData?.iban,
-    },
-  });
+    formState: { dirtyFields, isSubmitting },
+  } = useForm<CompanyBillingDataUpdateRequest>();
+
+  useEffect(() => {
+    if (initialCompanyData) {
+      reset({
+        taxNumber: initialCompanyData?.taxNumber,
+        vatNumber: initialCompanyData?.vatNumber,
+        registrationNumber: initialCompanyData?.registrationNumber,
+        bankAccount: initialCompanyData?.bankAccount,
+        iban: initialCompanyData?.iban,
+      });
+    }
+  }, [initialCompanyData, reset]);
 
   const t = useTranslations();
 
@@ -45,7 +50,7 @@ export default function CompanyTabBillingDataCard({
     const res = await CompanyService.updateCompanyBillingData(data);
 
     if (res.success && res.payload) {
-      reset(res.payload);
+      reset(res.payload, { keepDirtyValues: false });
       toast(t(`messageKey.${res.messageKey}`));
     }
   };
@@ -118,7 +123,7 @@ export default function CompanyTabBillingDataCard({
 
           <Button
             type='submit'
-            disabled={!isDirty || isSubmitting}
+            disabled={!Object.keys(dirtyFields).length || isSubmitting}
             className='bg-zinc-500 mt-2'
           >
             {t('common.save')}
