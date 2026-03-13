@@ -4,7 +4,6 @@ export type CompanyMinimalResponse = {
   logoId: number | null;
   logoUrl: string | null;
   logoUrlExpiry: string | null;
-  exists: boolean;
 };
 
 export type CompanyBaseDataResponse = {

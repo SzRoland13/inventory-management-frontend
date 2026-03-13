@@ -23,6 +23,8 @@ import { castToEnum } from '@/lib/helpers/enum';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useTranslations } from 'next-intl';
 import { UserRole } from '@/lib/enums/user';
+import { CompanyService } from '@/lib/services/CompanyService';
+import { useCompanyStore } from '@/lib/stores/companyStore';
 
 type TwoFaForm = {
   email: string;
@@ -90,6 +92,18 @@ export default function TwoFaLoginPage() {
           });
 
           useAuthStore.getState().clearAuthData();
+
+          const companyResponse = await CompanyService.getMinimalCompanyData();
+
+          if (companyResponse.success) {
+            useCompanyStore.getState().setCompanyData({
+              id: companyResponse.payload.id,
+              logoId: companyResponse.payload.logoId,
+              logoUrl: companyResponse.payload.logoUrl,
+              logoUrlExpiry: companyResponse.payload.logoUrlExpiry,
+              name: companyResponse.payload.name,
+            });
+          }
 
           pushLocalized(Routes.Dashboard);
         }
