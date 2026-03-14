@@ -144,7 +144,7 @@ export default function BillingDataCard({ initialCompanyData }: Props) {
         <Button
           type='submit'
           disabled={!hasChanges || isSubmitting}
-          className='bg-zinc-500 mt-2'
+          className='bg-zinc-500 mt-2 w-72  self-center'
         >
           {t('common.save')}
         </Button>

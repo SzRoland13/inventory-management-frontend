@@ -10,6 +10,7 @@
     "back": "Back",
     "cancel": "Cancel",
     "no-results": "No results.",
+    "none": "None",
     "role": {
       "title": "Role"
     },
@@ -222,6 +223,18 @@
               "TRANSFER_RECEIPT": "Stock transfer receipt",
               "STOCK_ADJUSTMENT": "Stock adjustment",
               "RETURN": "Return"
+            }
+          },
+          "currency": {
+            "title": "Preferred Currency",
+            "description": "Select your preferred currency for products and documents.",
+            "select": {
+              "placeholder": "Select..",
+              "EUR": "Euro",
+              "USD": "US Dollar",
+              "HUF": "Hungarian Forint",
+              "GBP": "Great British Pound",
+              "CHF": "Swiss Franc"
             }
           }
         }

@@ -9,6 +9,8 @@ import {
   CompanyMinimalResponse,
   CompanyBillingDataUpdateRequest,
   CompanyBillingDataResponse,
+  CompanyPreferredCurrencyUpdateRequest,
+  UpdatedPreferredCurrencyResponse,
 } from '@/lib/services/dtos/companyDtos';
 
 export const CompanyService = {
@@ -38,5 +40,11 @@ export const CompanyService = {
 
   updateLogo: async (data: LogoUpdateRequest): Promise<ApiResponse<void>> => {
     return handleRequest(BaseService.post('/company/logo', data));
+  },
+
+  updatePreferredCurrency: async (
+    data: CompanyPreferredCurrencyUpdateRequest,
+  ): Promise<ApiResponse<UpdatedPreferredCurrencyResponse>> => {
+    return handleRequest(BaseService.post('/company/currency', data));
   },
 };

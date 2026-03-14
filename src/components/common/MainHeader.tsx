@@ -12,7 +12,11 @@ export default function MainHeader({ title, icon }: Props) {
       <div className='flex items-center gap-3'>
         <SidebarButton />
 
-        {icon && <div className='text-zinc-300'>{icon}</div>}
+        {icon && (
+          <div className='flex items-center justify-center w-8 h-8 rounded-md bg-zinc-800 text-zinc-300'>
+            {icon}
+          </div>
+        )}
 
         <h1 className='text-xl font-semibold text-zinc-100 tracking-tight'>
           {title}

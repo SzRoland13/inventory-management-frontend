@@ -33,7 +33,10 @@ export default function CardWrapper({
 }: Props) {
   return (
     <Card
-      className={cn('bg-zinc-800 border-zinc-700 shadow-xl', cardExtraClass)}
+      className={cn(
+        'bg-zinc-800 border-zinc-700 shadow-xl lg:min-h-[500px]',
+        cardExtraClass,
+      )}
     >
       <CardHeader
         className={cn(

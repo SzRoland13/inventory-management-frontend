@@ -10,6 +10,7 @@
     "back": "Vissza",
     "cancel": "Mégse",
     "no-results": "Nincs találat.",
+    "none": "Egyik sem",
     "role": {
       "title": "Szerepkör"
     },
@@ -222,6 +223,18 @@
               "TRANSFER_RECEIPT": "Készletátvezetési bevételezés",
               "STOCK_ADJUSTMENT": "Készletkorrekció",
               "RETURN": "Visszáru"
+            }
+          },
+          "currency": {
+            "title": "Preferált pénznem",
+            "description": "Válaszd ki a termékeknél és dokumentumoknál preferált pénznemet.",
+            "select": {
+              "placeholder": "Kiválasztás..",
+              "EUR": "Euró",
+              "USD": "Amerikai Dollár",
+              "HUF": "Magyar Forint",
+              "GBP": "Angol Font",
+              "CHF": "Svájci Frank"
             }
           }
         }

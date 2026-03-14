@@ -109,7 +109,7 @@ export default function LogoCard() {
       <Button
         onClick={handleSaveLogo}
         disabled={!mediaAssetId}
-        className='bg-zinc-500'
+        className='bg-zinc-500 w-72'
       >
         {t('pages.settings.tabs.company.logo.save')}
       </Button>

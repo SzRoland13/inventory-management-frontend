@@ -1,3 +1,5 @@
+import { Currency } from '@/lib/services/dtos/currencyDtos';
+
 export type CompanyMinimalResponse = {
   id: number;
   name: string;
@@ -27,6 +29,7 @@ export type CompanyExtendedResponse = CompanyMinimalResponse & {
   registrationNumber: string;
   bankAccount: string;
   iban: string;
+  prefferedCurrency: Currency;
 };
 
 export type CompanyBillingDataResponse = {
@@ -57,4 +60,14 @@ export type CompanyBillingDataUpdateRequest = {
 
 export type LogoUpdateRequest = {
   mediaAssetId: number;
+};
+
+export type CompanyPreferredCurrencyUpdateRequest = {
+  companyId: number;
+  currencyId: number;
+};
+
+export type UpdatedPreferredCurrencyResponse = {
+  companyId: number;
+  currency: Currency;
 };

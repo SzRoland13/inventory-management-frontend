@@ -7,6 +7,7 @@ import { CompanyService } from '@/lib/services/CompanyService';
 import { CompanyExtendedResponse } from '@/lib/services/dtos/companyDtos';
 import BillingDataCard from '@/components/settings/company/BillingDataCard';
 import DocumentPrefixCard from '@/components/settings/company/DocumentPrefixCard';
+import PreferredCurrencyCard from '@/components/settings/company/PreferredCurrencyCard';
 
 export default function CompanyTab() {
   const [companyData, setCompanyData] =
@@ -30,6 +31,9 @@ export default function CompanyTab() {
       <BaseDataCard initialCompanyData={companyData} />
       <BillingDataCard initialCompanyData={companyData} />
       <DocumentPrefixCard />
+      <PreferredCurrencyCard
+        prefferedCurrency={companyData?.prefferedCurrency}
+      />
     </div>
   );
 }

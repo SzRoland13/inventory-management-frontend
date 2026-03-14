@@ -106,7 +106,7 @@ export default function AvatarCard() {
       <Button
         onClick={handleSaveAvatar}
         disabled={!mediaAssetId}
-        className='bg-zinc-500'
+        className='bg-zinc-500 w-72 self-center'
       >
         {t('pages.settings.tabs.user.profile.save')}
       </Button>
