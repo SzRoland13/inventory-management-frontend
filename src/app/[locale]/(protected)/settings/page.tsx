@@ -12,13 +12,17 @@ import { castToEnum } from '@/lib/helpers/enum';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useUserStore } from '@/lib/stores/userStore';
+import { UserRole } from '@/lib/enums/user';
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-
+  const { role } = useUserStore();
   const t = useTranslations();
+
+  const isAdmin = role === UserRole.ADMIN;
 
   const currentTab =
     castToEnum(SettingsTab, searchParams.get('tab') ?? '') ??
@@ -45,7 +49,10 @@ export default function SettingsPage() {
 
   return (
     <div className='flex flex-col w-full'>
-      <MainHeader title='Settings' icon={<Settings className='w-6 h-6' />} />
+      <MainHeader
+        title={t('pages.settings.title')}
+        icon={<Settings className='w-6 h-6 self-center' />}
+      />
 
       <Card className='bg-zinc-750 border-zinc-700 shadow-xl h-full rounded-none border-0 p-0 m-0'>
         <CardContent className='p-0 m-0 rounded-none w-full h-full'>
@@ -67,9 +74,14 @@ export default function SettingsPage() {
                 {t('pages.settings.tabs.product.title')}
               </TabsTrigger>
 
-              <TabsTrigger value={SettingsTab.Company} className={triggerStyle}>
-                {t('pages.settings.tabs.company.title')}
-              </TabsTrigger>
+              {isAdmin && (
+                <TabsTrigger
+                  value={SettingsTab.Company}
+                  className={triggerStyle}
+                >
+                  {t('pages.settings.tabs.company.title')}
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value={SettingsTab.General}>
@@ -84,9 +96,11 @@ export default function SettingsPage() {
               <ProductTab />
             </TabsContent>
 
-            <TabsContent value={SettingsTab.Company}>
-              <CompanyTab />
-            </TabsContent>
+            {isAdmin && (
+              <TabsContent value={SettingsTab.Company}>
+                <CompanyTab />
+              </TabsContent>
+            )}
           </Tabs>
         </CardContent>
       </Card>
