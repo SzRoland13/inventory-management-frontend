@@ -257,6 +257,9 @@
         "password-setup-success": "Your password has been successfully set up.",
         "email-send-failed": "Failed to send verification email. Please try again later."
       },
+      "logout": {
+        "success": "Logout successful! See you later!"
+      },
       "token-refreshed": "Your session has been refreshed successfully.",
       "invalid-token": "Your token is invalid. Please log in again.",
       "token-expired": "Your session has expired. Please log in again.",
@@ -287,6 +290,32 @@
       "password-reset-complete": "Password has been reset successfully.",
       "two-fa-not-enabled": "Two-factor authentication is not enabled for this user.",
       "password": "User has not set up a password yet."
+    },
+    "company": {
+      "logo-updated": "Company logo updated successfully.",
+      "currency-updated": "Preferred currency updated successfully."
+    },
+    "error": {
+      "generic": "An unexpected error occurred.",
+      "validation": "Validation error occurred."
+    },
+    "request": {
+      "success": "Request completed successfully."
+    },
+    "media": {
+      "url-generated": "Media URL generated successfully.",
+      "deleted": "Media deleted successfully."
+    },
+    "not-found": {
+      "user": "User not found.",
+      "one-time-code": "One-time code not found.",
+      "refresh-token": "Refresh token not found.",
+      "company": "Company not found.",
+      "media-asset": "Media asset not found.",
+      "media-usage": "Media usage not found.",
+      "currency": "Currency not found.",
+      "document-sequence": "Document sequence not found.",
+      "document-prefix": "Document prefix not found."
     }
   },
   "sidebar": {

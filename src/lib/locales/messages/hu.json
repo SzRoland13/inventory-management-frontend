@@ -257,6 +257,9 @@
         "password-setup-success": "A jelszavad sikeresen beállítva.",
         "email-send-failed": "Nem sikerült elküldeni az e-mailt. Próbáld újra később."
       },
+      "logout": {
+        "success": "Kijelentkezés sikeres! Később találkozunk!"
+      },
       "token-refreshed": "A munkamenet sikeresen frissítve.",
       "invalid-token": "Érvénytelen token. Kérjük, jelentkezz be újra.",
       "token-expired": "A munkamenet lejárt. Kérjük, jelentkezz be újra.",
@@ -287,6 +290,32 @@
       "password-reset-complete": "A jelszó sikeresen visszaállítva.",
       "two-fa-not-enabled": "A kétlépcsős azonosítás nincs engedélyezve ennél a felhasználónál.",
       "password": "A felhasználó még nem állított be jelszót."
+    },
+    "company": {
+      "logo-updated": "A céglogó sikeresen frissítve.",
+      "currency-updated": "A preferált pénznem sikeresen frissítve."
+    },
+    "error": {
+      "generic": "Váratlan hiba történt.",
+      "validation": "Érvényesítési hiba történt."
+    },
+    "request": {
+      "success": "A kérés sikeresen feldolgozva."
+    },
+    "media": {
+      "url-generated": "A média URL sikeresen létrehozva.",
+      "deleted": "A média sikeresen törölve."
+    },
+    "not-found": {
+      "user": "A felhasználó nem található.",
+      "one-time-code": "Az egyszer használatos kód nem található.",
+      "refresh-token": "A frissítő token nem található.",
+      "company": "A vállalat nem található.",
+      "media-asset": "A médiafájl nem található.",
+      "media-usage": "A médiahasználat nem található.",
+      "currency": "A pénznem nem található.",
+      "document-sequence": "A dokumentumszámozás nem található.",
+      "document-prefix": "A dokumentum előtag nem található."
     }
   },
   "sidebar": {
