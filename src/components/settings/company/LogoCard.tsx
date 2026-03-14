@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-export default function CompanyTabLogoCard() {
+export default function LogoCard() {
   const [logo, setLogo] = useState<MediaPreviewResponse | null>(null);
   const [mediaAssetId, setMediaAssetId] = useState<number | null>(null);
   const companyLogoUrl = useCompanyStore((state) => state.logoUrl);

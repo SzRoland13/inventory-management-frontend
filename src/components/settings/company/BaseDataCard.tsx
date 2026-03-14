@@ -18,7 +18,7 @@ type Props = {
   initialCompanyData?: CompanyExtendedResponse | null;
 };
 
-export default function CompanyTabBaseDataCard({ initialCompanyData }: Props) {
+export default function BaseDataCard({ initialCompanyData }: Props) {
   const {
     register,
     handleSubmit,

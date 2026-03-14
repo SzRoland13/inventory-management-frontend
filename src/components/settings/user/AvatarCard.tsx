@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { MediaPreviewResponse } from '@/lib/services/dtos/mediaDtos';
 import CardWrapper from '@/components/common/CardWrapper';
 
-export default function UserTabAvatarCard() {
+export default function AvatarCard() {
   const [avatar, setAvatar] = useState<MediaPreviewResponse | null>(null);
   const [mediaAssetId, setMediaAssetId] = useState<number | null>(null);
   const avatarUrl = useUserStore((state) => state.avatarUrl);

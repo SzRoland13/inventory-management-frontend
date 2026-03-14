@@ -21,7 +21,7 @@ type FormValues = {
   prefixes: DocumentPrefixDto[];
 };
 
-export default function CompanyTabDocumentPrefixCard() {
+export default function DocumentPrefixCard() {
   const t = useTranslations();
 
   const {
