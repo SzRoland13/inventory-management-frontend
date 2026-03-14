@@ -3,19 +3,21 @@ import { ReactNode } from 'react';
 
 type Props = {
   title: string;
-  icon: ReactNode;
+  icon?: ReactNode;
 };
 
 export default function MainHeader({ title, icon }: Props) {
   return (
-    <div className='flex w-full bg-gradient-to-r from-zinc-800 to-zinc-900 p-4 items-center justify-between shadow-md'>
-      <div className='align-center flex flex-row gap-2'>
+    <header className='flex items-center justify-between h-16 px-6 bg-zinc-900 border-b border-zinc-800 shadow-md'>
+      <div className='flex items-center gap-3'>
         <SidebarButton />
-        {icon}
-        <h1 className='flex align-bottom text-2xl leading-normal font-bold text-zinc-100 tracking-tight'>
+
+        {icon && <div className='text-zinc-300'>{icon}</div>}
+
+        <h1 className='text-xl font-semibold text-zinc-100 tracking-tight'>
           {title}
         </h1>
       </div>
-    </div>
+    </header>
   );
 }
