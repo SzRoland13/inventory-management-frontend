@@ -32,7 +32,7 @@ export default function CompanyTab() {
       <BillingDataCard initialCompanyData={companyData} />
       <DocumentPrefixCard />
       <PreferredCurrencyCard
-        prefferedCurrency={companyData?.prefferedCurrency}
+        preferredCurrency={companyData?.preferredCurrency}
       />
     </div>
   );

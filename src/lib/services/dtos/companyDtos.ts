@@ -29,7 +29,7 @@ export type CompanyExtendedResponse = CompanyMinimalResponse & {
   registrationNumber: string;
   bankAccount: string;
   iban: string;
-  prefferedCurrency: Currency;
+  preferredCurrency: Currency;
 };
 
 export type CompanyBillingDataResponse = {
@@ -64,10 +64,10 @@ export type LogoUpdateRequest = {
 
 export type CompanyPreferredCurrencyUpdateRequest = {
   companyId: number;
-  currencyId: number;
+  currencyId: number | null;
 };
 
 export type UpdatedPreferredCurrencyResponse = {
   companyId: number;
-  currency: Currency;
+  currency: Currency | null;
 };
