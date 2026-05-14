@@ -16,12 +16,16 @@ export type UserDto = {
   userStatus: UserStatus;
 };
 
+export type UserDtoWithAvatar = UserDto & {
+  avatarUrl: string | null;
+};
+
 export type Reset2FaRequest = {
   ids: number[];
 };
 
 export type AllUserResponse = {
-  users: UserDto[];
+  users: UserDtoWithAvatar[];
 };
 
 export type ModificationUser = {

@@ -3,7 +3,10 @@
 import MainHeader from '@/components/common/MainHeader';
 import { UsersTable } from '@/components/users/UsersTable';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
-import { AllUserResponse, UserDto } from '@/lib/services/dtos/userDtos';
+import {
+  AllUserResponse,
+  UserDtoWithAvatar,
+} from '@/lib/services/dtos/userDtos';
 import { UserService } from '@/lib/services/UserService';
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -13,7 +16,7 @@ import { toast } from 'sonner';
 export default function UsersPage() {
   const t = useTranslations();
 
-  const [users, setUsers] = useState<UserDto[]>([]);
+  const [users, setUsers] = useState<UserDtoWithAvatar[]>([]);
 
   const fetchUsers = useCallback(() => {
     UserService.getAllUsers()

@@ -1,13 +1,14 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { UserStatus } from '@/lib/enums/user';
 import { useTranslations } from 'next-intl';
-import { UserDto } from '@/lib/services/dtos/userDtos';
+import { UserDtoWithAvatar } from '@/lib/services/dtos/userDtos';
 
-export const useUserColumns = (): ColumnDef<UserDto>[] => {
+export const useUserColumns = (): ColumnDef<UserDtoWithAvatar>[] => {
   const t = useTranslations();
 
   return [
@@ -25,7 +26,25 @@ export const useUserColumns = (): ColumnDef<UserDto>[] => {
       enableHiding: false,
     },
     { accessorKey: 'id', header: t('common.id') },
-    { accessorKey: 'username', header: t('common.username.title') },
+    {
+      accessorKey: 'username',
+      header: t('common.username.title'),
+      cell: ({ row }) => {
+        const { username, avatarUrl } = row.original;
+
+        return (
+          <div className='flex items-center gap-3'>
+            <Avatar size='default'>
+              <AvatarImage src={avatarUrl ?? ''} />
+              <AvatarFallback>
+                {username.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span>{username}</span>
+          </div>
+        );
+      },
+    },
     { accessorKey: 'email', header: t('common.email.title') },
     { accessorKey: 'role', header: t('common.role.title') },
     {
