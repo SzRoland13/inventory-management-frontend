@@ -1,14 +1,15 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import Sidebar from '@/components/common/Sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 import useSessionGuard from '@/lib/hooks/useSessionGuard';
 import { SidebarProvider } from '@/lib/providers/SidebarContext';
 import { useTranslations } from 'next-intl';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { Routes } from '@/lib/utils/enums';
+import { Routes } from '@/lib/enums/routes';
+import { usePresignedMediaRefresher } from '@/lib/hooks/usePresignedMediaRefresher';
 
 export default function ProtectedLayout({
   children,
@@ -18,6 +19,7 @@ export default function ProtectedLayout({
   const t = useTranslations();
   const { loading, isAuthenticated } = useSessionGuard();
   const { replaceLocalized } = useLocalizedRouter();
+  usePresignedMediaRefresher();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {

@@ -15,13 +15,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthService } from '@/lib/services/AuthService';
-import { Routes, UserRole } from '@/lib/utils/enums';
+import { Routes } from '@/lib/enums/routes';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
 import { useUserStore } from '@/lib/stores/userStore';
-import { castToEnum } from '@/lib/utils/helpers';
+import { castToEnum } from '@/lib/helpers/enum';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useTranslations } from 'next-intl';
+import { UserRole } from '@/lib/enums/user';
+import { CompanyService } from '@/lib/services/CompanyService';
+import { useCompanyStore } from '@/lib/stores/companyStore';
 
 type TwoFaForm = {
   email: string;
@@ -79,14 +82,28 @@ export default function TwoFaLoginPage() {
 
         if (response.success) {
           useUserStore.getState().setUser({
+            id: user.id,
             username: user.username,
             email: user.email,
             role: castToEnum(UserRole, user.role),
+            avatarId: user.avatarId,
+            avatarUrl: user.avatarUrl,
+            avatarUrlExpiry: user.avatarUrlExpiry,
           });
 
           useAuthStore.getState().clearAuthData();
 
-          toast.info('Finalizing login...');
+          const companyResponse = await CompanyService.getMinimalCompanyData();
+
+          if (companyResponse.success) {
+            useCompanyStore.getState().setCompanyData({
+              id: companyResponse.payload.id,
+              logoId: companyResponse.payload.logoId,
+              logoUrl: companyResponse.payload.logoUrl,
+              logoUrlExpiry: companyResponse.payload.logoUrlExpiry,
+              name: companyResponse.payload.name,
+            });
+          }
 
           pushLocalized(Routes.Dashboard);
         }

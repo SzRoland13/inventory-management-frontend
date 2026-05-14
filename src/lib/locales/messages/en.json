@@ -4,11 +4,13 @@
     "continue": "Continue",
     "saving": "Saving..",
     "save": "Save",
+    "reset": "Reset",
     "verifying": "Verifying...",
     "verify": "Verify code",
     "back": "Back",
     "cancel": "Cancel",
     "no-results": "No results.",
+    "none": "None",
     "role": {
       "title": "Role"
     },
@@ -132,6 +134,111 @@
         "reset-2fa": "Reset 2FA",
         "reset-password": "Reset password"
       }
+    },
+    "dashboard": {
+      "title": "Dashboard"
+    },
+    "products": {
+      "title": "Product Management"
+    },
+    "warehouses": {
+      "title": "Warehouse Management"
+    },
+    "stocks": {
+      "title": "Stock Management"
+    },
+    "documents": {
+      "title": "Document Managemet"
+    },
+    "reports": {
+      "title": "Report Management"
+    },
+    "sales": {
+      "title": "Sale Management"
+    },
+    "settings": {
+      "title": "Settings",
+      "tabs": {
+        "general": {
+          "title": "General"
+        },
+        "user": {
+          "title": "User",
+          "profile": {
+            "title": "Profile Picture",
+            "description": "Upload a new avatar for your account.",
+            "upload": "Upload",
+            "save": "Save Avatar"
+          }
+        },
+        "product": {
+          "title": "Product"
+        },
+        "company": {
+          "title": "Company",
+          "logo": {
+            "title": "Company Logo",
+            "description": "Upload a new logo for your company.",
+            "upload": "Upload",
+            "save": "Save Logo"
+          },
+          "data": {
+            "title": "Company Data",
+            "description": "Update the information about your company.",
+            "fields": {
+              "name": "Company name",
+              "description": "Description",
+              "email": "Email",
+              "phone": "Phone",
+              "address": "Address",
+              "website": "Website"
+            }
+          },
+          "billing": {
+            "title": "Billing information",
+            "description": "Manage the billing details that will appear on invoices and other official documents.",
+            "fields": {
+              "taxNumber": "Tax number",
+              "vatNumber": "VAT number",
+              "registrationNumber": "Company registration number",
+              "bankAccount": "Bank account number",
+              "iban": "IBAN"
+            }
+          },
+          "prefix": {
+            "title": "Document prefixes",
+            "description": "Configure the prefixes used for automatically generated document numbers.",
+            "types": {
+              "RFQ": "Request for quotation",
+              "SUPPLIER_QUOTATION": "Supplier quotation",
+              "PURCHASE_ORDER": "Purchase order",
+              "GOODS_RECEIPT": "Goods receipt",
+              "CUSTOMER_RFQ": "Customer request for quotation",
+              "SALES_QUOTATION": "Sales quotation",
+              "SALES_ORDER": "Sales order",
+              "DELIVERY_NOTE": "Delivery note",
+              "INVOICE": "Invoice",
+              "TRANSFER_REQUEST": "Stock transfer request",
+              "TRANSFER_DELIVERY": "Stock transfer delivery",
+              "TRANSFER_RECEIPT": "Stock transfer receipt",
+              "STOCK_ADJUSTMENT": "Stock adjustment",
+              "RETURN": "Return"
+            }
+          },
+          "currency": {
+            "title": "Preferred Currency",
+            "description": "Select your preferred currency for products and documents.",
+            "select": {
+              "placeholder": "Select..",
+              "EUR": "Euro",
+              "USD": "US Dollar",
+              "HUF": "Hungarian Forint",
+              "GBP": "Great British Pound",
+              "CHF": "Swiss Franc"
+            }
+          }
+        }
+      }
     }
   },
   "messagekey": {
@@ -149,6 +256,9 @@
         "password-not-match": "Passwords do not match. Please check and try again.",
         "password-setup-success": "Your password has been successfully set up.",
         "email-send-failed": "Failed to send verification email. Please try again later."
+      },
+      "logout": {
+        "success": "Logout successful! See you later!"
       },
       "token-refreshed": "Your session has been refreshed successfully.",
       "invalid-token": "Your token is invalid. Please log in again.",
@@ -180,6 +290,32 @@
       "password-reset-complete": "Password has been reset successfully.",
       "two-fa-not-enabled": "Two-factor authentication is not enabled for this user.",
       "password": "User has not set up a password yet."
+    },
+    "company": {
+      "logo-updated": "Company logo updated successfully.",
+      "currency-updated": "Preferred currency updated successfully."
+    },
+    "error": {
+      "generic": "An unexpected error occurred.",
+      "validation": "Validation error occurred."
+    },
+    "request": {
+      "success": "Request completed successfully."
+    },
+    "media": {
+      "url-generated": "Media URL generated successfully.",
+      "deleted": "Media deleted successfully."
+    },
+    "not-found": {
+      "user": "User not found.",
+      "one-time-code": "One-time code not found.",
+      "refresh-token": "Refresh token not found.",
+      "company": "Company not found.",
+      "media-asset": "Media asset not found.",
+      "media-usage": "Media usage not found.",
+      "currency": "Currency not found.",
+      "document-sequence": "Document sequence not found.",
+      "document-prefix": "Document prefix not found."
     }
   },
   "sidebar": {
@@ -191,6 +327,12 @@
     "reports": "Reports",
     "sales": "Sales",
     "settings": "Settings",
-    "users": "User Management"
+    "users": "Users",
+    "header": {
+      "company-fallback": "Company name"
+    },
+    "footer": {
+      "logout": "Logout"
+    }
   }
 }

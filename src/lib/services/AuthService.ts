@@ -11,7 +11,7 @@ import {
 } from '@/lib/services/dtos/authDtos';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 import { UserDto } from '@/lib/services/dtos/userDtos';
-import { handleRequest } from '@/lib/utils/helpers';
+import { handleRequest } from '@/lib/helpers/service';
 
 export const AuthService = {
   checkSession: async (): Promise<ApiResponse<UserDto>> => {
@@ -54,5 +54,9 @@ export const AuthService = {
     req: TwoFactorVerifyRequest,
   ): Promise<ApiResponse<LoginResponse>> => {
     return handleRequest(BaseService.post('/auth/2fa/login', req));
+  },
+
+  logout: async (): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post('/auth/logout'));
   },
 };

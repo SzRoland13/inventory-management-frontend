@@ -4,11 +4,13 @@
     "continue": "Folytatás",
     "saving": "Mentés..",
     "save": "Mentés",
+    "reset": "Visszaállítás",
     "verifying": "Ellenőrzés folyamatban...",
     "verify": "Kód ellenőrzése",
     "back": "Vissza",
     "cancel": "Mégse",
     "no-results": "Nincs találat.",
+    "none": "Egyik sem",
     "role": {
       "title": "Szerepkör"
     },
@@ -132,6 +134,111 @@
         "reset-2fa": "2FA visszaállítás",
         "reset-password": "Jelszó visszaállítás"
       }
+    },
+    "dashboard": {
+      "title": "Irányítópult"
+    },
+    "products": {
+      "title": "Termékkezelés"
+    },
+    "warehouses": {
+      "title": "Raktárkezelés"
+    },
+    "stocks": {
+      "title": "Készletkezelés"
+    },
+    "documents": {
+      "title": "Dokumentumkezelés"
+    },
+    "reports": {
+      "title": "Riportkezelés"
+    },
+    "sales": {
+      "title": "Akciókezelés"
+    },
+    "settings": {
+      "title": "Beállítások",
+      "tabs": {
+        "general": {
+          "title": "Általános"
+        },
+        "user": {
+          "title": "Felhasználó",
+          "profile": {
+            "title": "Profilkép",
+            "description": "Tölts fel egy új profilképet a fiókodhoz.",
+            "upload": "Feltöltés",
+            "save": "Profilkép mentése"
+          }
+        },
+        "product": {
+          "title": "Termék"
+        },
+        "company": {
+          "title": "Vállalat",
+          "logo": {
+            "title": "Céglogó",
+            "description": "Tölts fel egy új logót a cégednek.",
+            "upload": "Feltöltés",
+            "save": "Logó mentése"
+          },
+          "data": {
+            "title": "Cégadatok",
+            "description": "Frissítse a vállalatával kapcsolatos információkat.",
+            "fields": {
+              "name": "Cég neve",
+              "description": "Leírás",
+              "email": "E-mail cím",
+              "phone": "Telefonszám",
+              "address": "Székhely",
+              "website": "Weboldal"
+            }
+          },
+          "billing": {
+            "title": "Számlázási adatok",
+            "description": "A számlákon és egyéb hivatalos dokumentumokon megjelenő számlázási adatok kezelése.",
+            "fields": {
+              "taxNumber": "Adószám",
+              "vatNumber": "EU adószám",
+              "registrationNumber": "Cégjegyzékszám",
+              "bankAccount": "Bankszámlaszám",
+              "iban": "IBAN"
+            }
+          },
+          "prefix": {
+            "title": "Dokumentum előtagok",
+            "description": "Az automatikusan generált dokumentumszámok előtagjainak beállítása.",
+            "types": {
+              "RFQ": "Ajánlatkérés",
+              "SUPPLIER_QUOTATION": "Beszállítói ajánlat",
+              "PURCHASE_ORDER": "Beszerzési rendelés",
+              "GOODS_RECEIPT": "Áruátvétel",
+              "CUSTOMER_RFQ": "Vevői ajánlatkérés",
+              "SALES_QUOTATION": "Értékesítési ajánlat",
+              "SALES_ORDER": "Vevői rendelés",
+              "DELIVERY_NOTE": "Szállítólevél",
+              "INVOICE": "Számla",
+              "TRANSFER_REQUEST": "Készletátvezetési igény",
+              "TRANSFER_DELIVERY": "Készletátvezetési kiadás",
+              "TRANSFER_RECEIPT": "Készletátvezetési bevételezés",
+              "STOCK_ADJUSTMENT": "Készletkorrekció",
+              "RETURN": "Visszáru"
+            }
+          },
+          "currency": {
+            "title": "Preferált pénznem",
+            "description": "Válaszd ki a termékeknél és dokumentumoknál preferált pénznemet.",
+            "select": {
+              "placeholder": "Kiválasztás..",
+              "EUR": "Euró",
+              "USD": "Amerikai Dollár",
+              "HUF": "Magyar Forint",
+              "GBP": "Angol Font",
+              "CHF": "Svájci Frank"
+            }
+          }
+        }
+      }
     }
   },
   "messagekey": {
@@ -149,6 +256,9 @@
         "password-not-match": "A jelszavak nem egyeznek. Ellenőrizd és próbáld újra.",
         "password-setup-success": "A jelszavad sikeresen beállítva.",
         "email-send-failed": "Nem sikerült elküldeni az e-mailt. Próbáld újra később."
+      },
+      "logout": {
+        "success": "Kijelentkezés sikeres! Később találkozunk!"
       },
       "token-refreshed": "A munkamenet sikeresen frissítve.",
       "invalid-token": "Érvénytelen token. Kérjük, jelentkezz be újra.",
@@ -180,6 +290,32 @@
       "password-reset-complete": "A jelszó sikeresen visszaállítva.",
       "two-fa-not-enabled": "A kétlépcsős azonosítás nincs engedélyezve ennél a felhasználónál.",
       "password": "A felhasználó még nem állított be jelszót."
+    },
+    "company": {
+      "logo-updated": "A céglogó sikeresen frissítve.",
+      "currency-updated": "A preferált pénznem sikeresen frissítve."
+    },
+    "error": {
+      "generic": "Váratlan hiba történt.",
+      "validation": "Érvényesítési hiba történt."
+    },
+    "request": {
+      "success": "A kérés sikeresen feldolgozva."
+    },
+    "media": {
+      "url-generated": "A média URL sikeresen létrehozva.",
+      "deleted": "A média sikeresen törölve."
+    },
+    "not-found": {
+      "user": "A felhasználó nem található.",
+      "one-time-code": "Az egyszer használatos kód nem található.",
+      "refresh-token": "A frissítő token nem található.",
+      "company": "A vállalat nem található.",
+      "media-asset": "A médiafájl nem található.",
+      "media-usage": "A médiahasználat nem található.",
+      "currency": "A pénznem nem található.",
+      "document-sequence": "A dokumentumszámozás nem található.",
+      "document-prefix": "A dokumentum előtag nem található."
     }
   },
   "sidebar": {
@@ -191,6 +327,12 @@
     "reports": "Riportok",
     "sales": "Akciók",
     "users": "Felhasználók",
-    "settings": "Beállítások"
+    "settings": "Beállítások",
+    "header": {
+      "company-fallback": "Cég neve"
+    },
+    "footer": {
+      "logout": "Kijelentkezés"
+    }
   }
 }

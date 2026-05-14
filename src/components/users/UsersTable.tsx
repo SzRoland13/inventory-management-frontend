@@ -7,7 +7,10 @@ import {
   getCoreRowModel,
   RowSelectionState,
 } from '@tanstack/react-table';
-import { ModificationUser } from '@/lib/utils/types';
+import {
+  ModificationUser,
+  UserDtoWithAvatar,
+} from '@/lib/services/dtos/userDtos';
 import { useUserColumns } from '@/components/users/UsersColumns';
 import { UsersToolbar } from '@/components/users/UsersToolbar';
 import { AddEditUserDialog } from '@/components/users/AddEditUserDialog';
@@ -15,16 +18,15 @@ import { DataTable } from '@/components/common/DataTable';
 import {
   mapModificationUserToAddEditUserRequest,
   mapUserDtoToModificationUser,
-} from '@/lib/utils/helpers';
-import { UserDto } from '@/lib/services/dtos/userDtos';
+} from '@/lib/helpers/user';
 import { UserService } from '@/lib/services/UserService';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
-import { UserStatus } from '@/lib/utils/enums';
+import { UserStatus } from '@/lib/enums/user';
 
 type UsersTableProps = {
-  data: UserDto[];
+  data: UserDtoWithAvatar[];
   onSave: () => void;
 };
 
@@ -36,7 +38,7 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
     ModificationUser | undefined
   >();
 
-  const table = useReactTable<UserDto>({
+  const table = useReactTable<UserDtoWithAvatar>({
     data,
     columns: useUserColumns(),
     getCoreRowModel: getCoreRowModel(),

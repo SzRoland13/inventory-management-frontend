@@ -2,8 +2,8 @@
 
 import { AuthService } from '@/lib/services/AuthService';
 import { useUserStore } from '@/lib/stores/userStore';
-import { UserRole } from '@/lib/utils/enums';
-import { castToEnum } from '@/lib/utils/helpers';
+import { UserRole } from '@/lib/enums/user';
+import { castToEnum } from '@/lib/helpers/enum';
 import { useEffect, useState } from 'react';
 
 export default function useSessionGuard() {

@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from '@/lib/utils/enums';
+import { UserRole, UserStatus } from '@/lib/enums/user';
 
 export type AddEditUserRequest = {
   username: string;
@@ -16,10 +16,25 @@ export type UserDto = {
   userStatus: UserStatus;
 };
 
+export type UserDtoWithAvatar = UserDto & {
+  avatarUrl: string | null;
+};
+
 export type Reset2FaRequest = {
   ids: number[];
 };
 
 export type AllUserResponse = {
-  users: UserDto[];
+  users: UserDtoWithAvatar[];
+};
+
+export type ModificationUser = {
+  id: number | undefined;
+  username: string;
+  email: string;
+  role: UserRole;
+};
+
+export type AvatarUploadRequest = {
+  mediaAssetId: number;
 };

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useLocaleStore } from '@/lib/stores/localeStore';
-import { Routes } from '@/lib/utils/enums';
+import { Routes } from '@/lib/enums/routes';
 
 export function useLocalizedRouter() {
   const router = useRouter();

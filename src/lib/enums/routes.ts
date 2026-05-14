@@ -7,16 +7,12 @@ export enum Routes {
   Two_Fa_Login = '/2fa-login',
   Two_Fa_Setup = '/2fa-setup',
   Dashboard = '/dashboard',
-}
-
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  MANAGER = 'MANAGER',
-  SALES = 'SALES',
-}
-
-export enum UserStatus {
-  ACTIVE = 'ACTIVE',
-  SUSPENDED = 'SUSPENDED',
-  SETUP_REQUIRED = 'SETUP_REQUIRED',
+  Products = '/products',
+  Warehouses = '/warehouses',
+  Stocks = '/stocks',
+  Documents = '/documents',
+  Reports = '/reports',
+  Sales = '/sales',
+  Users = '/users',
+  Settings = '/settings',
 }
