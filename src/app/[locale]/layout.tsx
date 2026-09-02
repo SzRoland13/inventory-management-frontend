@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import React from 'react';
 import '@/app/globals.css';
 import LocaleSetter from '@/components/common/LocaleSetter';
+import { QueryProvider } from '@/lib/providers/QueryProvider';
 
 export default async function LocaleLayout({
   children,
@@ -24,8 +25,10 @@ export default async function LocaleLayout({
   return (
     <div className='w-full'>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <LocaleSetter locale={locale} />
-        {children}
+        <QueryProvider>
+          <LocaleSetter locale={locale} />
+          {children}
+        </QueryProvider>
       </NextIntlClientProvider>
     </div>
   );

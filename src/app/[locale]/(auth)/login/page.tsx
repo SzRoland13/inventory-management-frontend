@@ -11,7 +11,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AuthService } from '@/lib/services/AuthService';
+import { useLoginMutation } from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Routes } from '@/lib/enums/routes';
 import { useEffect, useState } from 'react';
@@ -30,6 +31,7 @@ export default function LoginPage() {
   const { pushLocalized } = useLocalizedRouter();
   const t = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
+  const login = useLoginMutation();
 
   const {
     register,
@@ -42,26 +44,26 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    const response = await AuthService.login({
-      email: data.email,
-      password: data.password,
-    });
-
-    if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
+    try {
+      const response = await login.mutateAsync({
+        email: data.email,
+        password: data.password,
+      });
       const expiresAt = new Date(response.payload.expiresAt);
-
       useAuthStore.getState().setAuthData({
         shortLifeToken: response.payload.shortLifeToken,
         shortLifeTokenExpiry: expiresAt,
       });
-    }
 
-    toast(t(`messagekey.${response.messageKey}`));
+      toast(t(`messagekey.${response.messageKey}`));
 
-    if (response.payload.twoFactorEnabled) {
-      pushLocalized(Routes.Two_Fa_Login);
-    } else {
-      pushLocalized(Routes.Two_Fa_Setup);
+      if (response.payload.twoFactorEnabled) {
+        pushLocalized(Routes.Two_Fa_Login);
+      } else {
+        pushLocalized(Routes.Two_Fa_Setup);
+      }
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }
   };
 

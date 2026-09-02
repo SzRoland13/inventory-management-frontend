@@ -16,7 +16,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { AuthService } from '@/lib/services/AuthService';
+import { useSetupNewPasswordMutation } from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Routes } from '@/lib/enums/routes';
 import { Label } from '@radix-ui/react-label';
@@ -39,6 +40,7 @@ export default function SetupPasswordPage() {
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+  const setupNewPassword = useSetupNewPasswordMutation();
 
   const {
     register,
@@ -65,11 +67,12 @@ export default function SetupPasswordPage() {
   const password = watch('password');
 
   const onSubmit = async (data: SetupPasswordFormData) => {
-    const response = await AuthService.setupNewPassword(data);
-
-    toast(t(`messagekey.${response.messageKey}`));
-    if (response.success) {
+    try {
+      const response = await setupNewPassword.mutateAsync(data);
+      toast(t(`messagekey.${response.messageKey}`));
       pushLocalized(Routes.Login);
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }
   };
 

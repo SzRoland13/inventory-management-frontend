@@ -15,7 +15,11 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AuthService } from '@/lib/services/AuthService';
+import {
+  useTwoFaLoginMutation,
+  useTwoFaSetupMutation,
+} from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { Routes } from '@/lib/enums/routes';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
@@ -39,6 +43,8 @@ export default function TwoFaSetupPage() {
   const { pushLocalized } = useLocalizedRouter();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
 
+  const twoFaSetup = useTwoFaSetupMutation();
+  const twoFaLogin = useTwoFaLoginMutation();
   const [qrCode, setQrCode] = useState<string | null>(null);
 
   useEffect(() => {
@@ -76,11 +82,12 @@ export default function TwoFaSetupPage() {
 
   const onRequestQr = async (data: EmailForm) => {
     if (data.email) {
-      const response = await AuthService.twoFaSetup({ email: data.email });
-
-      toast(t(`messagekey.${response.messageKey}`));
-      if (response.success && response.payload) {
+      try {
+        const response = await twoFaSetup.mutateAsync({ email: data.email });
+        toast(t(`messagekey.${response.messageKey}`));
         setQrCode(response.payload);
+      } catch (error) {
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
       }
     } else {
       toast(t('messagekey.auth.invalid-or-expired-session'));
@@ -92,26 +99,27 @@ export default function TwoFaSetupPage() {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
 
     if (loginEmail && shortLifeToken) {
-      const response = await AuthService.twoFaLogin({
-        email: loginEmail,
-        code: data.code,
-        shortLifeToken,
-      });
-
-      const { user, firstTime2FAEnabled } = response.payload;
-
-      toast(t(`messagekey.${response.messageKey}`));
-
-      if (response.success && firstTime2FAEnabled) {
-        useUserStore.getState().setUser({
-          username: user.username,
-          email: user.email,
-          role: castToEnum(UserRole, user.role),
+      try {
+        const response = await twoFaLogin.mutateAsync({
+          email: loginEmail,
+          code: data.code,
+          shortLifeToken,
         });
+        const { user, firstTime2FAEnabled } = response.payload;
+        toast(t(`messagekey.${response.messageKey}`));
 
-        useAuthStore.getState().clearAuthData();
+        if (firstTime2FAEnabled) {
+          useUserStore.getState().setUser({
+            username: user.username,
+            email: user.email,
+            role: castToEnum(UserRole, user.role),
+          });
 
-        pushLocalized(Routes.Dashboard);
+          useAuthStore.getState().clearAuthData();
+          pushLocalized(Routes.Dashboard);
+        }
+      } catch (error) {
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
       }
     }
   };

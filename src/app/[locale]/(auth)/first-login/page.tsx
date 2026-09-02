@@ -11,7 +11,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
-import { AuthService } from '@/lib/services/AuthService';
+import {
+  useRequestOneTimeCodeMutation,
+  useValidateOneTimeCodeMutation,
+} from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Routes } from '@/lib/enums/routes';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -39,6 +43,8 @@ export default function FirstLoginPage() {
   const { pushLocalized } = useLocalizedRouter();
   const [step, setStep] = useState<Step>(Step.STEP1);
   const codeInputRef = useRef<HTMLInputElement | null>(null);
+  const requestOneTimeCode = useRequestOneTimeCodeMutation();
+  const validateOneTimeCode = useValidateOneTimeCodeMutation();
 
   useEffect(() => {
     if (!useAuthStore.getState().email) {
@@ -74,28 +80,29 @@ export default function FirstLoginPage() {
 
   const onOneTimeCodeRequest = async (data: EmailForm) => {
     if (data.email) {
-      const response = await AuthService.requestOneTimeCode({
-        email: data.email,
-      });
-
-      toast(t(`messagekey.${response.messageKey}`));
-      if (response.success) {
+      try {
+        const response = await requestOneTimeCode.mutateAsync({
+          email: data.email,
+        });
+        toast(t(`messagekey.${response.messageKey}`));
         resetTotpForm({ email: data.email, oneTimeCode: '' });
         setStep(Step.STEP2);
+      } catch (error) {
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
       }
     }
   };
 
   const onVerifyTotp = async (data: OneTimeCodeForm) => {
-    const response = await AuthService.validateOneTimeCode({
-      email: data.email,
-      oneTimeCode: data.oneTimeCode,
-    });
-
-    toast(t(`messagekey.${response.messageKey}`));
-    if (response.success) {
+    try {
+      const response = await validateOneTimeCode.mutateAsync({
+        email: data.email,
+        oneTimeCode: data.oneTimeCode,
+      });
+      toast(t(`messagekey.${response.messageKey}`));
       pushLocalized(Routes.Setup_Password);
-    } else {
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
       setStep(Step.STEP1);
     }
   };

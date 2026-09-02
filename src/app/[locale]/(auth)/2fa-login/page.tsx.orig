@@ -53,6 +53,7 @@ export default function TwoFaLoginPage() {
       !storeState.shortLifeTokenExpiry
     ) {
       toast(t('messagekey.auth.invalid-or-expired-session'));
+      console.log('ez fut le?');
       pushLocalized(Routes.Login_Start);
     } else {
       setTimeout(() => codeInputRef.current?.focus(), 250);
@@ -71,43 +72,46 @@ export default function TwoFaLoginPage() {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
 
     if (data.email && data.code && shortLifeToken) {
-      try {
-        const response = await twoFaLogin.mutateAsync({
-          email: data.email,
-          code: data.code,
-          shortLifeToken,
-        });
+      const response = await AuthService.twoFaLogin({
+        email: data.email,
+        code: data.code,
+        shortLifeToken,
+      });
+
+      if (response.success && response.payload) {
         const { user } = response.payload;
+
         toast(t(`messagekey.${response.messageKey}`));
 
-        useUserStore.getState().setUser({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: castToEnum(UserRole, user.role),
-          avatarId: user.avatarId,
-          avatarUrl: user.avatarUrl,
-          avatarUrlExpiry: user.avatarUrlExpiry,
-        });
-
-        useAuthStore.getState().clearAuthData();
-
-        const companyResult = await minimalCompany.refetch();
-        const company = companyResult.data?.payload;
-
-        if (company) {
-          useCompanyStore.getState().setCompanyData({
-            id: company.id,
-            logoId: company.logoId,
-            logoUrl: company.logoUrl,
-            logoUrlExpiry: company.logoUrlExpiry,
-            name: company.name,
+        if (response.success) {
+          useUserStore.getState().setUser({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: castToEnum(UserRole, user.role),
+            avatarId: user.avatarId,
+            avatarUrl: user.avatarUrl,
+            avatarUrlExpiry: user.avatarUrlExpiry,
           });
-        }
 
-        pushLocalized(Routes.Dashboard);
-      } catch (error) {
-        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+          useAuthStore.getState().clearAuthData();
+
+          const companyResponse = await CompanyService.getMinimalCompanyData();
+
+          if (companyResponse.success) {
+            useCompanyStore.getState().setCompanyData({
+              id: companyResponse.payload.id,
+              logoId: companyResponse.payload.logoId,
+              logoUrl: companyResponse.payload.logoUrl,
+              logoUrlExpiry: companyResponse.payload.logoUrlExpiry,
+              name: companyResponse.payload.name,
+            });
+          }
+
+          pushLocalized(Routes.Dashboard);
+        }
+      } else {
+        toast.error(t(`${response.messageKey}`));
       }
     }
   };
