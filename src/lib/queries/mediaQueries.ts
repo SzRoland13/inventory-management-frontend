@@ -7,6 +7,21 @@ import { queryKeys } from '@/lib/queries/queryKeys';
 
 const REFRESH_BUFFER_MS = 60_000;
 
+const toInitialPreviewResponse = (initialPreview: MediaPreviewResponse) => {
+  return {
+    success: true,
+    messageKey: '',
+    payload: initialPreview,
+  };
+};
+
+const getMsUntilRefreshNeeded = (expiry: string, minMs: number) => {
+  return Math.max(
+    new Date(expiry).getTime() - Date.now() - REFRESH_BUFFER_MS,
+    minMs,
+  );
+};
+
 export function useMediaPreviewQuery(
   id: number | null,
   initialPreview?: MediaPreviewResponse,
@@ -16,29 +31,15 @@ export function useMediaPreviewQuery(
     queryFn: () => requireSuccessfulResponse(MediaService.getPreview(id!)),
     enabled: id !== null,
     initialData: initialPreview
-      ? {
-          success: true,
-          messageKey: '',
-          payload: initialPreview,
-        }
+      ? toInitialPreviewResponse(initialPreview)
       : undefined,
     staleTime: (query) => {
       const expiry = query.state.data?.payload.expiry;
-      return expiry
-        ? Math.max(
-            new Date(expiry).getTime() - Date.now() - REFRESH_BUFFER_MS,
-            0,
-          )
-        : 0;
+      return expiry ? getMsUntilRefreshNeeded(expiry, 0) : 0;
     },
     refetchInterval: (query) => {
       const expiry = query.state.data?.payload.expiry;
-      return expiry
-        ? Math.max(
-            new Date(expiry).getTime() - Date.now() - REFRESH_BUFFER_MS,
-            1_000,
-          )
-        : 60_000;
+      return expiry ? getMsUntilRefreshNeeded(expiry, 1_000) : 60_000;
     },
   });
 }
