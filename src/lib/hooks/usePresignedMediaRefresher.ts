@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useUserStore } from '@/lib/stores/userStore';
+import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { useCompanyStore } from '@/lib/stores/companyStore';
 import { useMediaPreviewQuery } from '@/lib/queries/mediaQueries';
 
@@ -8,7 +8,7 @@ import { useMediaPreviewQuery } from '@/lib/queries/mediaQueries';
  * Place it in the layout so it runs globally.
  */
 export function usePresignedMediaRefresher() {
-  const { avatarId, setUser } = useUserStore();
+  const { avatarId, setAvatar } = useAvatarStore();
   const { logoId, setCompanyData } = useCompanyStore();
 
   const avatarQuery = useMediaPreviewQuery(avatarId ?? null);
@@ -18,12 +18,12 @@ export function usePresignedMediaRefresher() {
     const payload = avatarQuery.data?.payload;
     if (!payload) return;
 
-    setUser({
+    setAvatar({
       avatarId: payload.id,
       avatarUrl: payload.getUrl,
       avatarUrlExpiry: payload.expiry,
     });
-  }, [avatarQuery.data, setUser]);
+  }, [avatarQuery.data, setAvatar]);
 
   useEffect(() => {
     const payload = logoQuery.data?.payload;

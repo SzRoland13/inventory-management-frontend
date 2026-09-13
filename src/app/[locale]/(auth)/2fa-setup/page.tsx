@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -20,15 +21,17 @@ import {
   useTwoFaSetupMutation,
 } from '@/lib/queries/authQueries';
 import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { queryKeys } from '@/lib/queries/queryKeys';
 import { Routes } from '@/lib/enums/routes';
 import { useAuthStore } from '@/lib/stores/authStore';
+import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
-import { useUserStore } from '@/lib/stores/userStore';
 import { castToEnum } from '@/lib/helpers/enum';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useTranslations } from 'next-intl';
-import { UserRole } from '@/lib/enums/user';
+import { UserRole, UserStatus } from '@/lib/enums/user';
+import { UserDto } from '@/lib/services/dtos/userDtos';
 
 type EmailForm = {
   email: string;
@@ -46,6 +49,7 @@ export default function TwoFaSetupPage() {
   const twoFaSetup = useTwoFaSetupMutation();
   const twoFaLogin = useTwoFaLoginMutation();
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const storeState = useAuthStore.getState();
@@ -109,10 +113,26 @@ export default function TwoFaSetupPage() {
         toast(t(`messagekey.${response.messageKey}`));
 
         if (firstTime2FAEnabled) {
-          useUserStore.getState().setUser({
-            username: user.username,
-            email: user.email,
-            role: castToEnum(UserRole, user.role),
+          queryClient.setQueryData(queryKeys.auth.session, {
+            success: true,
+            messageKey: response.messageKey,
+            payload: {
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              // Least-privilege fallback: never silently grant elevated
+              // access if the role string somehow doesn't match the enum.
+              role: castToEnum(UserRole, user.role) ?? UserRole.SALES,
+              twoFaEnabled: true,
+              otcSetupCompleted: true,
+              userStatus: UserStatus.ACTIVE,
+            } satisfies UserDto,
+          });
+
+          useAvatarStore.getState().setAvatar({
+            avatarId: user.avatarId,
+            avatarUrl: user.avatarUrl,
+            avatarUrlExpiry: user.avatarUrlExpiry,
           });
 
           useAuthStore.getState().clearAuthData();

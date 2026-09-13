@@ -1,49 +1,41 @@
-'use client';
-
-import { Loader2 } from 'lucide-react';
-import Sidebar from '@/components/sidebar/Sidebar';
-import useSessionGuard from '@/lib/hooks/useSessionGuard';
-import { SidebarProvider } from '@/lib/providers/SidebarContext';
-import { useTranslations } from 'next-intl';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
-import { useEffect } from 'react';
-import { toast } from 'sonner';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/lib/auth/sessionHeader';
+import { queryKeys } from '@/lib/queries/queryKeys';
 import { Routes } from '@/lib/enums/routes';
-import { usePresignedMediaRefresher } from '@/lib/hooks/usePresignedMediaRefresher';
+import ProtectedLayoutClient from '@/components/layout/ProtectedLayoutClient';
 
-export default function ProtectedLayout({
+export default async function ProtectedLayout({
   children,
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-}>) {
-  const t = useTranslations();
-  const { loading, isAuthenticated } = useSessionGuard();
-  const { replaceLocalized } = useLocalizedRouter();
-  usePresignedMediaRefresher();
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const headerList = await headers();
+  const session = decodeSessionHeader(headerList.get(SESSION_HEADER_NAME));
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      toast.info(t('messagekey.guard.session-expired'));
-      replaceLocalized(Routes.Login_Start);
-    }
-  }, [loading, isAuthenticated, replaceLocalized, t]);
-
-  if (loading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center bg-zinc-950'>
-        <Loader2 className='w-6 h-6 animate-spin text-zinc-300' />
-      </div>
-    );
+  // proxy.ts already redirects unauthenticated requests away from protected
+  // routes - this is a defense-in-depth fallback (e.g. a future route added
+  // under (protected) before PROTECTED_ROUTES is updated), not the primary gate.
+  if (!session.authenticated) {
+    redirect(`/${locale}${Routes.Login_Start}`);
   }
 
+  // Fresh QueryClient per request - never a module-level singleton, which
+  // would leak session data between users.
+  const queryClient = new QueryClient();
+  queryClient.setQueryData(queryKeys.auth.session, {
+    success: true,
+    messageKey: '',
+    payload: session.user,
+  });
+
   return (
-    <div className='w-full flex min-h-screen bg-muted/10'>
-      <SidebarProvider>
-        <Sidebar />
-        <main className='flex w-full transition-all duration-300'>
-          {children}
-        </main>
-      </SidebarProvider>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProtectedLayoutClient>{children}</ProtectedLayoutClient>
+    </HydrationBoundary>
   );
 }

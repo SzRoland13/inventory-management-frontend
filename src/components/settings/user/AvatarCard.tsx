@@ -1,18 +1,20 @@
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Upload } from 'lucide-react';
-import { useUserStore } from '@/lib/stores/userStore';
+import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 import { toast } from 'sonner';
 import CardWrapper from '@/components/common/CardWrapper';
 import { useMediaUploadMutation } from '@/lib/queries/mediaQueries';
 import { useUpdateUserAvatarMutation } from '@/lib/queries/userQueries';
+import { useSessionQuery } from '@/lib/queries/authQueries';
 import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 
 export default function AvatarCard() {
-  const avatarUrl = useUserStore((state) => state.avatarUrl);
-  const setUser = useUserStore((state) => state.setUser);
+  const avatarUrl = useAvatarStore((state) => state.avatarUrl);
+  const setAvatar = useAvatarStore((state) => state.setAvatar);
+  const sessionQuery = useSessionQuery();
 
   const uploadMedia = useMediaUploadMutation();
   const updateAvatar = useUpdateUserAvatarMutation();
@@ -39,7 +41,7 @@ export default function AvatarCard() {
     const mediaAssetId = avatar?.id;
     if (!mediaAssetId) return;
 
-    const userId = useUserStore.getState().id;
+    const userId = sessionQuery.data?.payload.id;
     if (!userId) return;
 
     try {
@@ -49,7 +51,7 @@ export default function AvatarCard() {
       });
 
       if (avatar?.getUrl && avatar.expiry && avatar.id) {
-        setUser({
+        setAvatar({
           avatarId: avatar.id,
           avatarUrl: avatar.getUrl,
           avatarUrlExpiry: avatar.expiry,
