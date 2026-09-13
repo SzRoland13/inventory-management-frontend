@@ -28,7 +28,7 @@ import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
 import { castToEnum } from '@/lib/helpers/enum';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { UserRole, UserStatus } from '@/lib/enums/user';
 import { UserDto } from '@/lib/services/dtos/userDtos';
@@ -43,7 +43,7 @@ type TotpForm = {
 
 export default function TwoFaSetupPage() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
 
   const twoFaSetup = useTwoFaSetupMutation();
@@ -60,9 +60,9 @@ export default function TwoFaSetupPage() {
       !storeState.shortLifeTokenExpiry
     ) {
       toast(t('messagekey.auth.invalid-or-expired-session'));
-      pushLocalized(Routes.Login_Start);
+      router.push(Routes.Login_Start);
     }
-  }, [pushLocalized, t]);
+  }, [router, t]);
 
   useEffect(() => {
     if (qrCode) {
@@ -136,7 +136,7 @@ export default function TwoFaSetupPage() {
           });
 
           useAuthStore.getState().clearAuthData();
-          pushLocalized(Routes.Dashboard);
+          router.push(Routes.Dashboard);
         }
       } catch (error) {
         toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
@@ -157,7 +157,7 @@ export default function TwoFaSetupPage() {
         </div>
 
         <ShortLifeTokenCountdown
-          onExpire={() => pushLocalized(Routes.Login_Start)}
+          onExpire={() => router.push(Routes.Login_Start)}
         />
       </CardHeader>
       <CardContent>

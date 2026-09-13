@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import {
   useRequestOneTimeCodeMutation,
   useValidateOneTimeCodeMutation,
@@ -40,7 +40,7 @@ enum Step {
 
 export default function FirstLoginPage() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const [step, setStep] = useState<Step>(Step.STEP1);
   const codeInputRef = useRef<HTMLInputElement | null>(null);
   const requestOneTimeCode = useRequestOneTimeCodeMutation();
@@ -48,9 +48,9 @@ export default function FirstLoginPage() {
 
   useEffect(() => {
     if (!useAuthStore.getState().email) {
-      pushLocalized(Routes.Login_Start);
+      router.push(Routes.Login_Start);
     }
-  }, [pushLocalized]);
+  }, [router]);
 
   useEffect(() => {
     if (step === Step.STEP2) {
@@ -100,7 +100,7 @@ export default function FirstLoginPage() {
         oneTimeCode: data.oneTimeCode,
       });
       toast(t(`messagekey.${response.messageKey}`));
-      pushLocalized(Routes.Setup_Password);
+      router.push(Routes.Setup_Password);
     } catch (error) {
       toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
       setStep(Step.STEP1);

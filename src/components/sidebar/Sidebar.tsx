@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { useSessionQuery } from '@/lib/queries/authQueries';
 import { sidebarItems } from '@/lib/config/sidebarConfig';
 import { Button } from '@/components/ui/button';
@@ -13,13 +13,12 @@ import { useTranslations } from 'next-intl';
 import { useSidebar } from '@/lib/providers/SidebarContext';
 import SidebarHeader from '@/components/sidebar/SidebarHeader';
 import SidebarFooter from '@/components/sidebar/SidebarFooter';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 
 export default function Sidebar() {
   const { isOpen: sheetOpen, setOpen: setSheetOpen } = useSidebar();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const t = useTranslations();
-  const pathname = usePathname();
+  const activePath = usePathname();
   const role = useSessionQuery().data?.payload.role;
 
   useEffect(() => {
@@ -30,12 +29,6 @@ export default function Sidebar() {
   const visibleItems = sidebarItems.filter(
     (item) => !item.roles || (role ? item.roles.includes(role) : false),
   );
-
-  const getPath = () => {
-    return `/${pathname.split('/')[2]}`;
-  };
-
-  const activePath = getPath();
 
   const SidebarContent = (
     <div className='flex flex-col h-full w-full bg-zinc-800 text-zinc-200 rounded-tr-md rounded-br-md'>
@@ -50,7 +43,7 @@ export default function Sidebar() {
                 key={item.path}
                 variant='ghost'
                 onClick={() => {
-                  pushLocalized(item.path);
+                  router.push(item.path);
                   setSheetOpen(false);
                 }}
                 className={cn(

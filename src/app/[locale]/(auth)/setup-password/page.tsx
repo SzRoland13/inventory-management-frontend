@@ -25,7 +25,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Info } from 'lucide-react';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 
 type SetupPasswordFormData = {
@@ -36,7 +36,7 @@ type SetupPasswordFormData = {
 
 export default function SetupPasswordPage() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
@@ -59,10 +59,10 @@ export default function SetupPasswordPage() {
 
   useEffect(() => {
     if (!useAuthStore.getState().email) {
-      pushLocalized(Routes.Login_Start);
+      router.push(Routes.Login_Start);
     }
     passwordRef.current?.focus();
-  }, [pushLocalized]);
+  }, [router]);
 
   const password = watch('password');
 
@@ -70,7 +70,7 @@ export default function SetupPasswordPage() {
     try {
       const response = await setupNewPassword.mutateAsync(data);
       toast(t(`messagekey.${response.messageKey}`));
-      pushLocalized(Routes.Login);
+      router.push(Routes.Login);
     } catch (error) {
       toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }

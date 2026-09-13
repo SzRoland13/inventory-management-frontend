@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import { useLogoutMutation, useSessionQuery } from '@/lib/queries/authQueries';
 import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useCompanyStore } from '@/lib/stores/companyStore';
@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 
 export default function SidebarFooter() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const username = useSessionQuery().data?.payload.username;
   const avatarUrl = useAvatarStore((state) => state.avatarUrl);
   const logout = useLogoutMutation();
@@ -23,7 +23,7 @@ export default function SidebarFooter() {
         useAvatarStore.getState().clearAvatar();
         useCompanyStore.getState().clearCompanyData();
 
-        pushLocalized(Routes.Login_Start);
+        router.push(Routes.Login_Start);
 
         toast(t(`messagekey.${response.messageKey}`));
       },
