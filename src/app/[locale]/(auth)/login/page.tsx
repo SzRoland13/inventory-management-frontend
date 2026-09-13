@@ -19,7 +19,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 
 type LoginFormData = {
@@ -28,7 +28,7 @@ type LoginFormData = {
 };
 
 export default function LoginPage() {
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const t = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
   const login = useLoginMutation();
@@ -60,9 +60,9 @@ export default function LoginPage() {
       toast(t(`messagekey.${response.messageKey}`));
 
       if (response.payload.twoFactorEnabled) {
-        pushLocalized(Routes.Two_Fa_Login);
+        router.push(Routes.Two_Fa_Login);
       } else {
-        pushLocalized(Routes.Two_Fa_Setup);
+        router.push(Routes.Two_Fa_Setup);
       }
     } catch (error) {
       toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
@@ -71,9 +71,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!useAuthStore.getState().email) {
-      pushLocalized(Routes.Login_Start);
+      router.push(Routes.Login_Start);
     }
-  }, [pushLocalized]);
+  }, [router]);
 
   return (
     <Card className='w-full max-w-sm bg-zinc-900 border-zinc-700 shadow-xl'>
@@ -148,7 +148,7 @@ export default function LoginPage() {
               type='button'
               disabled={isSubmitting}
               className='flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
-              onClick={() => pushLocalized(Routes.Login_Start)}
+              onClick={() => router.push(Routes.Login_Start)}
             >
               {t('common.back')}
             </Button>

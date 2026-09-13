@@ -139,10 +139,12 @@ export async function resolveSession(
       setCookies: refreshResult.setCookies,
       clearCookies: false,
     };
-  } catch {
+  } catch (error) {
     // Network/fetch exception at any step: fail-safe unauthenticated, but
     // never touch cookies - this must not log a valid session out over a
-    // transient backend blip.
+    // transient backend blip. Logged (not swallowed silently) since this
+    // is the one branch that can make a valid session look logged-out.
+    console.error('[resolveSession] backend call failed:', error);
     return unauthenticated();
   }
 }

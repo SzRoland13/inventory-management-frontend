@@ -1,9 +1,9 @@
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/lib/auth/sessionHeader';
 import { queryKeys } from '@/lib/queries/queryKeys';
 import { Routes } from '@/lib/enums/routes';
+import { redirect } from '@/i18n/navigation';
 import ProtectedLayoutClient from '@/components/layout/ProtectedLayoutClient';
 
 export default async function ProtectedLayout({
@@ -21,7 +21,7 @@ export default async function ProtectedLayout({
   // routes - this is a defense-in-depth fallback (e.g. a future route added
   // under (protected) before PROTECTED_ROUTES is updated), not the primary gate.
   if (!session.authenticated) {
-    redirect(`/${locale}${Routes.Login_Start}`);
+    redirect({ href: Routes.Login_Start, locale });
   }
 
   // Fresh QueryClient per request - never a module-level singleton, which

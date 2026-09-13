@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import { useCheckFirstLoginMutation } from '@/lib/queries/authQueries';
 import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useAuthStore } from '@/lib/stores/authStore';
@@ -26,7 +26,7 @@ type LoginStartFormData = {
 
 export default function LoginStartPage() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const checkFirstLogin = useCheckFirstLoginMutation();
 
   const {
@@ -48,9 +48,9 @@ export default function LoginStartPage() {
 
       if (response.payload.firstLogin) {
         toast(t(`messagekey.${response.messageKey}`));
-        pushLocalized(Routes.First_Login);
+        router.push(Routes.First_Login);
       } else {
-        pushLocalized(Routes.Login);
+        router.push(Routes.Login);
       }
     } catch (error) {
       toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));

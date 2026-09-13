@@ -1,6 +1,6 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/lib/config/locales';
+import { routing } from '@/i18n/routing';
 import { classifyPath } from '@/lib/auth/routeGroups';
 import { resolveSession, ResolveSessionResult } from '@/lib/auth/resolveSession';
 import {
@@ -10,10 +10,7 @@ import {
 } from '@/lib/auth/sessionHeader';
 import { Routes } from '@/lib/enums/routes';
 
-const intlMiddleware = createMiddleware({
-  locales: SUPPORTED_LOCALES,
-  defaultLocale: DEFAULT_LOCALE,
-});
+const intlMiddleware = createMiddleware(routing);
 
 function applyCookieInstructions(
   response: NextResponse,
@@ -41,11 +38,11 @@ export default async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const [, localeSegment, ...rest] = pathname.split('/');
-  const locale = SUPPORTED_LOCALES.includes(
-    localeSegment as (typeof SUPPORTED_LOCALES)[number],
+  const locale = (routing.locales as readonly string[]).includes(
+    localeSegment,
   )
     ? localeSegment
-    : DEFAULT_LOCALE;
+    : routing.defaultLocale;
   const pathWithoutLocale = `/${rest.join('/')}`.replace(/\/$/, '') || '/';
   const group = classifyPath(pathWithoutLocale);
 

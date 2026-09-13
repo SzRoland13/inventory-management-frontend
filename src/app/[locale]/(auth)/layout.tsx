@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/lib/auth/sessionHeader';
 import { Routes } from '@/lib/enums/routes';
+import { redirect } from '@/i18n/navigation';
 
 export default async function AuthLayout({
   children,
@@ -18,7 +18,7 @@ export default async function AuthLayout({
   // this request (one backend call total) - this layout owns the decision
   // to bounce an already-authenticated guest away from these pages.
   if (session.authenticated) {
-    redirect(`/${locale}${Routes.Dashboard}`);
+    redirect({ href: Routes.Dashboard, locale });
   }
 
   return (
