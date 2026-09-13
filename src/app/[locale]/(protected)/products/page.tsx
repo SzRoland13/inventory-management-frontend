@@ -1,11 +1,9 @@
-'use client';
-
 import MainHeader from '@/components/common/MainHeader';
 import { PackageSearch } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export default function ProductsPage() {
-  const t = useTranslations();
+export default async function ProductsPage() {
+  const t = await getTranslations();
 
   return (
     <div className='flex flex-col w-full'>

@@ -1,10 +1,9 @@
-'use client';
-
 import MainHeader from '@/components/common/MainHeader';
 import { Barcode } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-export default function StocksPage() {
-  const t = useTranslations();
+import { getTranslations } from 'next-intl/server';
+
+export default async function StocksPage() {
+  const t = await getTranslations();
 
   return (
     <div className='flex flex-col w-full'>
