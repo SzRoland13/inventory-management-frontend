@@ -24,6 +24,11 @@ export function ShortLifeTokenCountdown({
 
   // client-only effect
   useEffect(() => {
+    // Initial sync must happen post-mount, not during the lazy useState
+    // initializer: the value depends on Date.now() and persisted
+    // client-only store state, so computing it during the server render
+    // would cause a hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSecondsLeft(getRemainingSessionSeconds());
 
     const interval = setInterval(() => {
