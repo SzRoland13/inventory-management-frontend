@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form';
-import { CompanyService } from '@/lib/services/CompanyService';
 import {
   CompanyBaseDataUpdateRequest,
   CompanyExtendedResponse,
@@ -13,6 +12,8 @@ import { useCompanyStore } from '@/lib/stores/companyStore';
 import { useEffect } from 'react';
 import { useFormChanges } from '@/lib/hooks/useFormChanges';
 import CardWrapper from '@/components/common/CardWrapper';
+import { useUpdateCompanyBaseDataMutation } from '@/lib/queries/companyQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 
 type Props = {
   initialCompanyData?: CompanyExtendedResponse | null;
@@ -50,11 +51,12 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
 
   const t = useTranslations();
   const setCompanyData = useCompanyStore((state) => state.setCompanyData);
+  const updateBaseData = useUpdateCompanyBaseDataMutation();
 
   const onSubmit = async (data: CompanyBaseDataUpdateRequest) => {
-    const res = await CompanyService.updateCompanyBaseData(data);
+    try {
+      const res = await updateBaseData.mutateAsync(data);
 
-    if (res.success && res.payload) {
       const values = {
         name: res.payload.name ?? '',
         description: res.payload.description ?? '',
@@ -72,7 +74,9 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
       setInitialValues(values);
       reset(values);
 
-      toast(t(`messageKey.${res.messageKey}`));
+      toast(t(`messagekey.${res.messageKey}`));
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }
   };
 

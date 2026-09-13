@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -14,17 +15,20 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AuthService } from '@/lib/services/AuthService';
 import { Routes } from '@/lib/enums/routes';
 import { useAuthStore } from '@/lib/stores/authStore';
+import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
-import { useUserStore } from '@/lib/stores/userStore';
 import { castToEnum } from '@/lib/helpers/enum';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { UserRole } from '@/lib/enums/user';
-import { CompanyService } from '@/lib/services/CompanyService';
+import { UserRole, UserStatus } from '@/lib/enums/user';
+import { UserDto } from '@/lib/services/dtos/userDtos';
 import { useCompanyStore } from '@/lib/stores/companyStore';
+import { useTwoFaLoginMutation } from '@/lib/queries/authQueries';
+import { useMinimalCompanyQuery } from '@/lib/queries/companyQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { queryKeys } from '@/lib/queries/queryKeys';
 
 type TwoFaForm = {
   email: string;
@@ -33,12 +37,15 @@ type TwoFaForm = {
 
 export default function TwoFaLoginPage() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
   const initialCheck = useRef(false);
+  const twoFaLogin = useTwoFaLoginMutation();
+  const minimalCompany = useMinimalCompanyQuery(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!initialCheck.current) return;
+    if (initialCheck.current) return;
 
     initialCheck.current = true;
 
@@ -50,12 +57,11 @@ export default function TwoFaLoginPage() {
       !storeState.shortLifeTokenExpiry
     ) {
       toast(t('messagekey.auth.invalid-or-expired-session'));
-      console.log('ez fut le?');
-      pushLocalized(Routes.Login_Start);
+      router.push(Routes.Login_Start);
     } else {
       setTimeout(() => codeInputRef.current?.focus(), 250);
     }
-  }, [pushLocalized, t]);
+  }, [router, t]);
 
   const {
     register: registerTotp,
@@ -69,46 +75,66 @@ export default function TwoFaLoginPage() {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
 
     if (data.email && data.code && shortLifeToken) {
-      const response = await AuthService.twoFaLogin({
-        email: data.email,
-        code: data.code,
-        shortLifeToken,
-      });
+      try {
+        const response = await twoFaLogin.mutateAsync({
+          email: data.email,
+          code: data.code,
+          shortLifeToken,
+        });
+        if (!response.payload) {
+          toast.error(t(`messagekey.${response.messageKey}`));
+          return;
+        }
 
-      if (response.success && response.payload) {
         const { user } = response.payload;
-
         toast(t(`messagekey.${response.messageKey}`));
 
-        if (response.success) {
-          useUserStore.getState().setUser({
+        // check-session's UserDto never carries avatar fields - this
+        // 2FA-login response is the only place avatar data is available.
+        // The identity fields below are a best-effort seed: the very next
+        // protected-layout render (triggered by pushLocalized(Dashboard))
+        // re-runs proxy.ts's own check-session call and overwrites this
+        // entry with the real values within the same navigation.
+        queryClient.setQueryData(queryKeys.auth.session, {
+          success: true,
+          messageKey: response.messageKey,
+          payload: {
             id: user.id,
             username: user.username,
             email: user.email,
-            role: castToEnum(UserRole, user.role),
-            avatarId: user.avatarId,
-            avatarUrl: user.avatarUrl,
-            avatarUrlExpiry: user.avatarUrlExpiry,
+            // Least-privilege fallback: never silently grant elevated
+            // access if the role string somehow doesn't match the enum.
+            role: castToEnum(UserRole, user.role) ?? UserRole.SALES,
+            twoFaEnabled: true,
+            otcSetupCompleted: true,
+            userStatus: UserStatus.ACTIVE,
+          } satisfies UserDto,
+        });
+
+        useAvatarStore.getState().setAvatar({
+          avatarId: user.avatarId,
+          avatarUrl: user.avatarUrl,
+          avatarUrlExpiry: user.avatarUrlExpiry,
+        });
+
+        useAuthStore.getState().clearAuthData();
+
+        const companyResult = await minimalCompany.refetch();
+        const company = companyResult.data?.payload;
+
+        if (company) {
+          useCompanyStore.getState().setCompanyData({
+            id: company.id,
+            logoId: company.logoId,
+            logoUrl: company.logoUrl,
+            logoUrlExpiry: company.logoUrlExpiry,
+            name: company.name,
           });
-
-          useAuthStore.getState().clearAuthData();
-
-          const companyResponse = await CompanyService.getMinimalCompanyData();
-
-          if (companyResponse.success) {
-            useCompanyStore.getState().setCompanyData({
-              id: companyResponse.payload.id,
-              logoId: companyResponse.payload.logoId,
-              logoUrl: companyResponse.payload.logoUrl,
-              logoUrlExpiry: companyResponse.payload.logoUrlExpiry,
-              name: companyResponse.payload.name,
-            });
-          }
-
-          pushLocalized(Routes.Dashboard);
         }
-      } else {
-        toast.error(t(`${response.messageKey}`));
+
+        router.push(Routes.Dashboard);
+      } catch (error) {
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
       }
     }
   };

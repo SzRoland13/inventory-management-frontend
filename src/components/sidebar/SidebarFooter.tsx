@@ -1,19 +1,37 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
-import { AuthService } from '@/lib/services/AuthService';
-import { ApiResponse } from '@/lib/services/dtos/genericDtos';
+import { useRouter } from '@/i18n/navigation';
+import { useLogoutMutation, useSessionQuery } from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useCompanyStore } from '@/lib/stores/companyStore';
-import { useUserStore } from '@/lib/stores/userStore';
+import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { Routes } from '@/lib/enums/routes';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 export default function SidebarFooter() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
-  const { username, avatarUrl } = useUserStore();
+  const router = useRouter();
+  const username = useSessionQuery().data?.payload.username;
+  const avatarUrl = useAvatarStore((state) => state.avatarUrl);
+  const logout = useLogoutMutation();
+
+  const handleLogout = () => {
+    logout.mutate(undefined, {
+      onSuccess: (response) => {
+        useAvatarStore.getState().clearAvatar();
+        useCompanyStore.getState().clearCompanyData();
+
+        router.push(Routes.Login_Start);
+
+        toast(t(`messagekey.${response.messageKey}`));
+      },
+      onError: (error) => {
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      },
+    });
+  };
 
   return (
     <div className='border-t border-zinc-800 p-4 space-y-3'>
@@ -26,20 +44,7 @@ export default function SidebarFooter() {
         <div className='flex-1'>
           <div className='text-sm text-white'>{username}</div>
           <button
-            onClick={() => {
-              AuthService.logout()
-                .then((response) => {
-                  useUserStore.getState().clearUser();
-                  useCompanyStore.getState().clearCompanyData();
-
-                  pushLocalized(Routes.Login_Start);
-
-                  toast(t(`messagekey.${response.messageKey}`));
-                })
-                .catch((error: ApiResponse<void>) => {
-                  toast.error(t(`messagekey.${error.messageKey}`));
-                });
-            }}
+            onClick={handleLogout}
             className='text-xs text-zinc-400 hover:text-red-800'
           >
             {t('sidebar.footer.logout')}

@@ -1,22 +1,26 @@
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Upload } from 'lucide-react';
-import { MediaService } from '@/lib/services/MediaService';
-import { ObjectStorageService } from '@/lib/services/ObjectStorageService';
-import { UserService } from '@/lib/services/UserService';
-import { useUserStore } from '@/lib/stores/userStore';
+import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { toast } from 'sonner';
-import { MediaPreviewResponse } from '@/lib/services/dtos/mediaDtos';
 import CardWrapper from '@/components/common/CardWrapper';
+import { useMediaUploadMutation } from '@/lib/queries/mediaQueries';
+import { useUpdateUserAvatarMutation } from '@/lib/queries/userQueries';
+import { useSessionQuery } from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 
 export default function AvatarCard() {
-  const [avatar, setAvatar] = useState<MediaPreviewResponse | null>(null);
-  const [mediaAssetId, setMediaAssetId] = useState<number | null>(null);
-  const avatarUrl = useUserStore((state) => state.avatarUrl);
+  const avatarUrl = useAvatarStore((state) => state.avatarUrl);
+  const setAvatar = useAvatarStore((state) => state.setAvatar);
+  const sessionQuery = useSessionQuery();
+
+  const uploadMedia = useMediaUploadMutation();
+  const updateAvatar = useUpdateUserAvatarMutation();
+
+  const avatar = uploadMedia.data?.payload ?? null;
   const imageSrc = avatar?.getUrl ?? avatarUrl ?? undefined;
-  const setUser = useUserStore((state) => state.setUser);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const t = useTranslations();
@@ -26,42 +30,38 @@ export default function AvatarCard() {
 
     const file = e.target.files[0];
 
-    const initResp = await MediaService.initializeUpload({
-      filename: file.name,
-      mimeType: file.type,
-      fileSize: file.size,
-    });
-
-    setMediaAssetId(initResp.payload.id);
-
-    await ObjectStorageService.putImage({
-      url: initResp.payload.putUrl,
-      file,
-    });
-
-    const previewResp = await MediaService.getPreview(initResp.payload.id);
-    setAvatar(previewResp.payload);
+    try {
+      await uploadMedia.mutateAsync(file);
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+    }
   };
 
   const handleSaveAvatar = async () => {
+    const mediaAssetId = avatar?.id;
     if (!mediaAssetId) return;
 
-    const userId = useUserStore.getState().id;
+    const userId = sessionQuery.data?.payload.id;
     if (!userId) return;
 
-    const response = await UserService.uploadUserAvatar(userId, {
-      mediaAssetId,
-    });
-
-    if (avatar?.getUrl && avatar.expiry && avatar.id) {
-      setUser({
-        avatarId: avatar.id,
-        avatarUrl: avatar?.getUrl,
-        avatarUrlExpiry: avatar?.expiry,
+    try {
+      const response = await updateAvatar.mutateAsync({
+        id: userId,
+        request: { mediaAssetId },
       });
-    }
 
-    toast(t(`messageKey.${response.messageKey}`));
+      if (avatar?.getUrl && avatar.expiry && avatar.id) {
+        setAvatar({
+          avatarId: avatar.id,
+          avatarUrl: avatar.getUrl,
+          avatarUrlExpiry: avatar.expiry,
+        });
+      }
+
+      toast(t(`messagekey.${response.messageKey}`));
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+    }
   };
 
   return (
@@ -105,7 +105,7 @@ export default function AvatarCard() {
 
       <Button
         onClick={handleSaveAvatar}
-        disabled={!mediaAssetId}
+        disabled={!avatar?.id}
         className='bg-zinc-500 w-72 self-center'
       >
         {t('pages.settings.tabs.user.profile.save')}

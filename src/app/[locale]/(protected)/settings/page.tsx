@@ -11,15 +11,16 @@ import CompanyTab from '@/components/settings/company/CompanyTab';
 import { castToEnum } from '@/lib/helpers/enum';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useUserStore } from '@/lib/stores/userStore';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useSessionQuery } from '@/lib/queries/authQueries';
 import { UserRole } from '@/lib/enums/user';
+import { Routes } from '@/lib/enums/routes';
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
-  const { role } = useUserStore();
+  const role = useSessionQuery().data?.payload.role;
   const t = useTranslations();
 
   const isAdmin = role === UserRole.ADMIN;
@@ -30,9 +31,7 @@ export default function SettingsPage() {
 
   const onTabChange = (tab: string) => {
     const enumValue = castToEnum(SettingsTab, tab) ?? SettingsTab.General;
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('tab', enumValue);
-    router.replace(`${pathname}?${params.toString()}`);
+    router.replace({ pathname: Routes.Settings, query: { tab: enumValue } });
   };
 
   const triggerStyle = `

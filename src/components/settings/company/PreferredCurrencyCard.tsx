@@ -10,13 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { CompanyService } from '@/lib/services/CompanyService';
-import { CurrencyService } from '@/lib/services/CurrencyService';
 import { Currency } from '@/lib/services/dtos/currencyDtos';
 import { useCompanyStore } from '@/lib/stores/companyStore';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import {
+  useCurrenciesQuery,
+  useUpdatePreferredCurrencyMutation,
+} from '@/lib/queries/companyQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 
 type Props = {
   preferredCurrency?: Currency | null;
@@ -25,7 +28,9 @@ type Props = {
 export default function PreferredCurrencyCard({ preferredCurrency }: Props) {
   const t = useTranslations();
 
-  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const currenciesQuery = useCurrenciesQuery();
+  const currencies = currenciesQuery.data?.payload.currencies ?? [];
+  const updatePreferredCurrency = useUpdatePreferredCurrencyMutation();
 
   const [savedCurrencyId, setSavedCurrencyId] = useState<string | undefined>(
     preferredCurrency?.id?.toString(),
@@ -35,27 +40,20 @@ export default function PreferredCurrencyCard({ preferredCurrency }: Props) {
     string | undefined
   >(preferredCurrency?.id?.toString());
 
+  // Tracks which preferredCurrency we last synced from, so we can adjust
+  // state during render when it changes (e.g. it arrives later from the
+  // parent's query) without clobbering it via a useEffect-triggered set.
+  const [syncedId, setSyncedId] = useState(preferredCurrency?.id?.toString());
+  const incomingId = preferredCurrency?.id?.toString();
+
+  if (incomingId !== syncedId) {
+    setSyncedId(incomingId);
+    setSelectedCurrencyId(incomingId);
+    setSavedCurrencyId(incomingId);
+  }
+
   const hasChanges =
     selectedCurrencyId !== savedCurrencyId && selectedCurrencyId !== 'none';
-
-  useEffect(() => {
-    const loadCurrencies = async () => {
-      const response = await CurrencyService.getAll();
-
-      if (response.success && response.payload) {
-        setCurrencies(response.payload.currencies);
-      }
-    };
-
-    loadCurrencies();
-  }, []);
-
-  // ha később jön a company adat
-  useEffect(() => {
-    const id = preferredCurrency?.id?.toString() ?? '';
-    setSelectedCurrencyId(id);
-    setSavedCurrencyId(id);
-  }, [preferredCurrency]);
 
   const handleReset = () => {
     setSelectedCurrencyId(savedCurrencyId);
@@ -70,18 +68,20 @@ export default function PreferredCurrencyCard({ preferredCurrency }: Props) {
         ? null
         : Number(selectedCurrencyId);
 
-    const res = await CompanyService.updatePreferredCurrency({
-      companyId,
-      currencyId,
-    });
+    try {
+      const res = await updatePreferredCurrency.mutateAsync({
+        companyId,
+        currencyId,
+      });
 
-    if (res.success) {
       const newId = res.payload.currency?.id?.toString();
 
       setSavedCurrencyId(newId);
       setSelectedCurrencyId(newId);
 
-      toast(t(`messageKey.${res.messageKey}`));
+      toast(t(`messagekey.${res.messageKey}`));
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }
   };
 

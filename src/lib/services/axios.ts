@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { useUserStore } from '../stores/userStore';
-import { useLocaleStore } from '@/lib/stores/localeStore';
+import { routing } from '@/i18n/routing';
 
 const baseURL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
@@ -36,9 +35,12 @@ axiosClient.interceptors.response.use(
         if (e.response?.status === 400 || e.response?.status === 401) {
           await axiosClient.post('/auth/logout').catch(() => {});
 
-          useUserStore.getState().clearUser();
-
-          const locale = useLocaleStore.getState().locale || 'en';
+          const segment = window.location.pathname.split('/')[1];
+          const locale = (routing.locales as readonly string[]).includes(
+            segment,
+          )
+            ? segment
+            : routing.defaultLocale;
 
           if (window.location.pathname !== `/${locale}/login-start`) {
             window.location.href = `/${locale}/login-start`;

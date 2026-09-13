@@ -1,8 +1,10 @@
 import { NextIntlClientProvider } from 'next-intl';
+import { hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import React from 'react';
 import '@/app/globals.css';
-import LocaleSetter from '@/components/common/LocaleSetter';
+import { QueryProvider } from '@/lib/providers/QueryProvider';
+import { routing } from '@/i18n/routing';
 
 export default async function LocaleLayout({
   children,
@@ -12,20 +14,15 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  let messages;
 
-  try {
-    messages = (await import(`@/lib/locales/messages/${locale}.json`)).default;
-  } catch (error) {
-    console.error(error);
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
   return (
     <div className='w-full'>
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        <LocaleSetter locale={locale} />
-        {children}
+      <NextIntlClientProvider>
+        <QueryProvider>{children}</QueryProvider>
       </NextIntlClientProvider>
     </div>
   );

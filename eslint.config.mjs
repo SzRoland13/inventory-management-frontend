@@ -1,20 +1,13 @@
 import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import { FlatCompat } from '@eslint/eslintrc';
 import { defineConfig } from 'eslint/config';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
+import nextTypescript from 'eslint-config-next/typescript';
 
 export default defineConfig([
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
   {
     ignores: [
       '.next/**',

@@ -9,13 +9,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-import { DocumentPrefixService } from '@/lib/services/DocumentPrefixService';
 import {
   DocumentPrefixesUpdateRequest,
   DocumentPrefixDto,
 } from '@/lib/services/dtos/documentPrefixDtos';
 import { useFormChanges } from '@/lib/hooks/useFormChanges';
 import CardWrapper from '@/components/common/CardWrapper';
+import {
+  useDocumentPrefixesQuery,
+  useUpdateDocumentPrefixesMutation,
+} from '@/lib/queries/documentPrefixQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 
 type FormValues = {
   prefixes: DocumentPrefixDto[];
@@ -41,27 +45,23 @@ export default function DocumentPrefixCard() {
   const { hasChanges, setInitialValues, resetToInitial } =
     useFormChanges(values);
 
+  const prefixesQuery = useDocumentPrefixesQuery();
+  const updatePrefixes = useUpdateDocumentPrefixesMutation();
+
   useEffect(() => {
-    const load = async () => {
-      const res = await DocumentPrefixService.getAll();
+    const payload = prefixesQuery.data?.payload;
+    if (!payload) return;
 
-      if (res.success && res.payload) {
-        const values = {
-          prefixes: res.payload.prefixes,
-        };
+    const values = { prefixes: payload.prefixes };
 
-        reset(values);
-        setInitialValues(values);
-      }
-    };
-
-    load();
-  }, [reset, setInitialValues]);
+    reset(values);
+    setInitialValues(values);
+  }, [prefixesQuery.data, reset, setInitialValues]);
 
   const onSubmit = async (data: DocumentPrefixesUpdateRequest) => {
-    const res = await DocumentPrefixService.updateAll(data);
+    try {
+      const res = await updatePrefixes.mutateAsync(data);
 
-    if (res.success && res.payload) {
       const values = {
         prefixes: res.payload.prefixes,
       };
@@ -69,7 +69,9 @@ export default function DocumentPrefixCard() {
       reset(values);
       setInitialValues(values);
 
-      toast(t(`messageKey.${res.messageKey}`));
+      toast(t(`messagekey.${res.messageKey}`));
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }
   };
 

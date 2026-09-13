@@ -11,14 +11,15 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AuthService } from '@/lib/services/AuthService';
+import { useLoginMutation } from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Routes } from '@/lib/enums/routes';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 
 type LoginFormData = {
@@ -27,9 +28,10 @@ type LoginFormData = {
 };
 
 export default function LoginPage() {
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const t = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
+  const login = useLoginMutation();
 
   const {
     register,
@@ -42,34 +44,36 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    const response = await AuthService.login({
-      email: data.email,
-      password: data.password,
-    });
-
-    if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
-      const expiresAt = new Date(response.payload.expiresAt);
-
-      useAuthStore.getState().setAuthData({
-        shortLifeToken: response.payload.shortLifeToken,
-        shortLifeTokenExpiry: expiresAt,
+    try {
+      const response = await login.mutateAsync({
+        email: data.email,
+        password: data.password,
       });
-    }
+      if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
+        const expiresAt = new Date(response.payload.expiresAt);
+        useAuthStore.getState().setAuthData({
+          shortLifeToken: response.payload.shortLifeToken,
+          shortLifeTokenExpiry: expiresAt,
+        });
+      }
 
-    toast(t(`messagekey.${response.messageKey}`));
+      toast(t(`messagekey.${response.messageKey}`));
 
-    if (response.payload.twoFactorEnabled) {
-      pushLocalized(Routes.Two_Fa_Login);
-    } else {
-      pushLocalized(Routes.Two_Fa_Setup);
+      if (response.payload.twoFactorEnabled) {
+        router.push(Routes.Two_Fa_Login);
+      } else {
+        router.push(Routes.Two_Fa_Setup);
+      }
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }
   };
 
   useEffect(() => {
     if (!useAuthStore.getState().email) {
-      pushLocalized(Routes.Login_Start);
+      router.push(Routes.Login_Start);
     }
-  }, [pushLocalized]);
+  }, [router]);
 
   return (
     <Card className='w-full max-w-sm bg-zinc-900 border-zinc-700 shadow-xl'>
@@ -144,7 +148,7 @@ export default function LoginPage() {
               type='button'
               disabled={isSubmitting}
               className='flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
-              onClick={() => pushLocalized(Routes.Login_Start)}
+              onClick={() => router.push(Routes.Login_Start)}
             >
               {t('common.back')}
             </Button>
