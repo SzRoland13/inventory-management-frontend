@@ -1,22 +1,24 @@
 import CardWrapper from '@/components/common/CardWrapper';
 import { AvatarImage, AvatarFallback, Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { CompanyService } from '@/lib/services/CompanyService';
-import { MediaPreviewResponse } from '@/lib/services/dtos/mediaDtos';
-import { MediaService } from '@/lib/services/MediaService';
-import { ObjectStorageService } from '@/lib/services/ObjectStorageService';
 import { useCompanyStore } from '@/lib/stores/companyStore';
 import { Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { toast } from 'sonner';
+import { useMediaUploadMutation } from '@/lib/queries/mediaQueries';
+import { useUpdateCompanyLogoMutation } from '@/lib/queries/companyQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 
 export default function LogoCard() {
-  const [logo, setLogo] = useState<MediaPreviewResponse | null>(null);
-  const [mediaAssetId, setMediaAssetId] = useState<number | null>(null);
   const companyLogoUrl = useCompanyStore((state) => state.logoUrl);
-  const imageSrc = logo?.getUrl ?? companyLogoUrl ?? undefined;
   const setCompanyData = useCompanyStore((state) => state.setCompanyData);
+
+  const uploadMedia = useMediaUploadMutation();
+  const updateLogo = useUpdateCompanyLogoMutation();
+
+  const logo = uploadMedia.data?.payload ?? null;
+  const imageSrc = logo?.getUrl ?? companyLogoUrl ?? undefined;
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const t = useTranslations();
@@ -26,45 +28,38 @@ export default function LogoCard() {
 
     const file = e.target.files[0];
 
-    // Initialize presigned upload
-    const initResp = await MediaService.initializeUpload({
-      filename: file.name,
-      mimeType: file.type,
-      fileSize: file.size,
-    });
-
-    setMediaAssetId(initResp.payload.id);
-
-    // Upload the file
-    await ObjectStorageService.putImage({
-      url: initResp.payload.putUrl,
-      file,
-    });
-
-    // Get preview URL
-    const previewResp = await MediaService.getPreview(initResp.payload.id);
-    setLogo(previewResp.payload);
+    try {
+      await uploadMedia.mutateAsync(file);
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+    }
   };
 
   const handleSaveLogo = async () => {
+    const mediaAssetId = logo?.id;
     if (!mediaAssetId) return;
 
     const companyId = useCompanyStore.getState().id;
-    if (!companyId) return; // this silent not saving is wrong, fix this!
-
-    const response = await CompanyService.updateLogo({
-      mediaAssetId,
-    });
-
-    if (logo?.getUrl && logo.expiry && logo.id) {
-      setCompanyData({
-        logoId: logo.id,
-        logoUrl: logo.getUrl,
-        logoUrlExpiry: logo.expiry,
-      });
+    if (!companyId) {
+      toast.error(t('messagekey.error.generic'));
+      return;
     }
 
-    toast(t(`messageKey.${response.messageKey}`));
+    try {
+      const response = await updateLogo.mutateAsync({ mediaAssetId });
+
+      if (logo?.getUrl && logo.expiry && logo.id) {
+        setCompanyData({
+          logoId: logo.id,
+          logoUrl: logo.getUrl,
+          logoUrlExpiry: logo.expiry,
+        });
+      }
+
+      toast(t(`messagekey.${response.messageKey}`));
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+    }
   };
 
   return (
@@ -108,7 +103,7 @@ export default function LogoCard() {
 
       <Button
         onClick={handleSaveLogo}
-        disabled={!mediaAssetId}
+        disabled={!logo?.id}
         className='bg-zinc-500 w-72'
       >
         {t('pages.settings.tabs.company.logo.save')}

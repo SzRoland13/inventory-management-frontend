@@ -1,16 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
   RowSelectionState,
 } from '@tanstack/react-table';
-import {
-  ModificationUser,
-  UserDtoWithAvatar,
-} from '@/lib/services/dtos/userDtos';
+import { ModificationUser } from '@/lib/services/dtos/userDtos';
 import { useUserColumns } from '@/components/users/UsersColumns';
 import { UsersToolbar } from '@/components/users/UsersToolbar';
 import { AddEditUserDialog } from '@/components/users/AddEditUserDialog';
@@ -19,18 +16,20 @@ import {
   mapModificationUserToAddEditUserRequest,
   mapUserDtoToModificationUser,
 } from '@/lib/helpers/user';
-import { UserService } from '@/lib/services/UserService';
+import {
+  useUsersQuery,
+  useRegisterUserMutation,
+  useUpdateUserMutation,
+  useSetUserSuspendedMutation,
+  useResetUserPasswordMutation,
+  useResetUserTwoFaMutation,
+} from '@/lib/queries/userQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 import { UserStatus } from '@/lib/enums/user';
 
-type UsersTableProps = {
-  data: UserDtoWithAvatar[];
-  onSave: () => void;
-};
-
-export function UsersTable({ data, onSave }: UsersTableProps) {
+export function UsersTable() {
   const t = useTranslations();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -38,7 +37,25 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
     ModificationUser | undefined
   >();
 
-  const table = useReactTable<UserDtoWithAvatar>({
+  const usersQuery = useUsersQuery();
+  const data = useMemo(
+    () => usersQuery.data?.payload.users ?? [],
+    [usersQuery.data],
+  );
+
+  useEffect(() => {
+    if (usersQuery.error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(usersQuery.error)}`));
+    }
+  }, [usersQuery.error, t]);
+
+  const registerUser = useRegisterUserMutation();
+  const updateUser = useUpdateUserMutation();
+  const setSuspended = useSetUserSuspendedMutation();
+  const resetPassword = useResetUserPasswordMutation();
+  const resetTwoFa = useResetUserTwoFaMutation();
+
+  const table = useReactTable({
     data,
     columns: useUserColumns(),
     getCoreRowModel: getCoreRowModel(),
@@ -78,30 +95,30 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
 
   const handleSave = (user: ModificationUser) => {
     const userRequest = mapModificationUserToAddEditUserRequest(user);
+    const onError = (error: unknown) =>
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
 
     if (user.id) {
-      UserService.updateUser(user.id, userRequest)
-        .then(() => {
-          toast.success(t('messagekey.user.update-success'));
-          setRowSelection({});
-          setDialogOpen(false);
-          onSave();
-        })
-        .catch((error: ApiResponse<void>) => {
-          toast.error(t(`messagekey.${error.messageKey}`));
-        });
+      updateUser.mutate(
+        { id: user.id, request: userRequest },
+        {
+          onSuccess: () => {
+            toast.success(t('messagekey.user.update-success'));
+            setRowSelection({});
+            setDialogOpen(false);
+          },
+          onError,
+        },
+      );
     } else {
-      // Register new user
-      UserService.registerUser(userRequest)
-        .then(() => {
+      registerUser.mutate(userRequest, {
+        onSuccess: () => {
           toast.success(t('messagekey.user.registration-successful'));
           setRowSelection({});
           setDialogOpen(false);
-          onSave();
-        })
-        .catch((error: ApiResponse<void>) => {
-          toast.error(t(`messagekey.${error.messageKey}`));
-        });
+        },
+        onError,
+      });
     }
   };
 
@@ -110,51 +127,49 @@ export function UsersTable({ data, onSave }: UsersTableProps) {
 
     const isSuspended = selectedUser.userStatus === UserStatus.SUSPENDED;
 
-    const action = isSuspended
-      ? UserService.activateUser(selectedIds[0])
-      : UserService.suspendUser(selectedIds[0]);
-
-    const successMessage = isSuspended
-      ? 'messagekey.user.activated'
-      : 'messagekey.user.suspended';
-
-    action
-      .then(() => {
-        toast.success(t(successMessage));
-        setRowSelection({});
-        onSave();
-      })
-      .catch((error: ApiResponse<void>) => {
-        toast.error(t(`messagekey.${error.messageKey}`));
-      });
+    setSuspended.mutate(
+      { id: selectedIds[0], suspended: !isSuspended },
+      {
+        onSuccess: () => {
+          toast.success(
+            t(
+              isSuspended
+                ? 'messagekey.user.activated'
+                : 'messagekey.user.suspended',
+            ),
+          );
+          setRowSelection({});
+        },
+        onError: (error) =>
+          toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`)),
+      },
+    );
   };
 
   const handleResetPassword = () => {
     if (selectedIds.length !== 1) return;
 
-    UserService.resetPassword(selectedIds[0])
-      .then(() => {
+    resetPassword.mutate(selectedIds[0], {
+      onSuccess: () => {
         toast.success(t('messagekey.user.password-reset-complete'));
         setRowSelection({});
-        onSave();
-      })
-      .catch((error: ApiResponse<void>) => {
-        toast.error(t(`messagekey.${error.messageKey}`));
-      });
+      },
+      onError: (error) =>
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`)),
+    });
   };
 
   const handleReset2FA = () => {
     if (selectedIds.length !== 1) return;
 
-    UserService.reset2fa(selectedIds[0])
-      .then(() => {
+    resetTwoFa.mutate(selectedIds[0], {
+      onSuccess: () => {
         toast.success(t('messagekey.user.two-fa-setup-reset-complete'));
         setRowSelection({});
-        onSave();
-      })
-      .catch((error: ApiResponse<void>) => {
-        toast.error(t(`messagekey.${error.messageKey}`));
-      });
+      },
+      onError: (error) =>
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`)),
+    });
   };
 
   return (

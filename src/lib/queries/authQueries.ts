@@ -12,6 +12,7 @@ export function useSessionQuery() {
     queryKey: queryKeys.auth.session,
     queryFn: () => requireSuccessfulResponse(AuthService.checkSession()),
     staleTime: 60_000,
+    retry: false,
   });
 }
 
