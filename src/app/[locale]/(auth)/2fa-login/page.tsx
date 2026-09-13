@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -16,16 +17,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Routes } from '@/lib/enums/routes';
 import { useAuthStore } from '@/lib/stores/authStore';
+import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
-import { useUserStore } from '@/lib/stores/userStore';
 import { castToEnum } from '@/lib/helpers/enum';
 import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 import { useTranslations } from 'next-intl';
-import { UserRole } from '@/lib/enums/user';
+import { UserRole, UserStatus } from '@/lib/enums/user';
+import { UserDto } from '@/lib/services/dtos/userDtos';
 import { useCompanyStore } from '@/lib/stores/companyStore';
 import { useTwoFaLoginMutation } from '@/lib/queries/authQueries';
 import { useMinimalCompanyQuery } from '@/lib/queries/companyQueries';
 import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { queryKeys } from '@/lib/queries/queryKeys';
 
 type TwoFaForm = {
   email: string;
@@ -39,6 +42,7 @@ export default function TwoFaLoginPage() {
   const initialCheck = useRef(false);
   const twoFaLogin = useTwoFaLoginMutation();
   const minimalCompany = useMinimalCompanyQuery(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (initialCheck.current) return;
@@ -85,11 +89,29 @@ export default function TwoFaLoginPage() {
         const { user } = response.payload;
         toast(t(`messagekey.${response.messageKey}`));
 
-        useUserStore.getState().setUser({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: castToEnum(UserRole, user.role),
+        // check-session's UserDto never carries avatar fields - this
+        // 2FA-login response is the only place avatar data is available.
+        // The identity fields below are a best-effort seed: the very next
+        // protected-layout render (triggered by pushLocalized(Dashboard))
+        // re-runs proxy.ts's own check-session call and overwrites this
+        // entry with the real values within the same navigation.
+        queryClient.setQueryData(queryKeys.auth.session, {
+          success: true,
+          messageKey: response.messageKey,
+          payload: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            // Least-privilege fallback: never silently grant elevated
+            // access if the role string somehow doesn't match the enum.
+            role: castToEnum(UserRole, user.role) ?? UserRole.SALES,
+            twoFaEnabled: true,
+            otcSetupCompleted: true,
+            userStatus: UserStatus.ACTIVE,
+          } satisfies UserDto,
+        });
+
+        useAvatarStore.getState().setAvatar({
           avatarId: user.avatarId,
           avatarUrl: user.avatarUrl,
           avatarUrlExpiry: user.avatarUrlExpiry,

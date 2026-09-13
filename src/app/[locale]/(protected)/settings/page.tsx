@@ -12,14 +12,14 @@ import { castToEnum } from '@/lib/helpers/enum';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useUserStore } from '@/lib/stores/userStore';
+import { useSessionQuery } from '@/lib/queries/authQueries';
 import { UserRole } from '@/lib/enums/user';
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const { role } = useUserStore();
+  const role = useSessionQuery().data?.payload.role;
   const t = useTranslations();
 
   const isAdmin = role === UserRole.ADMIN;

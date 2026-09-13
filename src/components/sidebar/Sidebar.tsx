@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { useUserStore } from '@/lib/stores/userStore';
+import { useSessionQuery } from '@/lib/queries/authQueries';
 import { sidebarItems } from '@/lib/config/sidebarConfig';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -20,7 +20,7 @@ export default function Sidebar() {
   const { pushLocalized } = useLocalizedRouter();
   const t = useTranslations();
   const pathname = usePathname();
-  const { role } = useUserStore();
+  const role = useSessionQuery().data?.payload.role;
 
   useEffect(() => {
     setSheetOpen(false);
@@ -28,7 +28,7 @@ export default function Sidebar() {
 
   // Filter sidebar items by user role
   const visibleItems = sidebarItems.filter(
-    (item) => !item.roles || item.roles.includes(role!),
+    (item) => !item.roles || (role ? item.roles.includes(role) : false),
   );
 
   const getPath = () => {

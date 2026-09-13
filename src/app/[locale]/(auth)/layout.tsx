@@ -1,35 +1,24 @@
-'use client';
-
-import { Loader2 } from 'lucide-react';
-import useSessionGuard from '@/lib/hooks/useSessionGuard';
-import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
-import { toast } from 'sonner';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/lib/auth/sessionHeader';
 import { Routes } from '@/lib/enums/routes';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-}>) {
-  const t = useTranslations();
-  const { loading, isAuthenticated } = useSessionGuard();
-  const { replaceLocalized } = useLocalizedRouter();
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const headerList = await headers();
+  const session = decodeSessionHeader(headerList.get(SESSION_HEADER_NAME));
 
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      toast.info(t('messagekey.guard.logged-in-redirect'));
-      replaceLocalized(Routes.Dashboard);
-    }
-  }, [loading, isAuthenticated, replaceLocalized, t]);
-
-  if (loading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center bg-zinc-950'>
-        <Loader2 className='w-6 h-6 animate-spin text-zinc-300' />
-      </div>
-    );
+  // The literal "reverse check": proxy.ts already resolved the session for
+  // this request (one backend call total) - this layout owns the decision
+  // to bounce an already-authenticated guest away from these pages.
+  if (session.authenticated) {
+    redirect(`/${locale}${Routes.Dashboard}`);
   }
 
   return (

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useUserStore } from '../stores/userStore';
 import { useLocaleStore } from '@/lib/stores/localeStore';
 
 const baseURL =
@@ -35,8 +34,6 @@ axiosClient.interceptors.response.use(
       } catch (e: any) {
         if (e.response?.status === 400 || e.response?.status === 401) {
           await axiosClient.post('/auth/logout').catch(() => {});
-
-          useUserStore.getState().clearUser();
 
           const locale = useLocaleStore.getState().locale || 'en';
 
