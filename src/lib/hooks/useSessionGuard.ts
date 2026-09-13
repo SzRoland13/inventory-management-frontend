@@ -1,48 +1,27 @@
 'use client';
 
-import { AuthService } from '@/lib/services/AuthService';
+import { useSessionQuery } from '@/lib/queries/authQueries';
 import { useUserStore } from '@/lib/stores/userStore';
 import { UserRole } from '@/lib/enums/user';
 import { castToEnum } from '@/lib/helpers/enum';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function useSessionGuard() {
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const sessionQuery = useSessionQuery();
 
   useEffect(() => {
-    let cancelled = false;
+    const payload = sessionQuery.data?.payload;
+    if (!payload) return;
 
-    const checkAuth = async () => {
-      try {
-        const respone = await AuthService.checkSession();
+    useUserStore.getState().setUser({
+      username: payload.username,
+      email: payload.email,
+      role: castToEnum(UserRole, payload.role),
+    });
+  }, [sessionQuery.data]);
 
-        useUserStore.getState().setUser({
-          username: respone.payload.username,
-          email: respone.payload.email,
-          role: castToEnum(UserRole, respone.payload.role),
-        });
-
-        if (!cancelled) {
-          setIsAuthenticated(true);
-        }
-      } catch {
-        if (!cancelled) {
-          setIsAuthenticated(false);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    checkAuth();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return { loading, isAuthenticated };
+  return {
+    loading: sessionQuery.isPending,
+    isAuthenticated: sessionQuery.isSuccess,
+  };
 }
