@@ -77,6 +77,11 @@ export default function TwoFaLoginPage() {
           code: data.code,
           shortLifeToken,
         });
+        if (!response.payload) {
+          toast.error(t(`messagekey.${response.messageKey}`));
+          return;
+        }
+
         const { user } = response.payload;
         toast(t(`messagekey.${response.messageKey}`));
 

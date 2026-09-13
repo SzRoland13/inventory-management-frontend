@@ -49,11 +49,13 @@ export default function LoginPage() {
         email: data.email,
         password: data.password,
       });
-      const expiresAt = new Date(response.payload.expiresAt);
-      useAuthStore.getState().setAuthData({
-        shortLifeToken: response.payload.shortLifeToken,
-        shortLifeTokenExpiry: expiresAt,
-      });
+      if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
+        const expiresAt = new Date(response.payload.expiresAt);
+        useAuthStore.getState().setAuthData({
+          shortLifeToken: response.payload.shortLifeToken,
+          shortLifeTokenExpiry: expiresAt,
+        });
+      }
 
       toast(t(`messagekey.${response.messageKey}`));
 
