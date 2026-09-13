@@ -13,7 +13,7 @@ import {
 import { Currency } from '@/lib/services/dtos/currencyDtos';
 import { useCompanyStore } from '@/lib/stores/companyStore';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import {
   useCurrenciesQuery,
@@ -40,15 +40,20 @@ export default function PreferredCurrencyCard({ preferredCurrency }: Props) {
     string | undefined
   >(preferredCurrency?.id?.toString());
 
+  // Tracks which preferredCurrency we last synced from, so we can adjust
+  // state during render when it changes (e.g. it arrives later from the
+  // parent's query) without clobbering it via a useEffect-triggered set.
+  const [syncedId, setSyncedId] = useState(preferredCurrency?.id?.toString());
+  const incomingId = preferredCurrency?.id?.toString();
+
+  if (incomingId !== syncedId) {
+    setSyncedId(incomingId);
+    setSelectedCurrencyId(incomingId);
+    setSavedCurrencyId(incomingId);
+  }
+
   const hasChanges =
     selectedCurrencyId !== savedCurrencyId && selectedCurrencyId !== 'none';
-
-  // ha később jön a company adat
-  useEffect(() => {
-    const id = preferredCurrency?.id?.toString() ?? '';
-    setSelectedCurrencyId(id);
-    setSavedCurrencyId(id);
-  }, [preferredCurrency]);
 
   const handleReset = () => {
     setSelectedCurrencyId(savedCurrencyId);

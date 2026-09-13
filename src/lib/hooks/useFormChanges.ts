@@ -1,23 +1,23 @@
-import { useMemo, useRef, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { deepEqual } from 'fast-equals';
 
 export function useFormChanges<T extends FieldValues>(values: T) {
-  const initialValuesRef = useRef<T | null>(null);
+  const [initialValues, setInitialValuesState] = useState<T | null>(null);
 
   const setInitialValues = useCallback((values: T) => {
-    initialValuesRef.current = values;
+    setInitialValuesState(values);
   }, []);
 
   const resetToInitial = useCallback(() => {
-    return initialValuesRef.current;
-  }, []);
+    return initialValues;
+  }, [initialValues]);
 
   const hasChanges = useMemo(() => {
-    if (!initialValuesRef.current) return false;
+    if (!initialValues) return false;
 
-    return !deepEqual(values, initialValuesRef.current);
-  }, [values]);
+    return !deepEqual(values, initialValues);
+  }, [values, initialValues]);
 
   return { hasChanges, setInitialValues, resetToInitial };
 }
