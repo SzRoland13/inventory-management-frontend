@@ -39,11 +39,12 @@ export default function LoginStartPage() {
   });
 
   const onSubmit = async (data: LoginStartFormData) => {
+    useAuthStore.getState().setAuthData({ email: data.email });
+
     try {
       const response = await checkFirstLogin.mutateAsync({
         email: data.email,
       });
-      useAuthStore.getState().setAuthData({ email: data.email });
 
       if (response.payload.firstLogin) {
         toast(t(`messagekey.${response.messageKey}`));
