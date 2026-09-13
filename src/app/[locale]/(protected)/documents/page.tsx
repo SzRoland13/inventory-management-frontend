@@ -1,11 +1,9 @@
-'use client';
-
 import MainHeader from '@/components/common/MainHeader';
 import { Inbox } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export default function DocumentsPage() {
-  const t = useTranslations();
+export default async function DocumentsPage() {
+  const t = await getTranslations();
 
   return (
     <div className='flex flex-col w-full'>
