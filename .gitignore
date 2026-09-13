@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# graphify (regenerated knowledge graph; run `graphify update .` to rebuild)
+/graphify-out/
+
 # idea
 .idea/
 
