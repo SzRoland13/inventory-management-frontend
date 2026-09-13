@@ -16,7 +16,7 @@ export const handleRequest = async <T>(
     } else {
       return {
         success: false,
-        messageKey: 'error.unexpected',
+        messageKey: 'error.generic',
         payload: error.response?.data?.payload ?? null,
       };
     }
