@@ -27,15 +27,6 @@ function applyCookieInstructions(
 }
 
 export default async function proxy(request: NextRequest) {
-  const intlResponse = intlMiddleware(request);
-
-  // next-intl already decided to redirect/rewrite for a locale reason -
-  // return it as-is and defer auth logic to the next request, which will
-  // have a stable, locale-prefixed path.
-  if (intlResponse.status >= 300 && intlResponse.status < 400) {
-    return intlResponse;
-  }
-
   const { pathname } = request.nextUrl;
   const [, localeSegment, ...rest] = pathname.split('/');
   const locale = (routing.locales as readonly string[]).includes(
@@ -47,7 +38,7 @@ export default async function proxy(request: NextRequest) {
   const group = classifyPath(pathWithoutLocale);
 
   if (group === 'public') {
-    return intlResponse;
+    return intlMiddleware(request);
   }
 
   const accessToken = request.cookies.get('access_token')?.value;
@@ -55,6 +46,9 @@ export default async function proxy(request: NextRequest) {
   const result = await resolveSession({ accessToken, refreshToken });
 
   if (group === 'protected' && !result.authenticated) {
+    // Built directly rather than deferring to next-intl, since the
+    // fallback locale computed above already produces a correctly
+    // prefixed URL regardless of whether the incoming request had one.
     const redirectUrl = new URL(`/${locale}${Routes.Login_Start}`, request.url);
     const response = NextResponse.redirect(redirectUrl);
     applyCookieInstructions(response, result);
@@ -64,19 +58,24 @@ export default async function proxy(request: NextRequest) {
   // protected+authenticated, or auth-group (either state): continue,
   // attaching the verified-session header. The (auth) layout - not this
   // file - owns the "already authenticated, bounce to dashboard" decision.
+  //
+  // Important: the header must be set on the REQUEST *before* handing it
+  // to intlMiddleware, not by wrapping its result in a second
+  // NextResponse.next() afterward. next-intl builds its own forwarded
+  // request headers as `new Headers(request.headers)` internally - a
+  // second, independent NextResponse.next() call here would silently
+  // replace that forwarded header set, dropping next-intl's own locale
+  // negotiation header and breaking translations for non-default locales.
   const session: VerifiedSession = result.authenticated
     ? { authenticated: true, user: result.user! }
     : { authenticated: false, user: null };
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.delete(SESSION_HEADER_NAME); // anti-spoof: never trust a client-supplied value
-  requestHeaders.set(SESSION_HEADER_NAME, encodeSessionHeader(session));
+  const headers = new Headers(request.headers);
+  headers.delete(SESSION_HEADER_NAME); // anti-spoof: never trust a client-supplied value
+  headers.set(SESSION_HEADER_NAME, encodeSessionHeader(session));
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
-
-  for (const setCookie of intlResponse.headers.getSetCookie()) {
-    response.headers.append('set-cookie', setCookie);
-  }
+  const requestWithSession = new NextRequest(request, { headers });
+  const response = intlMiddleware(requestWithSession);
   applyCookieInstructions(response, result);
 
   return response;
