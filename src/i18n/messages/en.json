@@ -249,6 +249,7 @@
     "auth": {
       "login": {
         "success": "Login successful! Welcome back.",
+        "valid-credentials": "Credentials verified successfully.",
         "invalid-credentials": "Invalid credentials. Please try again.",
         "first-login": "First login not completed yet, please setup your account",
         "not-first-login": "You have already completed your first login.",

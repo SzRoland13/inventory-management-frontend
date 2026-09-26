@@ -1,16 +1,8 @@
 'use client';
 
 import { Button } from '@/features/shared/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/features/shared/components/ui/card';
-import { Input } from '@/features/shared/components/ui/input';
-import { Label } from '@/features/shared/components/ui/label';
+import { AuthCard } from '@/features/auth/components/AuthCard';
+import { AuthFormField } from '@/features/auth/components/AuthFormField';
 import { useRouter } from '@/i18n/navigation';
 import { useCheckFirstLoginMutation } from '@/features/auth/queries/authQueries';
 import { getApiErrorMessageKey } from '@/features/shared/api/apiResponse';
@@ -59,6 +51,7 @@ export default function LoginStartPage() {
 
       if (response.payload.firstLogin) {
         toast(t(`messagekey.${response.messageKey}`));
+
         router.push(Routes.First_Login);
       } else {
         router.push(Routes.Login);
@@ -68,55 +61,39 @@ export default function LoginStartPage() {
     }
   };
   return (
-    <Card className='w-full max-w-sm bg-zinc-900 border-zinc-700 shadow-xl'>
-      <CardHeader>
-        <CardTitle className='text-xl font-semibold text-zinc-100'>
-          {t('pages.login.title')}
-        </CardTitle>
-        <CardDescription className='text-zinc-400'>
-          {t('pages.login-start.subtitle')}
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-          <div className='flex flex-col gap-2'>
-            <Label htmlFor='email' className='text-zinc-300'>
-              {t('common.email.title')}
-            </Label>
-            <Input
-              id='email'
-              type='email'
-              placeholder='m@example.com'
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-              {...register('email', {
-                required: t('common.email.required'),
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: t('common.email.invalid'),
-                },
-              })}
-            />
-            {errors.email && (
-              <p className='text-sm text-red-400'>{errors.email.message}</p>
-            )}
-          </div>
-
-          <Button
-            type='submit'
-            disabled={isSubmitting}
-            className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
-          >
-            {isSubmitting ? t('common.submitting') : t('common.continue')}
-          </Button>
-        </form>
-      </CardContent>
-
-      <CardFooter>
+    <AuthCard
+      title={t('pages.login.title')}
+      description={t('pages.login-start.subtitle')}
+      footer={
         <p className='text-sm text-zinc-500 text-center w-full'>
           {t('pages.login.footer')}
         </p>
-      </CardFooter>
-    </Card>
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+        <AuthFormField
+          id='email'
+          label={t('common.email.title')}
+          type='email'
+          placeholder='m@example.com'
+          error={errors.email?.message}
+          {...register('email', {
+            required: t('common.email.required'),
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: t('common.email.invalid'),
+            },
+          })}
+        />
+
+        <Button
+          type='submit'
+          disabled={isSubmitting}
+          className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+        >
+          {isSubmitting ? t('common.submitting') : t('common.continue')}
+        </Button>
+      </form>
+    </AuthCard>
   );
 }

@@ -6,16 +6,8 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/features/shared/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/features/shared/components/ui/card';
-import { Input } from '@/features/shared/components/ui/input';
-import { Label } from '@/features/shared/components/ui/label';
+import { AuthCard } from '@/features/auth/components/AuthCard';
+import { AuthFormField } from '@/features/auth/components/AuthFormField';
 import {
   useTwoFaLoginMutation,
   useTwoFaSetupMutation,
@@ -145,128 +137,104 @@ export default function TwoFaSetupPage() {
   };
 
   return (
-    <Card className='w-full max-w-md bg-zinc-900 border-zinc-700 shadow-xl'>
-      <CardHeader className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
-        <div>
-          <CardTitle className='text-xl font-semibold text-zinc-100'>
-            {t('pages.2fa.setup.title')}
-          </CardTitle>
-          <CardDescription className='text-zinc-400'>
-            {t('pages.2fa.setup.subtitle')}
-          </CardDescription>
-        </div>
-
+    <AuthCard
+      title={t('pages.2fa.setup.title')}
+      description={t('pages.2fa.setup.subtitle')}
+      size='md'
+      headerAccessory={
         <ShortLifeTokenCountdown
           onExpire={() => router.push(Routes.Login_Start)}
         />
-      </CardHeader>
-      <CardContent>
-        <AnimatePresence mode='wait'>
-          {!qrCode ? (
-            <motion.form
-              key='step1'
-              onSubmit={handleEmailSubmit(onRequestQr)}
-              className='space-y-4'
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
-            >
-              <div className='flex flex-col gap-2'>
-                <Label htmlFor='email' className='text-zinc-300'>
-                  {t('common.email.title')}
-                </Label>
-                <Input
-                  id='email'
-                  type='email'
-                  placeholder='m@example.com'
-                  disabled
-                  className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-                  {...registerEmail('email', {
-                    required: t('common.email.required'),
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: t('common.email.invalid'),
-                    },
-                  })}
-                />
-                {emailErrors.email && (
-                  <p className='text-sm text-red-400'>
-                    {emailErrors.email.message}
-                  </p>
-                )}
-              </div>
-              <Button
-                type='submit'
-                disabled={emailSubmitting}
-                className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
-              >
-                {emailSubmitting ? t('common.requesting') : t('common.request')}
-              </Button>
-            </motion.form>
-          ) : (
-            <motion.div
-              className='space-y-4 text-center'
-              key='step2'
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
-            >
-              <p className='text-zinc-300'>{t('pages.2fa.qr.title')}</p>
-              <img
-                src={qrCode}
-                alt='2FA QR Code'
-                className='mx-auto w-64 h-64 bg-white rounded-lg p-2'
-              />
-              <form
-                onSubmit={handleTotpSubmit(onVerifyTotp)}
-                className='flex flex-col gap-2'
-              >
-                <Label htmlFor='code' className='text-zinc-300'>
-                  {t('pages.2fa.qr.label')}
-                </Label>
-                <Input
-                  id='code'
-                  type='text'
-                  placeholder='123456'
-                  className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-                  maxLength={6}
-                  {...registerTotp('code', {
-                    required: t('pages.2fa.code.required'),
-                    pattern: {
-                      value: /^\d{6}$/,
-                      message: t('pages.2fa.code.invalid'),
-                    },
-                  })}
-                  ref={(e) => {
-                    registerTotp('code').ref(e);
-                    codeInputRef.current = e;
-                  }}
-                />
-                {totpErrors.code && (
-                  <p className='text-sm text-red-400'>
-                    {totpErrors.code.message}
-                  </p>
-                )}
-                <Button
-                  type='submit'
-                  disabled={totpSubmitting}
-                  className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
-                >
-                  {totpSubmitting ? t('common.verifying') : t('common.verify')}
-                </Button>
-              </form>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </CardContent>
-
-      <CardFooter>
+      }
+      footer={
         <p className='text-sm text-zinc-500 text-center w-full'>
           {t('pages.2fa.setup.footer')}
         </p>
-      </CardFooter>
-    </Card>
+      }
+    >
+      <AnimatePresence mode='wait'>
+        {!qrCode ? (
+          <motion.form
+            key='step1'
+            onSubmit={handleEmailSubmit(onRequestQr)}
+            className='space-y-4'
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+          >
+            <AuthFormField
+              id='email'
+              label={t('common.email.title')}
+              type='email'
+              placeholder='m@example.com'
+              disabled
+              error={emailErrors.email?.message}
+              {...registerEmail('email', {
+                required: t('common.email.required'),
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: t('common.email.invalid'),
+                },
+              })}
+            />
+            <Button
+              type='submit'
+              disabled={emailSubmitting}
+              className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+            >
+              {emailSubmitting ? t('common.requesting') : t('common.request')}
+            </Button>
+          </motion.form>
+        ) : (
+          <motion.div
+            className='space-y-4 text-center'
+            key='step2'
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+          >
+            <p className='text-zinc-300'>{t('pages.2fa.qr.title')}</p>
+            <img
+              src={qrCode}
+              alt='2FA QR Code'
+              className='mx-auto w-64 h-64 bg-white rounded-lg p-2'
+            />
+            <form
+              onSubmit={handleTotpSubmit(onVerifyTotp)}
+              className='flex flex-col gap-2'
+            >
+              <AuthFormField
+                id='code'
+                label={t('pages.2fa.qr.label')}
+                type='text'
+                placeholder='123456'
+                maxLength={6}
+                error={totpErrors.code?.message}
+                {...registerTotp('code', {
+                  required: t('pages.2fa.code.required'),
+                  pattern: {
+                    value: /^\d{6}$/,
+                    message: t('pages.2fa.code.invalid'),
+                  },
+                })}
+                ref={(e) => {
+                  registerTotp('code').ref(e);
+                  codeInputRef.current = e;
+                }}
+              />
+              <Button
+                type='submit'
+                disabled={totpSubmitting}
+                className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+              >
+                {totpSubmitting ? t('common.verifying') : t('common.verify')}
+              </Button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </AuthCard>
   );
 }

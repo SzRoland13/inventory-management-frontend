@@ -1,13 +1,8 @@
 'use client';
 
 import { Button } from '@/features/shared/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/features/shared/components/ui/card';
+import { AuthCard } from '@/features/auth/components/AuthCard';
+import { AuthFormField } from '@/features/auth/components/AuthFormField';
 import { Input } from '@/features/shared/components/ui/input';
 import { Label } from '@/features/shared/components/ui/label';
 import { useRouter } from '@/i18n/navigation';
@@ -84,7 +79,9 @@ export default function FirstLoginPage() {
         const response = await requestOneTimeCode.mutateAsync({
           email: data.email,
         });
+
         toast(t(`messagekey.${response.messageKey}`));
+
         resetTotpForm({ email: data.email, oneTimeCode: '' });
         setStep(Step.STEP2);
       } catch (error) {
@@ -99,6 +96,7 @@ export default function FirstLoginPage() {
         email: data.email,
         oneTimeCode: data.oneTimeCode,
       });
+
       toast(t(`messagekey.${response.messageKey}`));
       router.push(Routes.Setup_Password);
     } catch (error) {
@@ -108,131 +106,107 @@ export default function FirstLoginPage() {
   };
 
   return (
-    <Card className='w-full max-w-sm bg-zinc-900 border-zinc-700 shadow-xl'>
-      <CardHeader>
-        <CardTitle className='text-xl font-semibold text-zinc-100'>
-          {t('pages.first-login.title')}
-        </CardTitle>
-        <CardDescription className='text-zinc-400'>
-          {step === Step.STEP1
-            ? t('pages.first-login.step-one.subtitle')
-            : t('pages.first-login.step-two.subtitle')}
-        </CardDescription>
-      </CardHeader>
+    <AuthCard
+      title={t('pages.first-login.title')}
+      description={
+        step === Step.STEP1
+          ? t('pages.first-login.step-one.subtitle')
+          : t('pages.first-login.step-two.subtitle')
+      }
+    >
+      <AnimatePresence mode='wait'>
+        {step === Step.STEP1 ? (
+          <motion.form
+            key='step1'
+            onSubmit={handleEmailSubmit(onOneTimeCodeRequest)}
+            className='space-y-4'
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+          >
+            <AuthFormField
+              id='email'
+              label={t('common.email.title')}
+              type='email'
+              placeholder='m@example.com'
+              disabled
+              error={emailErrors.email?.message}
+              {...registerEmail('email', {
+                required: t('common.email.required'),
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: t('common.email.invalid'),
+                },
+              })}
+            />
 
-      <CardContent>
-        <AnimatePresence mode='wait'>
-          {step === Step.STEP1 ? (
-            <motion.form
-              key='step1'
-              onSubmit={handleEmailSubmit(onOneTimeCodeRequest)}
-              className='space-y-4'
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
+            <Button
+              type='submit'
+              disabled={emailSubmitting}
+              className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
             >
-              <div className='flex flex-col gap-2'>
-                <Label htmlFor='email' className='text-zinc-300'>
-                  {t('common.email.title')}
-                </Label>
-                <Input
-                  id='email'
-                  type='email'
-                  placeholder='m@example.com'
-                  disabled
-                  className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-                  {...registerEmail('email', {
-                    required: t('common.email.required'),
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: t('common.email.invalid'),
-                    },
-                  })}
-                />
-                {emailErrors.email && (
-                  <p className='text-sm text-red-400'>
-                    {emailErrors.email.message}
-                  </p>
-                )}
-              </div>
-
-              <Button
-                type='submit'
-                disabled={emailSubmitting}
-                className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
-              >
-                {emailSubmitting ? t('common.requesting') : t('common.request')}
-              </Button>
-            </motion.form>
-          ) : (
-            <motion.form
-              key='step2'
-              onSubmit={handleTotpSubmit(onVerifyTotp)}
-              className='flex flex-col gap-2'
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
+              {emailSubmitting ? t('common.requesting') : t('common.request')}
+            </Button>
+          </motion.form>
+        ) : (
+          <motion.form
+            key='step2'
+            onSubmit={handleTotpSubmit(onVerifyTotp)}
+            className='flex flex-col gap-2'
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+          >
+            <AuthFormField
+              id='email'
+              label={t('common.email.title')}
+              type='email'
+              placeholder='m@example.com'
+              disabled
+              error={emailErrors.email?.message}
+              {...registerEmail('email', {
+                required: t('common.email.required'),
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: t('common.email.invalid'),
+                },
+              })}
+            />
+            <div className='flex flex-col gap-2'>
+              <Label htmlFor='code' className='text-zinc-300'>
+                {t('pages.first-login.otc.title')}
+              </Label>
+              <Input
+                id='code'
+                type='text'
+                placeholder='123456'
+                className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+                {...registerTotp('oneTimeCode', {
+                  required: t('pages.setup-password.otc.required'),
+                })}
+                ref={(e) => {
+                  registerTotp('oneTimeCode').ref(e);
+                  codeInputRef.current = e;
+                }}
+              />
+              {totpErrors.oneTimeCode && (
+                <p className='text-sm text-red-400'>
+                  {totpErrors.oneTimeCode.message}
+                </p>
+              )}
+            </div>
+            <Button
+              type='submit'
+              disabled={totpSubmitting}
+              className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors mt-4'
             >
-              <div className='flex flex-col gap-2'>
-                <Label htmlFor='email' className='text-zinc-300'>
-                  {t('common.email.title')}
-                </Label>
-                <Input
-                  id='email'
-                  type='email'
-                  placeholder='m@example.com'
-                  disabled
-                  className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-                  {...registerEmail('email', {
-                    required: t('common.email.required'),
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: t('common.email.invalid'),
-                    },
-                  })}
-                />
-                {emailErrors.email && (
-                  <p className='text-sm text-red-400'>
-                    {emailErrors.email.message}
-                  </p>
-                )}
-              </div>
-              <div className='flex flex-col gap-2'>
-                <Label htmlFor='code' className='text-zinc-300'>
-                  {t('pages.first-login.otc.title')}
-                </Label>
-                <Input
-                  id='code'
-                  type='text'
-                  placeholder='123456'
-                  className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-                  {...registerTotp('oneTimeCode', {
-                    required: t('pages.setup-password.otc.required'),
-                  })}
-                  ref={(e) => {
-                    registerTotp('oneTimeCode').ref(e);
-                    codeInputRef.current = e;
-                  }}
-                />
-                {totpErrors.oneTimeCode && (
-                  <p className='text-sm text-red-400'>
-                    {totpErrors.oneTimeCode.message}
-                  </p>
-                )}
-              </div>
-              <Button
-                type='submit'
-                disabled={totpSubmitting}
-                className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors mt-4'
-              >
-                {totpSubmitting ? t('common.verifying') : t('common.verify')}
-              </Button>
-            </motion.form>
-          )}
-        </AnimatePresence>
-      </CardContent>
-    </Card>
+              {totpSubmitting ? t('common.verifying') : t('common.verify')}
+            </Button>
+          </motion.form>
+        )}
+      </AnimatePresence>
+    </AuthCard>
   );
 }

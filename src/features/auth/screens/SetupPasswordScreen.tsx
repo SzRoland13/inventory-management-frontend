@@ -1,13 +1,8 @@
 'use client';
 
 import { Button } from '@/features/shared/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/features/shared/components/ui/card';
+import { AuthCard } from '@/features/auth/components/AuthCard';
+import { AuthFormField } from '@/features/auth/components/AuthFormField';
 import {
   Dialog,
   DialogContent,
@@ -146,149 +141,135 @@ export default function SetupPasswordPage() {
   }, [password, t]);
 
   return (
-    <Card className='w-full max-w-sm bg-zinc-900 border-zinc-700 shadow-xl'>
-      <CardHeader>
-        <CardTitle className='text-xl font-semibold text-zinc-100'>
-          {t('pages.setup-password.title')}
-        </CardTitle>
-        <CardDescription className='text-zinc-400'>
-          {t('pages.setup-password.subtitle')}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className='space-y-4 animate-fadeIn'
-        >
-          <div className='flex flex-col gap-2'>
-            <Label htmlFor='email' className='text-zinc-300'>
-              {t('common.email.title')}
-            </Label>
+    <AuthCard
+      title={t('pages.setup-password.title')}
+      description={t('pages.setup-password.subtitle')}
+    >
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='space-y-4 animate-fadeIn'
+      >
+        <AuthFormField
+          id='email'
+          label={t('common.email.title')}
+          type='email'
+          disabled
+          error={errors.email?.message}
+          {...register('email', {
+            required: t('common.email.required'),
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: t('common.email.invalid'),
+            },
+          })}
+        />
+
+        <div className='flex flex-col gap-2'>
+          <Label htmlFor='password' className='text-zinc-300'>
+            {t('common.password.title')}
+          </Label>
+          <div className='relative'>
             <Input
-              id='email'
-              type='email'
-              disabled
+              id='password'
+              type={showPassword ? 'text' : 'password'}
+              placeholder='••••••••'
               className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-              {...register('email', {
-                required: t('common.email.required'),
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: t('common.email.invalid'),
-                },
+              {...register('password', passwordValidation)}
+              ref={(e) => {
+                register('password').ref(e);
+                passwordRef.current = e;
+              }}
+            />
+            <button
+              type='button'
+              onClick={() => setShowPassword((prev) => !prev)}
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors'
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          <div className='flex justify-start'>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button
+                  type='button'
+                  className='text-sm text-zinc-400 underline hover:text-zinc-200 transition-colors flex items-center gap-1'
+                >
+                  <Info size={18} />
+                  {t('common.password.show-rules')}
+                </button>
+              </DialogTrigger>
+              <DialogContent className='bg-zinc-900 border-zinc-700 text-zinc-100 max-w-md'>
+                <DialogHeader>
+                  <DialogTitle>{t('common.password.title')}</DialogTitle>
+                </DialogHeader>
+                <ul className='list-disc list-inside space-y-1 text-zinc-300 text-sm mt-2'>
+                  <li>{t('common.password.rules.min-8-chars')}</li>
+                  <li>{t('common.password.rules.min-1-upper')}</li>
+                  <li>{t('common.password.rules.min-1-lower')}</li>
+                  <li>{t('common.password.rules.min-1-number')}</li>
+                  <li>{t('common.password.rules.min-1-special')}</li>
+                  <li>{t('common.password.rules.no-repeating-chars')}</li>
+                  <li>{t('common.password.rules.no-sequences')}</li>
+                </ul>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className='flex flex-col gap-1 mt-1 transition-all duration-300'>
+            <div className='w-full h-2 bg-zinc-700 rounded-full overflow-hidden'>
+              <div
+                className={`h-full transition-all duration-300 ${color}`}
+                style={{ width: `${(score / 5) * 100}%` }}
+              />
+            </div>
+            <p className='text-sm text-zinc-300'>{label}</p>
+          </div>
+          {errors.password && (
+            <p className='text-sm text-red-400'>{errors.password.message}</p>
+          )}
+        </div>
+
+        <div className='flex flex-col gap-2'>
+          <Label htmlFor='password' className='text-zinc-300'>
+            {t('pages.setup-password.repeat-password.title')}
+          </Label>
+          <div className='relative'>
+            <Input
+              id='repeat-password'
+              type={showRepeatPassword ? 'text' : 'password'}
+              placeholder='••••••••'
+              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
+              {...register('repeatPassword', {
+                required: t('pages.setup-password.repeat-password.required'),
+                validate: (value) =>
+                  value === password ||
+                    t('pages.setup-password.repeat-password.no-match'),
               })}
             />
-            {errors.email && (
-              <p className='text-sm text-red-400'>{errors.email.message}</p>
-            )}
+            <button
+              type='button'
+              onClick={() => setShowRepeatPassword((prev) => !prev)}
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors'
+              tabIndex={-1}
+            >
+              {showRepeatPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
-
-          <div className='flex flex-col gap-2'>
-            <Label htmlFor='password' className='text-zinc-300'>
-              {t('common.password.title')}
-            </Label>
-            <div className='relative'>
-              <Input
-                id='password'
-                type={showPassword ? 'text' : 'password'}
-                placeholder='••••••••'
-                className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-                {...register('password', passwordValidation)}
-                ref={(e) => {
-                  register('password').ref(e);
-                  passwordRef.current = e;
-                }}
-              />
-              <button
-                type='button'
-                onClick={() => setShowPassword((prev) => !prev)}
-                className='absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors'
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            <div className='flex justify-start'>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button
-                    type='button'
-                    className='text-sm text-zinc-400 underline hover:text-zinc-200 transition-colors flex items-center gap-1'
-                  >
-                    <Info size={18} />
-                    {t('common.password.show-rules')}
-                  </button>
-                </DialogTrigger>
-                <DialogContent className='bg-zinc-900 border-zinc-700 text-zinc-100 max-w-md'>
-                  <DialogHeader>
-                    <DialogTitle>{t('common.password.title')}</DialogTitle>
-                  </DialogHeader>
-                  <ul className='list-disc list-inside space-y-1 text-zinc-300 text-sm mt-2'>
-                    <li>{t('common.password.rules.min-8-chars')}</li>
-                    <li>{t('common.password.rules.min-1-upper')}</li>
-                    <li>{t('common.password.rules.min-1-lower')}</li>
-                    <li>{t('common.password.rules.min-1-number')}</li>
-                    <li>{t('common.password.rules.min-1-special')}</li>
-                    <li>{t('common.password.rules.no-repeating-chars')}</li>
-                    <li>{t('common.password.rules.no-sequences')}</li>
-                  </ul>
-                </DialogContent>
-              </Dialog>
-            </div>
-
-            <div className='flex flex-col gap-1 mt-1 transition-all duration-300'>
-              <div className='w-full h-2 bg-zinc-700 rounded-full overflow-hidden'>
-                <div
-                  className={`h-full transition-all duration-300 ${color}`}
-                  style={{ width: `${(score / 5) * 100}%` }}
-                />
-              </div>
-              <p className='text-sm text-zinc-300'>{label}</p>
-            </div>
-            {errors.password && (
-              <p className='text-sm text-red-400'>{errors.password.message}</p>
-            )}
-          </div>
-
-          <div className='flex flex-col gap-2'>
-            <Label htmlFor='password' className='text-zinc-300'>
-              {t('pages.setup-password.repeat-password.title')}
-            </Label>
-            <div className='relative'>
-              <Input
-                id='repeat-password'
-                type={showRepeatPassword ? 'text' : 'password'}
-                placeholder='••••••••'
-                className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-                {...register('repeatPassword', {
-                  required: t('pages.setup-password.repeat-password.required'),
-                  validate: (value) =>
-                    value === password ||
-                    t('pages.setup-password.repeat-password.no-match'),
-                })}
-              />
-              <button
-                type='button'
-                onClick={() => setShowRepeatPassword((prev) => !prev)}
-                className='absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors'
-                tabIndex={-1}
-              >
-                {showRepeatPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            {errors.password && (
-              <p className='text-sm text-red-400'>{errors.password.message}</p>
-            )}
-          </div>
-          <Button
-            type='submit'
-            disabled={isSubmitting}
-            className='mt-4 w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
-          >
-            {isSubmitting ? t('common.submitting') : t('common.continue')}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+          {errors.password && (
+            <p className='text-sm text-red-400'>{errors.password.message}</p>
+          )}
+        </div>
+        <Button
+          type='submit'
+          disabled={isSubmitting}
+          className='mt-4 w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+        >
+          {isSubmitting ? t('common.submitting') : t('common.continue')}
+        </Button>
+      </form>
+    </AuthCard>
   );
 }

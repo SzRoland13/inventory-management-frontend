@@ -5,16 +5,8 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/features/shared/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/features/shared/components/ui/card';
-import { Input } from '@/features/shared/components/ui/input';
-import { Label } from '@/features/shared/components/ui/label';
+import { AuthCard } from '@/features/auth/components/AuthCard';
+import { AuthFormField } from '@/features/auth/components/AuthFormField';
 import { Routes } from '@/features/shared/types/routes';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { useAvatarStore } from '@/features/shared/media/avatarStore';
@@ -81,6 +73,7 @@ export default function TwoFaLoginPage() {
           code: data.code,
           shortLifeToken,
         });
+
         if (!response.payload) {
           toast.error(t(`messagekey.${response.messageKey}`));
           return;
@@ -140,83 +133,61 @@ export default function TwoFaLoginPage() {
   };
 
   return (
-    <Card className='w-full max-w-md bg-zinc-900 border-zinc-700 shadow-xl'>
-      <CardHeader className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
-        <div>
-          <CardTitle className='text-xl font-semibold text-zinc-100'>
-            {t('pages.2fa.login.title')}
-          </CardTitle>
-          <CardDescription className='text-zinc-400'>
-            {t('pages.2fa.login.subtitle')}
-          </CardDescription>
-        </div>
-
-        <ShortLifeTokenCountdown />
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleEmailSubmit(onVerifyTotp)} className='space-y-4'>
-          <div className='flex flex-col gap-2'>
-            <Label htmlFor='email' className='text-zinc-300'>
-              {t('common.email.title')}
-            </Label>
-            <Input
-              id='email'
-              type='email'
-              placeholder='m@example.com'
-              disabled
-              className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-              {...registerTotp('email', {
-                required: t('common.email.required'),
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: t('common.email.invalid'),
-                },
-              })}
-            />
-            {totpErrors.email && (
-              <p className='text-sm text-red-400'>{totpErrors.email.message}</p>
-            )}
-          </div>
-          <Label htmlFor='code' className='text-zinc-300'>
-            {t('pages.2fa.qr.title')}
-          </Label>
-          <Input
-            id='code'
-            type='text'
-            placeholder='123456'
-            className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-            maxLength={6}
-            disabled={totpSubmitting}
-            {...registerTotp('code', {
-              required: t('pages.2fa.code.required'),
-              pattern: {
-                value: /^\d{6}$/,
-                message: t('pages.2fa.code.invalid'),
-              },
-            })}
-            ref={(e) => {
-              registerTotp('code').ref(e);
-              codeInputRef.current = e;
-            }}
-          />
-          {totpErrors.code && (
-            <p className='text-sm text-red-400'>{totpErrors.code.message}</p>
-          )}
-          <Button
-            type='submit'
-            disabled={totpSubmitting}
-            className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
-          >
-            {totpSubmitting ? t('common.verifying') : t('common.verify')}
-          </Button>
-        </form>
-      </CardContent>
-
-      <CardFooter>
+    <AuthCard
+      title={t('pages.2fa.login.title')}
+      description={t('pages.2fa.login.subtitle')}
+      size='md'
+      headerAccessory={<ShortLifeTokenCountdown />}
+      footer={
         <p className='text-sm text-zinc-500 text-start w-full'>
           {t('pages.2fa.login.footer')}
         </p>
-      </CardFooter>
-    </Card>
+      }
+    >
+      <form onSubmit={handleEmailSubmit(onVerifyTotp)} className='space-y-4'>
+        <AuthFormField
+          id='email'
+          label={t('common.email.title')}
+          type='email'
+          placeholder='m@example.com'
+          disabled
+          error={totpErrors.email?.message}
+          {...registerTotp('email', {
+            required: t('common.email.required'),
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: t('common.email.invalid'),
+            },
+          })}
+        />
+        <AuthFormField
+          id='code'
+          label={t('pages.2fa.qr.title')}
+          type='text'
+          placeholder='123456'
+          maxLength={6}
+          disabled={totpSubmitting}
+          error={totpErrors.code?.message}
+          {...registerTotp('code', {
+            required: t('pages.2fa.code.required'),
+            pattern: {
+              value: /^\d{6}$/,
+              message: t('pages.2fa.code.invalid'),
+            },
+          })}
+          ref={(e) => {
+            registerTotp('code').ref(e);
+            codeInputRef.current = e;
+          }}
+        />
+        <Button
+          type='submit'
+          disabled={totpSubmitting}
+          className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+        >
+          {totpSubmitting ? t('common.verifying') : t('common.verify')}
+        </Button>
+      </form>
+    </AuthCard>
   );
 }
