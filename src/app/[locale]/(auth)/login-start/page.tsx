@@ -11,12 +11,15 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
-import { AuthService } from '@/lib/services/AuthService';
+import { useRouter } from '@/i18n/navigation';
+import { useCheckFirstLoginMutation } from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Routes } from '@/lib/enums/routes';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 type LoginStartFormData = {
@@ -25,7 +28,17 @@ type LoginStartFormData = {
 
 export default function LoginStartPage() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const checkFirstLogin = useCheckFirstLoginMutation();
+
+  useEffect(() => {
+    if (searchParams.get('reason') === 'session-expired') {
+      toast(t('messagekey.guard.session-expired'));
+      router.replace({ pathname: Routes.Login_Start, query: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const {
     register,
@@ -37,14 +50,21 @@ export default function LoginStartPage() {
   });
 
   const onSubmit = async (data: LoginStartFormData) => {
-    const response = await AuthService.checkIfFirstLogin({ email: data.email });
     useAuthStore.getState().setAuthData({ email: data.email });
 
-    if (response.success && response.payload.firstLogin) {
-      toast(t(`messagekey.${response.messageKey}`));
-      pushLocalized(Routes.First_Login);
-    } else {
-      pushLocalized(Routes.Login);
+    try {
+      const response = await checkFirstLogin.mutateAsync({
+        email: data.email,
+      });
+
+      if (response.payload.firstLogin) {
+        toast(t(`messagekey.${response.messageKey}`));
+        router.push(Routes.First_Login);
+      } else {
+        router.push(Routes.Login);
+      }
+    } catch (error) {
+      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }
   };
   return (

@@ -1,11 +1,9 @@
-'use client';
-
 import MainHeader from '@/components/common/MainHeader';
 import { Home } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export default function DashboardPage() {
-  const t = useTranslations();
+export default async function DashboardPage() {
+  const t = await getTranslations();
 
   return (
     <div className='flex flex-col w-full'>

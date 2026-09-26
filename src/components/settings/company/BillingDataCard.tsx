@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFormChanges } from '@/lib/hooks/useFormChanges';
-import { CompanyService } from '@/lib/services/CompanyService';
 import {
   CompanyBillingDataUpdateRequest,
   CompanyExtendedResponse,
@@ -12,6 +11,8 @@ import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useUpdateCompanyBillingDataMutation } from '@/lib/queries/companyQueries';
+import { toastApiError } from '@/lib/queries/apiResponse';
 
 type Props = {
   initialCompanyData?: CompanyExtendedResponse | null;
@@ -32,7 +33,7 @@ export default function BillingDataCard({ initialCompanyData }: Props) {
     useFormChanges(values);
 
   useEffect(() => {
-    if (initialCompanyData) {
+    if (initialCompanyData && !hasChanges) {
       const values = {
         taxNumber: initialCompanyData?.taxNumber,
         vatNumber: initialCompanyData?.vatNumber,
@@ -44,14 +45,15 @@ export default function BillingDataCard({ initialCompanyData }: Props) {
       setInitialValues(values);
       reset(values);
     }
-  }, [initialCompanyData, reset, setInitialValues]);
+  }, [initialCompanyData, hasChanges, reset, setInitialValues]);
 
   const t = useTranslations();
+  const updateBillingData = useUpdateCompanyBillingDataMutation();
 
   const onSubmit = async (data: CompanyBillingDataUpdateRequest) => {
-    const res = await CompanyService.updateCompanyBillingData(data);
+    try {
+      const res = await updateBillingData.mutateAsync(data);
 
-    if (res.success && res.payload) {
       const values = {
         taxNumber: res.payload.taxNumber,
         vatNumber: res.payload.vatNumber,
@@ -63,7 +65,9 @@ export default function BillingDataCard({ initialCompanyData }: Props) {
       setInitialValues(values);
       reset(values);
 
-      toast(t(`messageKey.${res.messageKey}`));
+      toast(t(`messagekey.${res.messageKey}`));
+    } catch (error) {
+      toastApiError(t, error);
     }
   };
 

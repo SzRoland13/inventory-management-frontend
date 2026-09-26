@@ -1,11 +1,9 @@
-'use client';
-
 import MainHeader from '@/components/common/MainHeader';
 import { BadgeDollarSign } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export default function SalesPage() {
-  const t = useTranslations();
+export default async function SalesPage() {
+  const t = await getTranslations();
 
   return (
     <div className='flex flex-col w-full'>

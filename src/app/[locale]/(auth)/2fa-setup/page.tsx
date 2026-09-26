@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -15,16 +16,22 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AuthService } from '@/lib/services/AuthService';
+import {
+  useTwoFaLoginMutation,
+  useTwoFaSetupMutation,
+} from '@/lib/queries/authQueries';
+import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { queryKeys } from '@/lib/queries/queryKeys';
 import { Routes } from '@/lib/enums/routes';
 import { useAuthStore } from '@/lib/stores/authStore';
+import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { ShortLifeTokenCountdown } from '@/components/auth/ShortLifeTokenCountdown';
-import { useUserStore } from '@/lib/stores/userStore';
 import { castToEnum } from '@/lib/helpers/enum';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocalizedRouter } from '@/lib/hooks/useLocalizedRouter';
+import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { UserRole } from '@/lib/enums/user';
+import { UserRole, UserStatus } from '@/lib/enums/user';
+import { UserDto } from '@/lib/services/dtos/userDtos';
 
 type EmailForm = {
   email: string;
@@ -36,10 +43,13 @@ type TotpForm = {
 
 export default function TwoFaSetupPage() {
   const t = useTranslations();
-  const { pushLocalized } = useLocalizedRouter();
+  const router = useRouter();
   const codeInputRef = useRef<HTMLInputElement | null>(null);
 
+  const twoFaSetup = useTwoFaSetupMutation();
+  const twoFaLogin = useTwoFaLoginMutation();
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const storeState = useAuthStore.getState();
@@ -50,9 +60,9 @@ export default function TwoFaSetupPage() {
       !storeState.shortLifeTokenExpiry
     ) {
       toast(t('messagekey.auth.invalid-or-expired-session'));
-      pushLocalized(Routes.Login_Start);
+      router.push(Routes.Login_Start);
     }
-  }, [pushLocalized, t]);
+  }, [router, t]);
 
   useEffect(() => {
     if (qrCode) {
@@ -76,11 +86,12 @@ export default function TwoFaSetupPage() {
 
   const onRequestQr = async (data: EmailForm) => {
     if (data.email) {
-      const response = await AuthService.twoFaSetup({ email: data.email });
-
-      toast(t(`messagekey.${response.messageKey}`));
-      if (response.success && response.payload) {
+      try {
+        const response = await twoFaSetup.mutateAsync({ email: data.email });
+        toast(t(`messagekey.${response.messageKey}`));
         setQrCode(response.payload);
+      } catch (error) {
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
       }
     } else {
       toast(t('messagekey.auth.invalid-or-expired-session'));
@@ -92,26 +103,43 @@ export default function TwoFaSetupPage() {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
 
     if (loginEmail && shortLifeToken) {
-      const response = await AuthService.twoFaLogin({
-        email: loginEmail,
-        code: data.code,
-        shortLifeToken,
-      });
-
-      const { user, firstTime2FAEnabled } = response.payload;
-
-      toast(t(`messagekey.${response.messageKey}`));
-
-      if (response.success && firstTime2FAEnabled) {
-        useUserStore.getState().setUser({
-          username: user.username,
-          email: user.email,
-          role: castToEnum(UserRole, user.role),
+      try {
+        const response = await twoFaLogin.mutateAsync({
+          email: loginEmail,
+          code: data.code,
+          shortLifeToken,
         });
+        const { user, firstTime2FAEnabled } = response.payload;
+        toast(t(`messagekey.${response.messageKey}`));
 
-        useAuthStore.getState().clearAuthData();
+        if (firstTime2FAEnabled) {
+          queryClient.setQueryData(queryKeys.auth.session, {
+            success: true,
+            messageKey: response.messageKey,
+            payload: {
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              // Least-privilege fallback: never silently grant elevated
+              // access if the role string somehow doesn't match the enum.
+              role: castToEnum(UserRole, user.role) ?? UserRole.SALES,
+              twoFaEnabled: true,
+              otcSetupCompleted: true,
+              userStatus: UserStatus.ACTIVE,
+            } satisfies UserDto,
+          });
 
-        pushLocalized(Routes.Dashboard);
+          useAvatarStore.getState().setAvatar({
+            avatarId: user.avatarId,
+            avatarUrl: user.avatarUrl,
+            avatarUrlExpiry: user.avatarUrlExpiry,
+          });
+
+          useAuthStore.getState().clearAuthData();
+          router.push(Routes.Dashboard);
+        }
+      } catch (error) {
+        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
       }
     }
   };
@@ -129,7 +157,7 @@ export default function TwoFaSetupPage() {
         </div>
 
         <ShortLifeTokenCountdown
-          onExpire={() => pushLocalized(Routes.Login_Start)}
+          onExpire={() => router.push(Routes.Login_Start)}
         />
       </CardHeader>
       <CardContent>

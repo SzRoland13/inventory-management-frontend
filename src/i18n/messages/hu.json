@@ -244,8 +244,7 @@
   "messagekey": {
     "guard": {
       "session-expired": "Lejárt munkamenet. Kérlek lépj be újra.",
-      "invalid-session": "Érvénytelen munkamenet. A hitelesítő adatai már nem érvényesek.",
-      "logged-in-redirect": "Már bejelentkezve. Átirányítás az irányítópultra."
+      "invalid-session": "Érvénytelen munkamenet. A hitelesítő adatai már nem érvényesek."
     },
     "auth": {
       "login": {
