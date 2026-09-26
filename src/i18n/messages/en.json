@@ -67,7 +67,15 @@
       }
     },
     "requesting": "Requesting...",
-    "request": "Request"
+    "request": "Request",
+    "table-pagination": {
+      "showing": "Showing {start} - {end} out of {total}",
+      "showing-empty": "No items to show",
+      "page-selector": "Select page",
+      "rows-per-page": "Rows per page",
+      "previous": "Previous",
+      "next": "Next"
+    }
   },
   "pages": {
     "login": {
@@ -141,7 +149,36 @@
       "title": "Dashboard"
     },
     "products": {
-      "title": "Product Management"
+      "title": "Product Management",
+      "actions": {
+        "add": "Add product",
+        "edit": "Edit product"
+      },
+      "search-placeholder": "Search by name, SKU, or brand",
+      "loading": "Loading products",
+      "empty": {
+        "title": "No products yet",
+        "description": "Add your first product to start building your catalog."
+      },
+      "filters": {
+        "status": "Filter by status",
+        "all-statuses": "All statuses"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      },
+      "table": {
+        "sku": "SKU",
+        "name": "Product",
+        "brand": "Brand",
+        "unit": "Unit",
+        "net-price": "Net price",
+        "status": "Status"
+      },
+      "messages": {
+        "backend-pending": "Product actions will be available when the product API is connected."
+      }
     },
     "warehouses": {
       "title": "Warehouse Management"

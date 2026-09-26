@@ -67,7 +67,15 @@
       }
     },
     "requesting": "Kérés folyamatban...",
-    "request": "Kérés"
+    "request": "Kérés",
+    "table-pagination": {
+      "showing": "{start}–{end} megjelenítve, összesen {total}",
+      "showing-empty": "Nincs megjeleníthető elem",
+      "page-selector": "Oldal kiválasztása",
+      "rows-per-page": "Sor oldalanként",
+      "previous": "Előző",
+      "next": "Következő"
+    }
   },
   "pages": {
     "login": {
@@ -141,7 +149,36 @@
       "title": "Irányítópult"
     },
     "products": {
-      "title": "Termékkezelés"
+      "title": "Termékkezelés",
+      "actions": {
+        "add": "Termék hozzáadása",
+        "edit": "Termék szerkesztése"
+      },
+      "search-placeholder": "Keresés név, SKU vagy márka alapján",
+      "loading": "Termékek betöltése",
+      "empty": {
+        "title": "Még nincsenek termékek",
+        "description": "Adj hozzá egy terméket a katalógus felépítésének megkezdéséhez."
+      },
+      "filters": {
+        "status": "Szűrés állapot szerint",
+        "all-statuses": "Minden állapot"
+      },
+      "status": {
+        "ACTIVE": "Aktív",
+        "INACTIVE": "Inaktív"
+      },
+      "table": {
+        "sku": "SKU",
+        "name": "Termék",
+        "brand": "Márka",
+        "unit": "Mértékegység",
+        "net-price": "Nettó ár",
+        "status": "Állapot"
+      },
+      "messages": {
+        "backend-pending": "A termékműveletek a termék API csatlakoztatása után lesznek elérhetők."
+      }
     },
     "warehouses": {
       "title": "Raktárkezelés"
