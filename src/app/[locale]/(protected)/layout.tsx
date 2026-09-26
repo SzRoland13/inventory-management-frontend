@@ -1,10 +1,10 @@
 import { headers } from 'next/headers';
 import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/lib/auth/sessionHeader';
-import { queryKeys } from '@/lib/queries/queryKeys';
-import { Routes } from '@/lib/enums/routes';
+import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/features/auth/session/sessionHeader';
+import { queryKeys } from '@/features/shared/api/queryKeys';
+import { Routes } from '@/features/shared/types/routes';
 import { redirect } from '@/i18n/navigation';
-import ProtectedLayoutClient from '@/components/layout/ProtectedLayoutClient';
+import ProtectedLayoutClient from '@/features/shared/components/layout/ProtectedLayoutClient';
 
 export default async function ProtectedLayout({
   children,

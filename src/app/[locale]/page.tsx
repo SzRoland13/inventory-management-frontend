@@ -1,5 +1,5 @@
 import { redirect } from '@/i18n/navigation';
-import { Routes } from '@/lib/enums/routes';
+import { Routes } from '@/features/shared/types/routes';
 
 export default async function LocaleRootPage({
   params,

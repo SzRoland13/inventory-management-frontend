@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
-import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/lib/auth/sessionHeader';
-import { Routes } from '@/lib/enums/routes';
+import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/features/auth/session/sessionHeader';
+import { Routes } from '@/features/shared/types/routes';
 import { redirect } from '@/i18n/navigation';
 
 export default async function AuthLayout({

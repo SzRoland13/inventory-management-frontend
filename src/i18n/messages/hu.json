@@ -12,10 +12,12 @@
     "no-results": "Nincs találat.",
     "none": "Egyik sem",
     "role": {
-      "title": "Szerepkör"
+      "title": "Szerepkör",
+      "required": "A szerepkör megadása kötelező"
     },
     "username": {
-      "title": "Felhasználónév"
+      "title": "Felhasználónév",
+      "required": "A felhasználónév megadása kötelező"
     },
     "email": {
       "title": "E-mail cím",
@@ -249,6 +251,7 @@
     "auth": {
       "login": {
         "success": "Sikeres bejelentkezés! Üdv újra.",
+        "valid-credentials": "A hitelesítési adatok ellenőrzése sikeres.",
         "invalid-credentials": "Érvénytelen bejelentkezési adatok. Próbáld újra.",
         "first-login": "Az első bejelentkezés még nincs befejezve, kérjük, állítsd be a fiókodat.",
         "not-first-login": "Az első bejelentkezést már elvégezted.",
