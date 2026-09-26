@@ -8,26 +8,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/features/shared/components/ui/select';
-import type { Table as ReactTable } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 
-interface DataTablePaginationProps<T> {
-  table: ReactTable<T>;
+interface DataTablePaginationProps {
+  totalRows: number;
+  pageIndex: number;
+  pageSize: number;
+  pageCount: number;
+  canPreviousPage: boolean;
+  canNextPage: boolean;
+  onPageChange: (pageIndex: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
   pageSizes?: number[];
-  totalRows?: number;
 }
 
-export function DataTablePagination<T>({
-  table,
+export function DataTablePagination({
+  totalRows,
+  pageIndex,
+  pageSize,
+  pageCount,
+  canPreviousPage,
+  canNextPage,
+  onPageChange,
+  onPageSizeChange,
   pageSizes = [10, 20, 50],
-  totalRows = table.getFilteredRowModel().rows.length,
-}: DataTablePaginationProps<T>) {
+}: DataTablePaginationProps) {
   const t = useTranslations('common.table-pagination');
-  const { pageIndex, pageSize } = table.getState().pagination;
-  const visibleRows = table.getRowModel().rows.length;
   const start = totalRows === 0 ? 0 : pageIndex * pageSize + 1;
-  const end = totalRows === 0 ? 0 : start + visibleRows - 1;
-  const pageCount = Math.max(table.getPageCount(), 1);
+  const end = Math.min(start + pageSize - 1, totalRows);
 
   return (
     <div className='flex flex-wrap items-center justify-between gap-3 border-t border-zinc-700 px-4 py-3 text-sm text-zinc-400'>
@@ -40,7 +48,7 @@ export function DataTablePagination<T>({
         <span>{t('rows-per-page')}</span>
         <Select
           value={String(pageSize)}
-          onValueChange={(value) => table.setPageSize(Number(value))}
+          onValueChange={(value) => onPageSizeChange(Number(value))}
         >
           <SelectTrigger
             aria-label={t('rows-per-page')}
@@ -65,14 +73,14 @@ export function DataTablePagination<T>({
           variant='outline'
           size='sm'
           className='w-24 justify-center'
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={() => onPageChange(pageIndex - 1)}
+          disabled={!canPreviousPage}
         >
           {t('previous')}
         </Button>
         <Select
           value={String(pageIndex + 1)}
-          onValueChange={(value) => table.setPageIndex(Number(value) - 1)}
+          onValueChange={(value) => onPageChange(Number(value) - 1)}
         >
           <SelectTrigger
             aria-label={t('page-selector')}
@@ -99,8 +107,8 @@ export function DataTablePagination<T>({
           variant='outline'
           size='sm'
           className='w-24 justify-center'
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={() => onPageChange(pageIndex + 1)}
+          disabled={!canNextPage}
         >
           {t('next')}
         </Button>

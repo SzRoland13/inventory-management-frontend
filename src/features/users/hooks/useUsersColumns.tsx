@@ -8,7 +8,7 @@ import { UserStatus } from '@/features/users/types/user';
 import { useTranslations } from 'next-intl';
 import { UserDtoWithAvatar } from '@/features/users/types/userDtos';
 
-export const useUserColumns = (): ColumnDef<UserDtoWithAvatar>[] => {
+export const useUsersColumns = (): ColumnDef<UserDtoWithAvatar>[] => {
   const t = useTranslations();
 
   return [

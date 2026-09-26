@@ -1,6 +1,6 @@
 'use client';
 
-import { useProductsColumns } from '@/features/products/components/ProductsColumns';
+import { useProductsColumns } from '@/features/products/hooks/useProductsColumns';
 import { ProductsToolbar } from '@/features/products/components/ProductsToolbar';
 import type { ProductTableRow } from '@/features/products/types/product';
 import { Button } from '@/features/shared/components/ui/button';
@@ -27,7 +27,9 @@ const initialProducts: ProductTableRow[] = [];
 
 export function ProductsTable() {
   const t = useTranslations();
+
   const columns = useProductsColumns();
+
   const [products] = useState(initialProducts);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -112,7 +114,26 @@ export function ProductsTable() {
         <DataTable table={table} />
       )}
 
-      <DataTablePagination table={table} />
+      <DataTablePagination
+        totalRows={products.length}
+        pageIndex={pagination.pageIndex}
+        pageSize={pagination.pageSize}
+        pageCount={Math.max(
+          1,
+          Math.ceil(products.length / pagination.pageSize),
+        )}
+        canPreviousPage={pagination.pageIndex > 0}
+        canNextPage={
+          pagination.pageIndex + 1 <
+          Math.max(1, Math.ceil(products.length / pagination.pageSize))
+        }
+        onPageChange={(pageIndex) =>
+          setPagination((current) => ({ ...current, pageIndex }))
+        }
+        onPageSizeChange={(pageSize) =>
+          setPagination({ pageIndex: 0, pageSize })
+        }
+      />
     </section>
   );
 }
