@@ -1,0 +1,40 @@
+import { UserRole, UserStatus } from '@/features/users/types/user';
+
+export type AddEditUserRequest = {
+  username: string;
+  email: string;
+  role: UserRole;
+};
+
+export type UserDto = {
+  id: number;
+  username: string;
+  email: string;
+  role: UserRole;
+  twoFaEnabled: boolean;
+  otcSetupCompleted: boolean;
+  userStatus: UserStatus;
+};
+
+export type UserDtoWithAvatar = UserDto & {
+  avatarUrl: string | null;
+};
+
+export type Reset2FaRequest = {
+  ids: number[];
+};
+
+export type AllUserResponse = {
+  users: UserDtoWithAvatar[];
+};
+
+export type ModificationUser = {
+  id: number | undefined;
+  username: string;
+  email: string;
+  role: UserRole;
+};
+
+export type AvatarUploadRequest = {
+  mediaAssetId: number;
+};

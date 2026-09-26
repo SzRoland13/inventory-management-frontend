@@ -2,14 +2,14 @@ import createMiddleware from 'next-intl/middleware';
 import { hasLocale } from 'next-intl';
 import { NextRequest, NextResponse } from 'next/server';
 import { routing } from '@/i18n/routing';
-import { classifyPath } from '@/lib/auth/routeGroups';
-import { resolveSession, ResolveSessionResult } from '@/lib/auth/resolveSession';
+import { classifyPath } from '@/features/auth/session/routeGroups';
+import { resolveSession, ResolveSessionResult } from '@/features/auth/session/resolveSession';
 import {
   SESSION_HEADER_NAME,
   encodeSessionHeader,
   VerifiedSession,
-} from '@/lib/auth/sessionHeader';
-import { Routes } from '@/lib/enums/routes';
+} from '@/features/auth/session/sessionHeader';
+import { Routes } from '@/features/shared/types/routes';
 
 const intlMiddleware = createMiddleware(routing);
 

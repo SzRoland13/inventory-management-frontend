@@ -1,3 +1,3 @@
-export default function WarehousesPage() {
-  return <div></div>;
-}
+import WarehousesScreen from '@/features/warehouses/screens/WarehousesScreen';
+
+export default WarehousesScreen;

@@ -3,7 +3,7 @@ import { hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import React from 'react';
 import '@/app/globals.css';
-import { QueryProvider } from '@/lib/providers/QueryProvider';
+import { QueryProvider } from '@/features/shared/providers/QueryProvider';
 import { routing } from '@/i18n/routing';
 
 export default async function LocaleLayout({
