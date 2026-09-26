@@ -19,7 +19,7 @@ import {
   useDocumentPrefixesQuery,
   useUpdateDocumentPrefixesMutation,
 } from '@/lib/queries/documentPrefixQueries';
-import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { toastApiError } from '@/lib/queries/apiResponse';
 
 type FormValues = {
   prefixes: DocumentPrefixDto[];
@@ -50,13 +50,13 @@ export default function DocumentPrefixCard() {
 
   useEffect(() => {
     const payload = prefixesQuery.data?.payload;
-    if (!payload) return;
+    if (!payload || hasChanges) return;
 
     const values = { prefixes: payload.prefixes };
 
     reset(values);
     setInitialValues(values);
-  }, [prefixesQuery.data, reset, setInitialValues]);
+  }, [prefixesQuery.data, hasChanges, reset, setInitialValues]);
 
   const onSubmit = async (data: DocumentPrefixesUpdateRequest) => {
     try {
@@ -71,7 +71,7 @@ export default function DocumentPrefixCard() {
 
       toast(t(`messagekey.${res.messageKey}`));
     } catch (error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      toastApiError(t, error);
     }
   };
 

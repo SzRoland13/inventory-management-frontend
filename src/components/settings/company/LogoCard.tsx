@@ -8,7 +8,7 @@ import { useRef } from 'react';
 import { toast } from 'sonner';
 import { useMediaUploadMutation } from '@/lib/queries/mediaQueries';
 import { useUpdateCompanyLogoMutation } from '@/lib/queries/companyQueries';
-import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { toastApiError } from '@/lib/queries/apiResponse';
 
 export default function LogoCard() {
   const companyLogoUrl = useCompanyStore((state) => state.logoUrl);
@@ -31,7 +31,7 @@ export default function LogoCard() {
     try {
       await uploadMedia.mutateAsync(file);
     } catch (error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      toastApiError(t, error);
     }
   };
 
@@ -58,7 +58,7 @@ export default function LogoCard() {
 
       toast(t(`messagekey.${response.messageKey}`));
     } catch (error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      toastApiError(t, error);
     }
   };
 

@@ -19,7 +19,7 @@ import {
   useCurrenciesQuery,
   useUpdatePreferredCurrencyMutation,
 } from '@/lib/queries/companyQueries';
-import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { toastApiError } from '@/lib/queries/apiResponse';
 
 type Props = {
   preferredCurrency?: Currency | null;
@@ -52,8 +52,7 @@ export default function PreferredCurrencyCard({ preferredCurrency }: Props) {
     setSavedCurrencyId(incomingId);
   }
 
-  const hasChanges =
-    selectedCurrencyId !== savedCurrencyId && selectedCurrencyId !== 'none';
+  const hasChanges = selectedCurrencyId !== savedCurrencyId;
 
   const handleReset = () => {
     setSelectedCurrencyId(savedCurrencyId);
@@ -81,7 +80,7 @@ export default function PreferredCurrencyCard({ preferredCurrency }: Props) {
 
       toast(t(`messagekey.${res.messageKey}`));
     } catch (error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      toastApiError(t, error);
     }
   };
 

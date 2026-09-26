@@ -24,7 +24,7 @@ import {
   useResetUserPasswordMutation,
   useResetUserTwoFaMutation,
 } from '@/lib/queries/userQueries';
-import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { toastApiError } from '@/lib/queries/apiResponse';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { UserStatus } from '@/lib/enums/user';
@@ -45,7 +45,7 @@ export function UsersTable() {
 
   useEffect(() => {
     if (usersQuery.error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(usersQuery.error)}`));
+      toastApiError(t, usersQuery.error);
     }
   }, [usersQuery.error, t]);
 
@@ -95,8 +95,7 @@ export function UsersTable() {
 
   const handleSave = (user: ModificationUser) => {
     const userRequest = mapModificationUserToAddEditUserRequest(user);
-    const onError = (error: unknown) =>
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+    const onError = (error: unknown) => toastApiError(t, error);
 
     if (user.id) {
       updateUser.mutate(
@@ -140,8 +139,7 @@ export function UsersTable() {
           );
           setRowSelection({});
         },
-        onError: (error) =>
-          toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`)),
+        onError: (error) => toastApiError(t, error),
       },
     );
   };
@@ -154,8 +152,7 @@ export function UsersTable() {
         toast.success(t('messagekey.user.password-reset-complete'));
         setRowSelection({});
       },
-      onError: (error) =>
-        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`)),
+      onError: (error) => toastApiError(t, error),
     });
   };
 
@@ -167,8 +164,7 @@ export function UsersTable() {
         toast.success(t('messagekey.user.two-fa-setup-reset-complete'));
         setRowSelection({});
       },
-      onError: (error) =>
-        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`)),
+      onError: (error) => toastApiError(t, error),
     });
   };
 

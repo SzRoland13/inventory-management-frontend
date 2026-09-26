@@ -59,7 +59,7 @@ export default function LoginPage() {
 
       toast(t(`messagekey.${response.messageKey}`));
 
-      if (response.payload.twoFactorEnabled) {
+      if (response.payload?.twoFactorEnabled) {
         router.push(Routes.Two_Fa_Login);
       } else {
         router.push(Routes.Two_Fa_Setup);

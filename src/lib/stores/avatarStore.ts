@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface AvatarState {
   avatarId: number | null;
@@ -8,13 +9,17 @@ interface AvatarState {
   clearAvatar: () => void;
 }
 
-// Deliberately NOT persisted: avatars aren't a privilege-escalation vector,
-// but this store must not become another place identity data lives outside
-// the server-verified query cache.
-export const useAvatarStore = create<AvatarState>((set) => ({
-  avatarId: null,
-  avatarUrl: null,
-  avatarUrlExpiry: null,
-  setAvatar: (data) => set(data),
-  clearAvatar: () => set({ avatarId: null, avatarUrl: null, avatarUrlExpiry: null }),
-}));
+export const useAvatarStore = create<AvatarState>()(
+  persist(
+    (set) => ({
+      avatarId: null,
+      avatarUrl: null,
+      avatarUrlExpiry: null,
+      setAvatar: (data) => set(data),
+      clearAvatar: () => set({ avatarId: null, avatarUrl: null, avatarUrlExpiry: null }),
+    }),
+    {
+      name: 'avatar-store',
+    },
+  ),
+);

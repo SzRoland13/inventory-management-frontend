@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useUpdateCompanyBillingDataMutation } from '@/lib/queries/companyQueries';
-import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { toastApiError } from '@/lib/queries/apiResponse';
 
 type Props = {
   initialCompanyData?: CompanyExtendedResponse | null;
@@ -33,7 +33,7 @@ export default function BillingDataCard({ initialCompanyData }: Props) {
     useFormChanges(values);
 
   useEffect(() => {
-    if (initialCompanyData) {
+    if (initialCompanyData && !hasChanges) {
       const values = {
         taxNumber: initialCompanyData?.taxNumber,
         vatNumber: initialCompanyData?.vatNumber,
@@ -45,7 +45,7 @@ export default function BillingDataCard({ initialCompanyData }: Props) {
       setInitialValues(values);
       reset(values);
     }
-  }, [initialCompanyData, reset, setInitialValues]);
+  }, [initialCompanyData, hasChanges, reset, setInitialValues]);
 
   const t = useTranslations();
   const updateBillingData = useUpdateCompanyBillingDataMutation();
@@ -67,7 +67,7 @@ export default function BillingDataCard({ initialCompanyData }: Props) {
 
       toast(t(`messagekey.${res.messageKey}`));
     } catch (error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      toastApiError(t, error);
     }
   };
 

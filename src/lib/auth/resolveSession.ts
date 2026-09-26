@@ -45,6 +45,11 @@ async function fetchCheckSession(cookieHeader: string): Promise<UserDto | null> 
   return body.success ? body.payload : null;
 }
 
+// Known gap: this can race with axios.ts's client-side 401-refresh interceptor
+// (different runtime, no shared lock) - a stale in-flight API call refreshing
+// via axios while this proxy-driven refresh also fires can invalidate cookies
+// the other just set if the backend rotates refresh_token per call. Needs a
+// backend-side fix (e.g. a rotation grace period) to close fully.
 async function fetchRefresh(
   refreshToken: string,
 ): Promise<{ ok: boolean; setCookies: string[] }> {

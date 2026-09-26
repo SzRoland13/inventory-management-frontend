@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 import { ApiResponse } from '@/lib/services/dtos/genericDtos';
 
 export class ApiResponseError extends Error {
@@ -23,4 +25,11 @@ export function getApiErrorMessageKey(error: unknown): string {
   return error instanceof ApiResponseError
     ? error.messageKey
     : 'error.generic';
+}
+
+export function toastApiError(
+  t: ReturnType<typeof useTranslations>,
+  error: unknown,
+): void {
+  toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
 }

@@ -1,4 +1,5 @@
 import createMiddleware from 'next-intl/middleware';
+import { hasLocale } from 'next-intl';
 import { NextRequest, NextResponse } from 'next/server';
 import { routing } from '@/i18n/routing';
 import { classifyPath } from '@/lib/auth/routeGroups';
@@ -29,9 +30,7 @@ function applyCookieInstructions(
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const [, localeSegment, ...rest] = pathname.split('/');
-  const locale = (routing.locales as readonly string[]).includes(
-    localeSegment,
-  )
+  const locale = hasLocale(routing.locales, localeSegment)
     ? localeSegment
     : routing.defaultLocale;
   const pathWithoutLocale = `/${rest.join('/')}`.replace(/\/$/, '') || '/';
@@ -50,6 +49,7 @@ export default async function proxy(request: NextRequest) {
     // fallback locale computed above already produces a correctly
     // prefixed URL regardless of whether the incoming request had one.
     const redirectUrl = new URL(`/${locale}${Routes.Login_Start}`, request.url);
+    redirectUrl.searchParams.set('reason', 'session-expired');
     const response = NextResponse.redirect(redirectUrl);
     applyCookieInstructions(response, result);
     return response;

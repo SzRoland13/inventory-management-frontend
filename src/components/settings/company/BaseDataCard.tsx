@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { useFormChanges } from '@/lib/hooks/useFormChanges';
 import CardWrapper from '@/components/common/CardWrapper';
 import { useUpdateCompanyBaseDataMutation } from '@/lib/queries/companyQueries';
-import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { toastApiError } from '@/lib/queries/apiResponse';
 
 type Props = {
   initialCompanyData?: CompanyExtendedResponse | null;
@@ -34,7 +34,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
     useFormChanges(values);
 
   useEffect(() => {
-    if (initialCompanyData) {
+    if (initialCompanyData && !hasChanges) {
       const values = {
         name: initialCompanyData.name ?? '',
         description: initialCompanyData.description ?? '',
@@ -47,7 +47,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
       setInitialValues(values);
       reset(values);
     }
-  }, [initialCompanyData, reset, setInitialValues]);
+  }, [initialCompanyData, hasChanges, reset, setInitialValues]);
 
   const t = useTranslations();
   const setCompanyData = useCompanyStore((state) => state.setCompanyData);
@@ -76,7 +76,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
 
       toast(t(`messagekey.${res.messageKey}`));
     } catch (error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      toastApiError(t, error);
     }
   };
 

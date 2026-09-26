@@ -244,8 +244,7 @@
   "messagekey": {
     "guard": {
       "session-expired": "Session expired. Please log in again.",
-      "invalid-session": "Invalid session. Your credentials are no longer valid.",
-      "logged-in-redirect": "Already logged in. Redirected to your dashboard."
+      "invalid-session": "Invalid session. Your credentials are no longer valid."
     },
     "auth": {
       "login": {

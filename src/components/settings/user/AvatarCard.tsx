@@ -9,7 +9,7 @@ import CardWrapper from '@/components/common/CardWrapper';
 import { useMediaUploadMutation } from '@/lib/queries/mediaQueries';
 import { useUpdateUserAvatarMutation } from '@/lib/queries/userQueries';
 import { useSessionQuery } from '@/lib/queries/authQueries';
-import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { toastApiError } from '@/lib/queries/apiResponse';
 
 export default function AvatarCard() {
   const avatarUrl = useAvatarStore((state) => state.avatarUrl);
@@ -33,7 +33,7 @@ export default function AvatarCard() {
     try {
       await uploadMedia.mutateAsync(file);
     } catch (error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      toastApiError(t, error);
     }
   };
 
@@ -42,7 +42,10 @@ export default function AvatarCard() {
     if (!mediaAssetId) return;
 
     const userId = sessionQuery.data?.payload.id;
-    if (!userId) return;
+    if (!userId) {
+      toast.error(t('messagekey.error.generic'));
+      return;
+    }
 
     try {
       const response = await updateAvatar.mutateAsync({
@@ -60,7 +63,7 @@ export default function AvatarCard() {
 
       toast(t(`messagekey.${response.messageKey}`));
     } catch (error) {
-      toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      toastApiError(t, error);
     }
   };
 

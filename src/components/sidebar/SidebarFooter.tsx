@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useRouter } from '@/i18n/navigation';
 import { useLogoutMutation, useSessionQuery } from '@/lib/queries/authQueries';
-import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
+import { toastApiError } from '@/lib/queries/apiResponse';
 import { useCompanyStore } from '@/lib/stores/companyStore';
 import { useAvatarStore } from '@/lib/stores/avatarStore';
 import { Routes } from '@/lib/enums/routes';
@@ -28,7 +28,7 @@ export default function SidebarFooter() {
         toast(t(`messagekey.${response.messageKey}`));
       },
       onError: (error) => {
-        toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+        toastApiError(t, error);
       },
     });
   };

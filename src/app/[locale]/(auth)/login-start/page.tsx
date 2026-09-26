@@ -17,7 +17,9 @@ import { getApiErrorMessageKey } from '@/lib/queries/apiResponse';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Routes } from '@/lib/enums/routes';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 type LoginStartFormData = {
@@ -27,7 +29,16 @@ type LoginStartFormData = {
 export default function LoginStartPage() {
   const t = useTranslations();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const checkFirstLogin = useCheckFirstLoginMutation();
+
+  useEffect(() => {
+    if (searchParams.get('reason') === 'session-expired') {
+      toast(t('messagekey.guard.session-expired'));
+      router.replace({ pathname: Routes.Login_Start, query: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const {
     register,
