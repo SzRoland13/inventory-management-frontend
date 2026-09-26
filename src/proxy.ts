@@ -3,7 +3,10 @@ import { hasLocale } from 'next-intl';
 import { NextRequest, NextResponse } from 'next/server';
 import { routing } from '@/i18n/routing';
 import { classifyPath } from '@/features/auth/session/routeGroups';
-import { resolveSession, ResolveSessionResult } from '@/features/auth/session/resolveSession';
+import {
+  resolveSession,
+  ResolveSessionResult,
+} from '@/features/auth/session/resolveSession';
 import {
   SESSION_HEADER_NAME,
   encodeSessionHeader,
