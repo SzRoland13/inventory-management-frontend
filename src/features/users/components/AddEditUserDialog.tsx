@@ -17,8 +17,14 @@ import {
 } from '@/features/shared/components/ui/select';
 import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  addEditUserSchema,
+  type AddEditUserFormValues,
+} from '@/features/users/schemas/userSchemas';
 import { ModificationUser } from '@/features/users/types/userDtos';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
+import { ValidationMessage } from '@/features/shared/components/ValidationMessage';
 import { useTranslations } from 'next-intl';
 import { UserRole } from '@/features/users/types/user';
 
@@ -41,8 +47,9 @@ export function AddEditUserDialog({
     handleSubmit,
     reset,
     control,
-    formState: { isSubmitting },
-  } = useForm<ModificationUser>({
+    formState: { isSubmitting, errors },
+  } = useForm<AddEditUserFormValues>({
+    resolver: zodResolver(addEditUserSchema),
     defaultValues: user ?? {
       id: undefined,
       username: '',
@@ -85,19 +92,20 @@ export function AddEditUserDialog({
           {user?.id && <Input {...register('id')} type='hidden' />}
 
           <Input
-            {...register('username', { required: true })}
+            {...register('username')}
             placeholder={t('common.username.title')}
           />
+          <ValidationMessage messageKey={errors.username?.message} />
           <Input
-            {...register('email', { required: true })}
+            {...register('email')}
             placeholder={t('common.email.title')}
             type='email'
           />
+          <ValidationMessage messageKey={errors.email?.message} />
 
           <Controller
             name='role'
             control={control}
-            rules={{ required: true }}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value ?? ''}>
                 <SelectTrigger className='border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-sm text-zinc-100 shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 placeholder:text-zinc-500'>
@@ -120,6 +128,7 @@ export function AddEditUserDialog({
               </Select>
             )}
           />
+          <ValidationMessage messageKey={errors.role?.message} />
 
           <DialogFooter className='mt-4'>
             <Button

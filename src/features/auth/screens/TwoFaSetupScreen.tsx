@@ -3,11 +3,18 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/features/shared/components/ui/button';
 import { AuthCard } from '@/features/auth/components/AuthCard';
 import { AuthFormField } from '@/features/auth/components/AuthFormField';
+import {
+  firstLoginRequestSchema,
+  twoFactorSetupCodeSchema,
+  type FirstLoginRequestFormValues,
+  type TwoFactorSetupCodeFormValues,
+} from '@/features/auth/schemas/authSchemas';
 import {
   useTwoFaLoginMutation,
   useTwoFaSetupMutation,
@@ -24,14 +31,6 @@ import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { UserRole, UserStatus } from '@/features/users/types/user';
 import { UserDto } from '@/features/users/types/userDtos';
-
-type EmailForm = {
-  email: string;
-};
-
-type TotpForm = {
-  code: string;
-};
 
 export default function TwoFaSetupPage() {
   const t = useTranslations();
@@ -66,7 +65,8 @@ export default function TwoFaSetupPage() {
     register: registerEmail,
     handleSubmit: handleEmailSubmit,
     formState: { errors: emailErrors, isSubmitting: emailSubmitting },
-  } = useForm<EmailForm>({
+  } = useForm<FirstLoginRequestFormValues>({
+    resolver: zodResolver(firstLoginRequestSchema),
     defaultValues: { email: useAuthStore.getState().email ?? '' },
   });
 
@@ -74,9 +74,12 @@ export default function TwoFaSetupPage() {
     register: registerTotp,
     handleSubmit: handleTotpSubmit,
     formState: { errors: totpErrors, isSubmitting: totpSubmitting },
-  } = useForm<TotpForm>();
+  } = useForm<TwoFactorSetupCodeFormValues>({
+    resolver: zodResolver(twoFactorSetupCodeSchema),
+    defaultValues: { code: '' },
+  });
 
-  const onRequestQr = async (data: EmailForm) => {
+  const onRequestQr = async (data: FirstLoginRequestFormValues) => {
     if (data.email) {
       try {
         const response = await twoFaSetup.mutateAsync({ email: data.email });
@@ -90,7 +93,7 @@ export default function TwoFaSetupPage() {
     }
   };
 
-  const onVerifyTotp = async (data: TotpForm) => {
+  const onVerifyTotp = async (data: TwoFactorSetupCodeFormValues) => {
     const loginEmail = useAuthStore.getState().email;
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
 
@@ -170,13 +173,7 @@ export default function TwoFaSetupPage() {
               placeholder='m@example.com'
               disabled
               error={emailErrors.email?.message}
-              {...registerEmail('email', {
-                required: t('common.email.required'),
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: t('common.email.invalid'),
-                },
-              })}
+              {...registerEmail('email')}
             />
             <Button
               type='submit'
@@ -212,13 +209,7 @@ export default function TwoFaSetupPage() {
                 placeholder='123456'
                 maxLength={6}
                 error={totpErrors.code?.message}
-                {...registerTotp('code', {
-                  required: t('pages.2fa.code.required'),
-                  pattern: {
-                    value: /^\d{6}$/,
-                    message: t('pages.2fa.code.invalid'),
-                  },
-                })}
+                {...registerTotp('code')}
                 ref={(e) => {
                   registerTotp('code').ref(e);
                   codeInputRef.current = e;

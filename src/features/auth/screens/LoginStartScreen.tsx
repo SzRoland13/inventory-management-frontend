@@ -3,6 +3,10 @@
 import { Button } from '@/features/shared/components/ui/button';
 import { AuthCard } from '@/features/auth/components/AuthCard';
 import { AuthFormField } from '@/features/auth/components/AuthFormField';
+import {
+  loginStartSchema,
+  type LoginStartFormValues,
+} from '@/features/auth/schemas/authSchemas';
 import { useRouter } from '@/i18n/navigation';
 import { useCheckFirstLoginMutation } from '@/features/auth/queries/authQueries';
 import { getApiErrorMessageKey } from '@/features/shared/api/apiResponse';
@@ -11,12 +15,9 @@ import { Routes } from '@/features/shared/types/routes';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-
-type LoginStartFormData = {
-  email: string;
-};
 
 export default function LoginStartPage() {
   const t = useTranslations();
@@ -36,12 +37,13 @@ export default function LoginStartPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginStartFormData>({
+  } = useForm<LoginStartFormValues>({
+    resolver: zodResolver(loginStartSchema),
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
   });
 
-  const onSubmit = async (data: LoginStartFormData) => {
+  const onSubmit = async (data: LoginStartFormValues) => {
     useAuthStore.getState().setAuthData({ email: data.email });
 
     try {
@@ -77,13 +79,7 @@ export default function LoginStartPage() {
           type='email'
           placeholder='m@example.com'
           error={errors.email?.message}
-          {...register('email', {
-            required: t('common.email.required'),
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: t('common.email.invalid'),
-            },
-          })}
+          {...register('email')}
         />
 
         <Button

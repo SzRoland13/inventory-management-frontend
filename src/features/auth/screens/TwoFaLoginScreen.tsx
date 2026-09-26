@@ -2,11 +2,16 @@
 
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/features/shared/components/ui/button';
 import { AuthCard } from '@/features/auth/components/AuthCard';
 import { AuthFormField } from '@/features/auth/components/AuthFormField';
+import {
+  twoFactorLoginSchema,
+  type TwoFactorLoginFormValues,
+} from '@/features/auth/schemas/authSchemas';
 import { Routes } from '@/features/shared/types/routes';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { useAvatarStore } from '@/features/shared/media/avatarStore';
@@ -21,11 +26,6 @@ import { useTwoFaLoginMutation } from '@/features/auth/queries/authQueries';
 import { useMinimalCompanyQuery } from '@/features/settings/queries/companyQueries';
 import { getApiErrorMessageKey } from '@/features/shared/api/apiResponse';
 import { queryKeys } from '@/features/shared/api/queryKeys';
-
-type TwoFaForm = {
-  email: string;
-  code: string;
-};
 
 export default function TwoFaLoginPage() {
   const t = useTranslations();
@@ -59,11 +59,12 @@ export default function TwoFaLoginPage() {
     register: registerTotp,
     handleSubmit: handleEmailSubmit,
     formState: { errors: totpErrors, isSubmitting: totpSubmitting },
-  } = useForm<TwoFaForm>({
+  } = useForm<TwoFactorLoginFormValues>({
+    resolver: zodResolver(twoFactorLoginSchema),
     defaultValues: { email: useAuthStore.getState().email ?? '' },
   });
 
-  const onVerifyTotp = async (data: TwoFaForm) => {
+  const onVerifyTotp = async (data: TwoFactorLoginFormValues) => {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
 
     if (data.email && data.code && shortLifeToken) {
@@ -152,13 +153,7 @@ export default function TwoFaLoginPage() {
           placeholder='m@example.com'
           disabled
           error={totpErrors.email?.message}
-          {...registerTotp('email', {
-            required: t('common.email.required'),
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: t('common.email.invalid'),
-            },
-          })}
+          {...registerTotp('email')}
         />
         <AuthFormField
           id='code'
@@ -168,13 +163,7 @@ export default function TwoFaLoginPage() {
           maxLength={6}
           disabled={totpSubmitting}
           error={totpErrors.code?.message}
-          {...registerTotp('code', {
-            required: t('pages.2fa.code.required'),
-            pattern: {
-              value: /^\d{6}$/,
-              message: t('pages.2fa.code.invalid'),
-            },
-          })}
+          {...registerTotp('code')}
           ref={(e) => {
             registerTotp('code').ref(e);
             codeInputRef.current = e;

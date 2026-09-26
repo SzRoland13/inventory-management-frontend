@@ -3,12 +3,13 @@
 import type { ComponentProps, ReactNode } from 'react';
 import { Input } from '@/features/shared/components/ui/input';
 import { Label } from '@/features/shared/components/ui/label';
+import { ValidationMessage } from '@/features/shared/components/ValidationMessage';
 import { cn } from '@/features/shared/utils/css';
 
 type AuthFormFieldProps = Omit<ComponentProps<typeof Input>, 'id'> & {
   id: string;
   label: ReactNode;
-  error?: ReactNode;
+  error?: string;
 };
 
 export function AuthFormField({
@@ -31,7 +32,7 @@ export function AuthFormField({
         )}
         {...inputProps}
       />
-      {error && <p className='text-sm text-red-400'>{error}</p>}
+      <ValidationMessage messageKey={error} />
     </div>
   );
 }

@@ -12,10 +12,12 @@
     "no-results": "No results.",
     "none": "None",
     "role": {
-      "title": "Role"
+      "title": "Role",
+      "required": "Role is required"
     },
     "username": {
-      "title": "Username"
+      "title": "Username",
+      "required": "Username is required"
     },
     "email": {
       "title": "Email",

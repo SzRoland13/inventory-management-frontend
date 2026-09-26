@@ -3,6 +3,13 @@
 import { Button } from '@/features/shared/components/ui/button';
 import { AuthCard } from '@/features/auth/components/AuthCard';
 import { AuthFormField } from '@/features/auth/components/AuthFormField';
+import { ValidationMessage } from '@/features/shared/components/ValidationMessage';
+import {
+  firstLoginRequestSchema,
+  firstLoginVerifySchema,
+  type FirstLoginRequestFormValues,
+  type FirstLoginVerifyFormValues,
+} from '@/features/auth/schemas/authSchemas';
 import { Input } from '@/features/shared/components/ui/input';
 import { Label } from '@/features/shared/components/ui/label';
 import { useRouter } from '@/i18n/navigation';
@@ -17,16 +24,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-
-type EmailForm = {
-  email: string;
-};
-
-type OneTimeCodeForm = {
-  email: string;
-  oneTimeCode: string;
-};
 
 enum Step {
   STEP1 = 'STEP1',
@@ -57,7 +56,8 @@ export default function FirstLoginPage() {
     register: registerEmail,
     handleSubmit: handleEmailSubmit,
     formState: { errors: emailErrors, isSubmitting: emailSubmitting },
-  } = useForm<EmailForm>({
+  } = useForm<FirstLoginRequestFormValues>({
+    resolver: zodResolver(firstLoginRequestSchema),
     defaultValues: { email: useAuthStore.getState().email ?? '' },
   });
 
@@ -66,14 +66,15 @@ export default function FirstLoginPage() {
     register: registerTotp,
     handleSubmit: handleTotpSubmit,
     formState: { errors: totpErrors, isSubmitting: totpSubmitting },
-  } = useForm<OneTimeCodeForm>({
+  } = useForm<FirstLoginVerifyFormValues>({
+    resolver: zodResolver(firstLoginVerifySchema),
     defaultValues: {
       email: useAuthStore.getState().email ?? '',
       oneTimeCode: '',
     },
   });
 
-  const onOneTimeCodeRequest = async (data: EmailForm) => {
+  const onOneTimeCodeRequest = async (data: FirstLoginRequestFormValues) => {
     if (data.email) {
       try {
         const response = await requestOneTimeCode.mutateAsync({
@@ -90,7 +91,7 @@ export default function FirstLoginPage() {
     }
   };
 
-  const onVerifyTotp = async (data: OneTimeCodeForm) => {
+  const onVerifyTotp = async (data: FirstLoginVerifyFormValues) => {
     try {
       const response = await validateOneTimeCode.mutateAsync({
         email: data.email,
@@ -98,6 +99,7 @@ export default function FirstLoginPage() {
       });
 
       toast(t(`messagekey.${response.messageKey}`));
+
       router.push(Routes.Setup_Password);
     } catch (error) {
       toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
@@ -132,13 +134,7 @@ export default function FirstLoginPage() {
               placeholder='m@example.com'
               disabled
               error={emailErrors.email?.message}
-              {...registerEmail('email', {
-                required: t('common.email.required'),
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: t('common.email.invalid'),
-                },
-              })}
+              {...registerEmail('email')}
             />
 
             <Button
@@ -165,14 +161,8 @@ export default function FirstLoginPage() {
               type='email'
               placeholder='m@example.com'
               disabled
-              error={emailErrors.email?.message}
-              {...registerEmail('email', {
-                required: t('common.email.required'),
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: t('common.email.invalid'),
-                },
-              })}
+              error={totpErrors.email?.message}
+              {...registerTotp('email')}
             />
             <div className='flex flex-col gap-2'>
               <Label htmlFor='code' className='text-zinc-300'>
@@ -183,19 +173,13 @@ export default function FirstLoginPage() {
                 type='text'
                 placeholder='123456'
                 className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-                {...registerTotp('oneTimeCode', {
-                  required: t('pages.setup-password.otc.required'),
-                })}
+                {...registerTotp('oneTimeCode')}
                 ref={(e) => {
                   registerTotp('oneTimeCode').ref(e);
                   codeInputRef.current = e;
                 }}
               />
-              {totpErrors.oneTimeCode && (
-                <p className='text-sm text-red-400'>
-                  {totpErrors.oneTimeCode.message}
-                </p>
-              )}
+              <ValidationMessage messageKey={totpErrors.oneTimeCode?.message} />
             </div>
             <Button
               type='submit'

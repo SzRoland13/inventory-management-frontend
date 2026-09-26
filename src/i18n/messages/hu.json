@@ -12,10 +12,12 @@
     "no-results": "Nincs találat.",
     "none": "Egyik sem",
     "role": {
-      "title": "Szerepkör"
+      "title": "Szerepkör",
+      "required": "A szerepkör megadása kötelező"
     },
     "username": {
-      "title": "Felhasználónév"
+      "title": "Felhasználónév",
+      "required": "A felhasználónév megadása kötelező"
     },
     "email": {
       "title": "E-mail cím",

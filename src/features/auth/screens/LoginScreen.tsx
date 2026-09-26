@@ -3,6 +3,11 @@
 import { Button } from '@/features/shared/components/ui/button';
 import { AuthCard } from '@/features/auth/components/AuthCard';
 import { AuthFormField } from '@/features/auth/components/AuthFormField';
+import { ValidationMessage } from '@/features/shared/components/ValidationMessage';
+import {
+  loginSchema,
+  type LoginFormValues,
+} from '@/features/auth/schemas/authSchemas';
 import { Input } from '@/features/shared/components/ui/input';
 import { Label } from '@/features/shared/components/ui/label';
 import { useLoginMutation } from '@/features/auth/queries/authQueries';
@@ -11,15 +16,11 @@ import { useAuthStore } from '@/features/auth/stores/authStore';
 import { Routes } from '@/features/shared/types/routes';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-
-type LoginFormData = {
-  email: string;
-  password: string;
-};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,18 +32,20 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
     defaultValues: { email: useAuthStore.getState().email ?? '', password: '' },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: LoginFormValues) => {
     try {
       const response = await login.mutateAsync({
         email: data.email,
         password: data.password,
       });
+
       if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
         const expiresAt = new Date(response.payload.expiresAt);
 
@@ -88,13 +91,7 @@ export default function LoginPage() {
           placeholder='m@example.com'
           disabled
           error={errors.email?.message}
-          {...register('email', {
-            required: t('common.email.required'),
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: t('common.email.invalid'),
-            },
-          })}
+          {...register('email')}
         />
 
         <div className='flex flex-col gap-2'>
@@ -107,13 +104,7 @@ export default function LoginPage() {
               type={showPassword ? 'text' : 'password'}
               placeholder='••••••••'
               className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-              {...register('password', {
-                required: t('common.password.required'),
-                minLength: {
-                  value: 8,
-                  message: t('common.password.rules.min-8-chars'),
-                },
-              })}
+              {...register('password')}
             />
             <button
               type='button'
@@ -124,9 +115,7 @@ export default function LoginPage() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {errors.password && (
-            <p className='text-sm text-red-400'>{errors.password.message}</p>
-          )}
+          <ValidationMessage messageKey={errors.password?.message} />
         </div>
 
         <div className='flex flex-col sm:flex-row w-full gap-3'>

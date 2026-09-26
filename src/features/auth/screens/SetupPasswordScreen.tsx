@@ -4,6 +4,10 @@ import { Button } from '@/features/shared/components/ui/button';
 import { AuthCard } from '@/features/auth/components/AuthCard';
 import { AuthFormField } from '@/features/auth/components/AuthFormField';
 import {
+  passwordSetupSchema,
+  type PasswordSetupFormValues,
+} from '@/features/auth/schemas/authSchemas';
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -18,16 +22,12 @@ import { Routes } from '@/features/shared/types/routes';
 import { Label } from '@radix-ui/react-label';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ValidationMessage } from '@/features/shared/components/ValidationMessage';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Info } from 'lucide-react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-
-type SetupPasswordFormData = {
-  email: string;
-  password: string;
-  repeatPassword: string;
-};
 
 export default function SetupPasswordPage() {
   const t = useTranslations();
@@ -42,7 +42,8 @@ export default function SetupPasswordPage() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<SetupPasswordFormData>({
+  } = useForm<PasswordSetupFormValues>({
+    resolver: zodResolver(passwordSetupSchema),
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
     defaultValues: {
@@ -59,9 +60,10 @@ export default function SetupPasswordPage() {
     passwordRef.current?.focus();
   }, [router]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const password = watch('password');
 
-  const onSubmit = async (data: SetupPasswordFormData) => {
+  const onSubmit = async (data: PasswordSetupFormValues) => {
     try {
       const response = await setupNewPassword.mutateAsync(data);
       toast(t(`messagekey.${response.messageKey}`));
@@ -69,29 +71,6 @@ export default function SetupPasswordPage() {
     } catch (error) {
       toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
     }
-  };
-
-  const passwordValidation = {
-    required: 'Password is required',
-    validate: (value: string) => {
-      if (value.length < 8) return t('common.password.rules.min-8-chars');
-      if (!/[A-Z]/.test(value)) return t('common.password.rules.min-1-upper');
-      if (!/[a-z]/.test(value)) return t('common.password.rules.min-1-lower');
-      if (!/\d/.test(value)) return t('common.password.rules.min-1-number');
-      if (!/[^a-zA-Z0-9]/.test(value))
-        return t('common.password.rules.min-1-special');
-      if (/(.)\1{2,}/.test(value))
-        return t('common.password.rules.no-repeating-chars');
-      const lower = value.toLowerCase();
-      const seq = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      for (let i = 0; i < seq.length - 3; i++) {
-        const s = seq.slice(i, i + 4);
-        if (lower.includes(s) || lower.includes([...s].reverse().join(''))) {
-          return t('common.password.rules.no-sequences');
-        }
-      }
-      return true;
-    },
   };
 
   const { score, label, color } = useMemo(() => {
@@ -155,13 +134,7 @@ export default function SetupPasswordPage() {
           type='email'
           disabled
           error={errors.email?.message}
-          {...register('email', {
-            required: t('common.email.required'),
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: t('common.email.invalid'),
-            },
-          })}
+          {...register('email')}
         />
 
         <div className='flex flex-col gap-2'>
@@ -174,7 +147,7 @@ export default function SetupPasswordPage() {
               type={showPassword ? 'text' : 'password'}
               placeholder='••••••••'
               className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-              {...register('password', passwordValidation)}
+              {...register('password')}
               ref={(e) => {
                 register('password').ref(e);
                 passwordRef.current = e;
@@ -227,9 +200,7 @@ export default function SetupPasswordPage() {
             </div>
             <p className='text-sm text-zinc-300'>{label}</p>
           </div>
-          {errors.password && (
-            <p className='text-sm text-red-400'>{errors.password.message}</p>
-          )}
+          <ValidationMessage messageKey={errors.password?.message} />
         </div>
 
         <div className='flex flex-col gap-2'>
@@ -242,12 +213,7 @@ export default function SetupPasswordPage() {
               type={showRepeatPassword ? 'text' : 'password'}
               placeholder='••••••••'
               className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
-              {...register('repeatPassword', {
-                required: t('pages.setup-password.repeat-password.required'),
-                validate: (value) =>
-                  value === password ||
-                    t('pages.setup-password.repeat-password.no-match'),
-              })}
+              {...register('repeatPassword')}
             />
             <button
               type='button'
@@ -258,9 +224,7 @@ export default function SetupPasswordPage() {
               {showRepeatPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {errors.password && (
-            <p className='text-sm text-red-400'>{errors.password.message}</p>
-          )}
+          <ValidationMessage messageKey={errors.repeatPassword?.message} />
         </div>
         <Button
           type='submit'
