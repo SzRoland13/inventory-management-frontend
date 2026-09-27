@@ -15,20 +15,13 @@ import { useSessionQuery } from '@/features/auth/queries/authQueries';
 import { UserRole } from '@/features/users/types/user';
 import { useCurrenciesQuery } from '@/features/settings/queries/companyQueries';
 import { Button } from '@/features/shared/components/ui/button';
-import {
-  Dialog,
-  DialogFooter,
-  DialogHeader,
-  DialogDescription,
-  DialogTitle,
-} from '@/features/shared/components/ui/dialog';
-import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { toastApiError } from '@/features/shared/api/apiResponse';
 import { DataTable } from '@/features/shared/table/DataTable';
 import { DataTableEmptyState } from '@/features/shared/table/DataTableEmptyState';
 import { DataTableLoadingState } from '@/features/shared/table/DataTableLoadingState';
 import { DataTablePagination } from '@/features/shared/table/DataTablePagination';
 import { ProductFormDialog } from '@/features/products/components/ProductFormDialog';
+import { ProductArchiveDialog } from '@/features/products/components/ProductArchiveDialog';
 import { ProductsToolbar } from '@/features/products/components/ProductsToolbar';
 import { useProductsColumns } from '@/features/products/hooks/useProductsColumns';
 import {
@@ -392,36 +385,14 @@ export function ProductsTable() {
         onSave={handleSave}
       />
 
-      <Dialog open={archiveOpen} onOpenChange={setArchiveOpen}>
-        <ThemedDialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('pages.products.archive.title')}</DialogTitle>
-          </DialogHeader>
-          <DialogDescription className='text-sm text-zinc-300'>
-            {t('pages.products.archive.description', {
-              name: selectedProduct?.name ?? '',
-            })}
-          </DialogDescription>
-          <DialogFooter>
-            <Button
-              variant='secondary'
-              onClick={() => setArchiveOpen(false)}
-              disabled={archiveProduct.isPending}
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button
-              variant='destructive'
-              onClick={() => void handleArchive()}
-              disabled={archiveProduct.isPending || !selectedProduct}
-            >
-              {archiveProduct.isPending
-                ? t('common.saving')
-                : t('pages.products.actions.archive')}
-            </Button>
-          </DialogFooter>
-        </ThemedDialogContent>
-      </Dialog>
+      <ProductArchiveDialog
+        open={archiveOpen}
+        onOpenChange={setArchiveOpen}
+        productName={selectedProduct?.name}
+        saving={archiveProduct.isPending}
+        canArchive={!!selectedProduct}
+        onArchive={() => void handleArchive()}
+      />
     </section>
   );
 }
