@@ -2,7 +2,12 @@
 
 import MainHeader from '@/features/shared/components/MainHeader';
 import { Settings } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/features/shared/components/ui/tabs';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@/features/shared/components/ui/tabs';
 import { SettingsTab } from '@/features/settings/types/settings';
 import UserTab from '@/features/settings/components/user/UserTab';
 import GeneralTab from '@/features/settings/components/general/GeneralTab';

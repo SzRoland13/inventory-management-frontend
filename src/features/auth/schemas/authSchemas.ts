@@ -92,9 +92,7 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 export type FirstLoginRequestFormValues = z.infer<
   typeof firstLoginRequestSchema
 >;
-export type FirstLoginVerifyFormValues = z.infer<
-  typeof firstLoginVerifySchema
->;
+export type FirstLoginVerifyFormValues = z.infer<typeof firstLoginVerifySchema>;
 export type TwoFactorLoginFormValues = z.infer<typeof twoFactorLoginSchema>;
 export type TwoFactorSetupCodeFormValues = z.infer<
   typeof twoFactorSetupCodeSchema

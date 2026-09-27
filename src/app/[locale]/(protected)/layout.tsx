@@ -1,6 +1,13 @@
 import { headers } from 'next/headers';
-import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/features/auth/session/sessionHeader';
+import {
+  QueryClient,
+  dehydrate,
+  HydrationBoundary,
+} from '@tanstack/react-query';
+import {
+  decodeSessionHeader,
+  SESSION_HEADER_NAME,
+} from '@/features/auth/session/sessionHeader';
 import { queryKeys } from '@/features/shared/api/queryKeys';
 import { Routes } from '@/features/shared/types/routes';
 import { redirect } from '@/i18n/navigation';

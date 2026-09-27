@@ -1,5 +1,8 @@
 import { headers } from 'next/headers';
-import { decodeSessionHeader, SESSION_HEADER_NAME } from '@/features/auth/session/sessionHeader';
+import {
+  decodeSessionHeader,
+  SESSION_HEADER_NAME,
+} from '@/features/auth/session/sessionHeader';
 import { Routes } from '@/features/shared/types/routes';
 import { redirect } from '@/i18n/navigation';
 

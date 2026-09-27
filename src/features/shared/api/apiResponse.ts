@@ -22,9 +22,7 @@ export async function requireSuccessfulResponse<T>(
 }
 
 export function getApiErrorMessageKey(error: unknown): string {
-  return error instanceof ApiResponseError
-    ? error.messageKey
-    : 'error.generic';
+  return error instanceof ApiResponseError ? error.messageKey : 'error.generic';
 }
 
 export function toastApiError(

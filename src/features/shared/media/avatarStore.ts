@@ -5,7 +5,9 @@ interface AvatarState {
   avatarId: number | null;
   avatarUrl: string | null;
   avatarUrlExpiry: string | null;
-  setAvatar: (data: Partial<Omit<AvatarState, 'setAvatar' | 'clearAvatar'>>) => void;
+  setAvatar: (
+    data: Partial<Omit<AvatarState, 'setAvatar' | 'clearAvatar'>>,
+  ) => void;
   clearAvatar: () => void;
 }
 
@@ -16,7 +18,8 @@ export const useAvatarStore = create<AvatarState>()(
       avatarUrl: null,
       avatarUrlExpiry: null,
       setAvatar: (data) => set(data),
-      clearAvatar: () => set({ avatarId: null, avatarUrl: null, avatarUrlExpiry: null }),
+      clearAvatar: () =>
+        set({ avatarId: null, avatarUrl: null, avatarUrlExpiry: null }),
     }),
     {
       name: 'avatar-store',

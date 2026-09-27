@@ -9,6 +9,9 @@
     "verify": "Verify code",
     "back": "Back",
     "cancel": "Cancel",
+    "retry": "Retry",
+    "yes": "Yes",
+    "no": "No",
     "no-results": "No results.",
     "none": "None",
     "role": {
@@ -48,6 +51,7 @@
       "required": "Password is required",
       "invalid": "Invalid password",
       "show-rules": "Show password rules",
+      "rules-description": "Password requirements are listed below.",
       "rules": {
         "min-8-chars": "Password must be at least 8 characters long",
         "min-1-upper": "Must contain at least one uppercase letter",
@@ -67,7 +71,15 @@
       }
     },
     "requesting": "Requesting...",
-    "request": "Request"
+    "request": "Request",
+    "table-pagination": {
+      "showing": "Showing {start} - {end} out of {total}",
+      "showing-empty": "No items to show",
+      "page-selector": "Select page",
+      "rows-per-page": "Rows per page",
+      "previous": "Previous",
+      "next": "Next"
+    }
   },
   "pages": {
     "login": {
@@ -125,7 +137,9 @@
       "title": "User Management",
       "dialog": {
         "edit": "Edit User",
-        "create": "Add New User"
+        "create": "Add New User",
+        "edit-description": "Update this user's account details and role.",
+        "create-description": "Enter the account details and role for the new user."
       },
       "toolbar": {
         "add": "Add",
@@ -141,7 +155,122 @@
       "title": "Dashboard"
     },
     "products": {
-      "title": "Product Management"
+      "title": "Product Management",
+      "actions": {
+        "add": "Add product",
+        "edit": "Edit product",
+        "archive": "Archive",
+        "publish": "Publish"
+      },
+      "search-placeholder": "Search by name, SKU, or brand",
+      "loading": "Loading products",
+      "empty": {
+        "title": "No products yet",
+        "description": "Add your first product to start building your catalog."
+      },
+      "filters": {
+        "status": "Filter by status",
+        "all-statuses": "All statuses",
+        "category": "Category",
+        "all-categories": "All categories",
+        "unit": "Unit",
+        "all-units": "All units"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "DRAFT": "Draft",
+        "DISCONTINUED": "Discontinued",
+        "ARCHIVED": "Archived"
+      },
+      "table": {
+        "sku": "SKU",
+        "name": "Product",
+        "brand": "Brand",
+        "unit": "Unit",
+        "net-price": "Net price",
+        "status": "Status"
+      },
+      "messages": {
+        "created": "Product created successfully.",
+        "updated": "Product updated successfully.",
+        "archived": "Product archived successfully."
+      },
+      "error": {
+        "title": "Products could not be loaded",
+        "description": "Check your connection and try again."
+      },
+      "lookup-error": "Product editor options could not be loaded. Retry to enable create and edit.",
+      "loading-brands": "Searching brands...",
+      "no-brands-found": "No brands found.",
+      "dialog": {
+        "create-title": "Add product",
+        "edit-title": "Edit product",
+        "create-description": "Enter the product details, units, pricing, and other catalog information.",
+        "edit-description": "Review and update this product's catalog information.",
+        "groups": {
+          "units": "Unit conversion",
+          "pricing": "Pricing"
+        },
+        "sections": {
+          "details": "Product details",
+          "units-pricing": "Units and pricing",
+          "dimensions": "Dimensions",
+          "categories": "Categories",
+          "attributes": "Attributes"
+        },
+        "category-picker": {
+          "selected-count": "{count, plural, =0 {No categories selected} one {# category selected} other {# categories selected}}"
+        },
+        "tooltips": {
+          "cancel": "Close this dialog and discard unsaved changes.",
+          "save-draft": "Save this product as a draft. It will not be active yet.",
+          "save-edit": "Save your changes to this product.",
+          "publish": "Save this product as active so it can be used right away."
+        }
+      },
+      "fields": {
+        "sku": "SKU",
+        "name": "Name",
+        "ean": "EAN / barcode",
+        "brand": "Brand",
+        "no-brand": "No brand",
+        "search-brands": "Search brands...",
+        "status": "Status",
+        "description": "Description",
+        "main-unit": "Main unit",
+        "secondary-unit": "Secondary unit",
+        "secondary-units-per-main": "Secondary units per main unit",
+        "currency": "Currency",
+        "net-price": "Net price",
+        "cost-price": "Cost price",
+        "vat-rate": "VAT rate (%)",
+        "weight": "Weight",
+        "width": "Width",
+        "height": "Height",
+        "depth": "Depth",
+        "select-unit": "Select a unit",
+        "no-secondary-unit": "No secondary unit",
+        "no-currency": "No currency",
+        "select-value": "Select a value",
+        "no-value": "No value"
+      },
+      "validation": {
+        "required": "This field is required.",
+        "too-long": "This value is too long.",
+        "positive": "Enter a positive value.",
+        "non-negative": "Enter zero or a positive value.",
+        "decimal-precision": "Use up to 16 whole digits and 8 decimal places.",
+        "dimension-precision": "Use up to 12 whole digits and 3 decimal places.",
+        "vat-rate": "Use a VAT rate up to 99.999 with at most 3 decimal places.",
+        "attribute-number": "Use up to 12 whole digits and 3 decimal places.",
+        "invalid-date": "Enter a valid date.",
+        "invalid-attribute-value": "Select a valid option.",
+        "invalid-unit-configuration": "Choose a different secondary unit and provide a positive conversion."
+      },
+      "archive": {
+        "title": "Archive product?",
+        "description": "Archive {name}? It will be removed from the active products list."
+      }
     },
     "warehouses": {
       "title": "Warehouse Management"
@@ -174,7 +303,121 @@
           }
         },
         "product": {
-          "title": "Product"
+          "title": "Product",
+          "eyebrow": "CATALOG SETTINGS",
+          "heading": "Shape your product catalog",
+          "description": "Keep the brands, categories, and product details used across your company organized in one place.",
+          "item-count": "{count, plural, =0 {No items} one {# item} other {# items}}",
+          "showing-count": "{count, plural, =0 {No results} one {# result} other {# results}}",
+          "search": "Search this list...",
+          "load-error": "We couldn't load this catalog section.",
+          "empty-search-title": "No matching items",
+          "empty-search-description": "Try another name or code.",
+          "sections": {
+            "units": "Units",
+            "brands": "Brands",
+            "categories": "Categories",
+            "attributes": "Attributes"
+          },
+          "section-description": {
+            "units": "Manage the units of measure available when creating and updating products.",
+            "brands": "Manage the brands available when creating and updating products.",
+            "categories": "Organize products into a clear, reusable category structure.",
+            "attributes": "Define the extra product details your team needs to capture."
+          },
+          "empty-title": {
+            "units": "No units found",
+            "brands": "No brands yet",
+            "categories": "No categories yet",
+            "attributes": "No attributes yet"
+          },
+          "empty-description": {
+            "units": "There are no selectable units in this catalog.",
+            "brands": "Add your first brand to make it available on products.",
+            "categories": "Create categories to make product browsing and filtering easier.",
+            "attributes": "Add attributes to capture details beyond the standard product fields."
+          },
+          "actions": {
+            "add": "Add {item}",
+            "create-first": "Create the first one",
+            "edit": "Edit",
+            "delete": "Delete",
+            "add-option": "Add value",
+            "save-option": "Save value",
+            "drag-category": "Reorder {name}",
+            "collapse-category": "Collapse {name}",
+            "expand-category": "Expand {name}"
+          },
+          "entity-names": {
+            "unit": "unit",
+            "brand": "brand",
+            "category": "category",
+            "attribute": "attribute"
+          },
+          "fields": {
+            "name": "Name",
+            "code": "Code",
+            "symbol": "Symbol",
+            "description": "Description",
+            "parent": "Parent category",
+            "root-category": "No parent (top level)",
+            "sort-order": "Display order",
+            "value-type": "Value type",
+            "required": "Required on products",
+            "required-description": "Products cannot be saved without this value."
+          },
+          "required": "Required",
+          "value-types": {
+            "FIXED": "Fixed options",
+            "TEXT": "Text",
+            "NUMBER": "Number",
+            "DATE": "Date",
+            "BOOLEAN": "Yes / no"
+          },
+          "form": {
+            "unit-description": "Define the code, display name, and symbol shown when working with product quantities.",
+            "brand-description": "Brand names must be unique within your company.",
+            "category-description": "Use a unique code to identify this category. Categories can be nested.",
+            "attribute-description": "Choose how product values for this attribute should be stored."
+          },
+          "create": {
+            "unit": "Add unit",
+            "brand": "Add brand",
+            "category": "Add category",
+            "attribute": "Add attribute"
+          },
+          "edit": {
+            "unit": "Edit unit",
+            "brand": "Edit brand",
+            "category": "Edit category",
+            "attribute": "Edit attribute"
+          },
+          "options": {
+            "title": "Values for {name}",
+            "allowed-values": "Allowed values",
+            "description": "Add the allowed choices for this fixed-option attribute.",
+            "empty": "No values added yet.",
+            "placeholder": "Enter an option value"
+          },
+          "units": {
+            "system": "Built-in unit",
+            "custom": "Company unit"
+          },
+          "delete": {
+            "title": "Delete catalog item?",
+            "description": {
+              "unit": "Delete “{name}”? Units used by products or documents cannot be deleted.",
+              "brand": "Delete “{name}”? Products using this brand will no longer have a brand assigned.",
+              "category": "Delete “{name}”? Products assigned to this category will lose this category.",
+              "attribute": "Delete “{name}”? Values for this attribute will be removed from products.",
+              "option": "Delete the value “{name}”? It may be in use by products."
+            }
+          },
+          "messages": {
+            "saved": "Catalog item saved.",
+            "deleted": "Catalog item deleted.",
+            "reordered": "Category order saved."
+          }
         },
         "company": {
           "title": "Company",
@@ -293,6 +536,30 @@
       "two-fa-not-enabled": "Two-factor authentication is not enabled for this user.",
       "password": "User has not set up a password yet."
     },
+    "product": {
+      "error": {
+        "invalid_data": "The product details are invalid. Check the selected options and values.",
+        "sku_exists": "A product with this SKU already exists.",
+        "already_archived": "This product is already archived.",
+        "not_archived": "This product is not archived.",
+        "unit_in_use": "The product unit cannot be changed because it has stock movements."
+      },
+      "validation": {
+        "required": "This field is required.",
+        "too_long": "This value is too long.",
+        "positive": "Enter a positive value.",
+        "non_negative": "Enter zero or a positive value.",
+        "decimal_precision": "The number has too many digits or decimal places.",
+        "invalid_unit_configuration": "The secondary unit configuration is invalid.",
+        "exactly_one_attribute_value": "Provide exactly one value for this attribute.",
+        "page_size_limit": "Choose a page size of 100 or less."
+      }
+    },
+    "brand": {
+      "error": {
+        "already_exists": "A brand with this name already exists."
+      }
+    },
     "company": {
       "logo-updated": "Company logo updated successfully.",
       "currency-updated": "Preferred currency updated successfully."
@@ -310,6 +577,7 @@
     },
     "not-found": {
       "user": "User not found.",
+      "product": "Product not found.",
       "one-time-code": "One-time code not found.",
       "refresh-token": "Refresh token not found.",
       "company": "Company not found.",

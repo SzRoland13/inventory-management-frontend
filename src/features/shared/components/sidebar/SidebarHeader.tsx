@@ -1,6 +1,10 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/features/shared/components/ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/features/shared/components/ui/avatar';
 import { useCompanyStore } from '@/features/settings/stores/companyStore';
 import { useTranslations } from 'next-intl';
 

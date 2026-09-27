@@ -1,5 +1,9 @@
 import CardWrapper from '@/features/shared/components/CardWrapper';
-import { AvatarImage, AvatarFallback, Avatar } from '@/features/shared/components/ui/avatar';
+import {
+  AvatarImage,
+  AvatarFallback,
+  Avatar,
+} from '@/features/shared/components/ui/avatar';
 import { Button } from '@/features/shared/components/ui/button';
 import { useCompanyStore } from '@/features/settings/stores/companyStore';
 import { Upload } from 'lucide-react';
