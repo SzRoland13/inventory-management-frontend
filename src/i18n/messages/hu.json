@@ -9,6 +9,9 @@
     "verify": "Kód ellenőrzése",
     "back": "Vissza",
     "cancel": "Mégse",
+    "retry": "Újrapróbálás",
+    "yes": "Igen",
+    "no": "Nem",
     "no-results": "Nincs találat.",
     "none": "Egyik sem",
     "role": {
@@ -48,6 +51,7 @@
       "required": "A jelszó megadása kötelező",
       "invalid": "Érvénytelen jelszó",
       "show-rules": "Jelszószabályok megjelenítése",
+      "rules-description": "Alább láthatók a jelszóra vonatkozó követelmények.",
       "rules": {
         "min-8-chars": "A jelszónak legalább 8 karakter hosszúnak kell lennie",
         "min-1-upper": "Tartalmaznia kell legalább egy nagybetűt",
@@ -133,7 +137,9 @@
       "title": "Felhasználókezelés",
       "dialog": {
         "edit": "Felhasználó szerkesztése",
-        "create": "Új felhasználó hozzáadása"
+        "create": "Új felhasználó hozzáadása",
+        "edit-description": "Frissítsd a felhasználó fiókadatait és szerepkörét.",
+        "create-description": "Add meg az új felhasználó fiókadatait és szerepkörét."
       },
       "toolbar": {
         "add": "Hozzáadás",
@@ -152,7 +158,9 @@
       "title": "Termékkezelés",
       "actions": {
         "add": "Termék hozzáadása",
-        "edit": "Termék szerkesztése"
+        "edit": "Termék szerkesztése",
+        "archive": "Archiválás",
+        "publish": "Közzététel"
       },
       "search-placeholder": "Keresés név, SKU vagy márka alapján",
       "loading": "Termékek betöltése",
@@ -162,11 +170,17 @@
       },
       "filters": {
         "status": "Szűrés állapot szerint",
-        "all-statuses": "Minden állapot"
+        "all-statuses": "Minden állapot",
+        "category": "Kategória",
+        "all-categories": "Minden kategória",
+        "unit": "Mértékegység",
+        "all-units": "Minden mértékegység"
       },
       "status": {
         "ACTIVE": "Aktív",
-        "INACTIVE": "Inaktív"
+        "DRAFT": "Piszkozat",
+        "DISCONTINUED": "Megszüntetett",
+        "ARCHIVED": "Archivált"
       },
       "table": {
         "sku": "SKU",
@@ -177,7 +191,82 @@
         "status": "Állapot"
       },
       "messages": {
-        "backend-pending": "A termékműveletek a termék API csatlakoztatása után lesznek elérhetők."
+        "created": "A termék sikeresen létrejött.",
+        "updated": "A termék sikeresen frissült.",
+        "archived": "A termék archiválása sikerült."
+      },
+      "error": {
+        "title": "A termékek betöltése nem sikerült",
+        "description": "Ellenőrizd a kapcsolatot, majd próbáld újra."
+      },
+      "lookup-error": "A termékszerkesztő adatai nem töltődtek be. Próbáld újra a létrehozás és szerkesztés engedélyezéséhez.",
+      "loading-brands": "Márkák keresése...",
+      "no-brands-found": "Nem található márka.",
+      "dialog": {
+        "create-title": "Termék hozzáadása",
+        "edit-title": "Termék szerkesztése",
+        "create-description": "Add meg a termék adatait, mértékegységeit, árait és további katalógusadatait.",
+        "edit-description": "Tekintsd át és módosítsd a termék katalógusadatait.",
+        "groups": {
+          "units": "Mértékegység-átváltás",
+          "pricing": "Árazás"
+        },
+        "sections": {
+          "details": "Termék adatai",
+          "units-pricing": "Mértékegységek és árak",
+          "dimensions": "Méretek",
+          "categories": "Kategóriák",
+          "attributes": "Attribútumok"
+        },
+        "tooltips": {
+          "cancel": "Bezárja az ablakot, és elveti a nem mentett módosításokat.",
+          "save-draft": "Piszkozatként menti a terméket. Még nem lesz aktív.",
+          "save-edit": "Menti a terméken végzett módosításokat.",
+          "publish": "Aktívként menti a terméket, így az azonnal használható lesz."
+        }
+      },
+      "fields": {
+        "sku": "Cikkszám",
+        "name": "Név",
+        "ean": "EAN / vonalkód",
+        "brand": "Márka",
+        "no-brand": "Nincs márka",
+        "search-brands": "Márkák keresése...",
+        "status": "Állapot",
+        "description": "Leírás",
+        "main-unit": "Fő mértékegység",
+        "secondary-unit": "Másodlagos mértékegység",
+        "secondary-units-per-main": "Másodlagos egység egy főegységben",
+        "currency": "Pénznem",
+        "net-price": "Nettó ár",
+        "cost-price": "Beszerzési ár",
+        "vat-rate": "ÁFA (%)",
+        "weight": "Tömeg",
+        "width": "Szélesség",
+        "height": "Magasság",
+        "depth": "Mélység",
+        "select-unit": "Válassz mértékegységet",
+        "no-secondary-unit": "Nincs másodlagos mértékegység",
+        "no-currency": "Nincs pénznem",
+        "select-value": "Válassz értéket",
+        "no-value": "Nincs érték"
+      },
+      "validation": {
+        "required": "A mező kitöltése kötelező.",
+        "too-long": "A megadott érték túl hosszú.",
+        "positive": "Adj meg pozitív értéket.",
+        "non-negative": "Adj meg nullát vagy pozitív értéket.",
+        "decimal-precision": "Legfeljebb 16 egész számjegyet és 8 tizedesjegyet használj.",
+        "dimension-precision": "Legfeljebb 12 egész számjegyet és 3 tizedesjegyet használj.",
+        "vat-rate": "Az ÁFA legfeljebb 99,999 lehet, maximum 3 tizedesjeggyel.",
+        "attribute-number": "Legfeljebb 12 egész számjegyet és 3 tizedesjegyet használj.",
+        "invalid-date": "Adj meg érvényes dátumot.",
+        "invalid-attribute-value": "Válassz érvényes lehetőséget.",
+        "invalid-unit-configuration": "Válassz eltérő másodlagos mértékegységet, és adj meg pozitív átváltást."
+      },
+      "archive": {
+        "title": "Termék archiválása?",
+        "description": "Archiválod ezt a terméket: {name}? Eltűnik az aktív termékek listájából."
       }
     },
     "warehouses": {
@@ -330,6 +419,25 @@
       "two-fa-not-enabled": "A kétlépcsős azonosítás nincs engedélyezve ennél a felhasználónál.",
       "password": "A felhasználó még nem állított be jelszót."
     },
+    "product": {
+      "error": {
+        "invalid_data": "A termék adatai érvénytelenek. Ellenőrizd a kiválasztott lehetőségeket és értékeket.",
+        "sku_exists": "Már létezik termék ezzel a cikkszámmal.",
+        "already_archived": "A termék már archiválva van.",
+        "not_archived": "A termék nincs archiválva.",
+        "unit_in_use": "A termék mértékegysége készletmozgás miatt nem módosítható."
+      },
+      "validation": {
+        "required": "A mező kitöltése kötelező.",
+        "too_long": "A megadott érték túl hosszú.",
+        "positive": "Adj meg pozitív értéket.",
+        "non_negative": "Adj meg nullát vagy pozitív értéket.",
+        "decimal_precision": "A számjegyek vagy tizedesjegyek száma túl nagy.",
+        "invalid_unit_configuration": "A másodlagos mértékegység beállítása érvénytelen.",
+        "exactly_one_attribute_value": "Pontosan egy értéket adj meg ehhez az attribútumhoz.",
+        "page_size_limit": "Legfeljebb 100-as oldalméretet válassz."
+      }
+    },
     "company": {
       "logo-updated": "A céglogó sikeresen frissítve.",
       "currency-updated": "A preferált pénznem sikeresen frissítve."
@@ -347,6 +455,7 @@
     },
     "not-found": {
       "user": "A felhasználó nem található.",
+      "product": "A termék nem található.",
       "one-time-code": "Az egyszer használatos kód nem található.",
       "refresh-token": "A frissítő token nem található.",
       "company": "A vállalat nem található.",
