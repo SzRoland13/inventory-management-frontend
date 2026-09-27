@@ -45,7 +45,7 @@ export function CatalogRow({
           ? { marginInlineStart: indent, width: `calc(100% - ${indent}px)` }
           : undefined
       }
-      className={`flex min-w-0 items-center gap-3 rounded-xl border px-3 py-3 transition-colors ${depth ? 'border-l-2 border-l-sky-400/30' : ''} ${dropTarget ? 'ring-2 ring-sky-400/60' : ''} ${dragging ? 'opacity-40' : ''} ${selected ? 'border-sky-400/30 bg-sky-400/5' : 'border-zinc-700/80 bg-zinc-900/40 hover:bg-zinc-900/70'}`}
+      className={`flex min-w-0 flex-wrap items-center gap-3 rounded-xl border px-3 py-3 transition-colors ${depth ? 'border-l-2 border-l-sky-400/30' : ''} ${dropTarget ? 'ring-2 ring-sky-400/60' : ''} ${dragging ? 'opacity-40' : ''} ${selected ? 'border-sky-400/30 bg-sky-400/5' : 'border-zinc-700/80 bg-zinc-900/40 hover:bg-zinc-900/70'}`}
     >
       {leadingAction}
       {onSelect ? (
@@ -88,7 +88,7 @@ export function CatalogRow({
         </span>
       )}
       {admin && (
-        <div className='flex shrink-0 items-center gap-1'>
+        <div className='ml-auto flex basis-full shrink-0 items-center justify-end gap-1 sm:basis-auto'>
           {dragHandle}
           <Button
             type='button'
