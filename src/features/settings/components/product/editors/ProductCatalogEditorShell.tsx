@@ -1,6 +1,6 @@
 'use client';
 
-import type { FormEvent } from 'react';
+import type { SubmitEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/features/shared/components/ui/button';
 import {
@@ -28,7 +28,7 @@ export function EditorShell({
   description: string;
   pending: boolean;
   children: React.ReactNode;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
 }) {
   const t = useTranslations();
   return (

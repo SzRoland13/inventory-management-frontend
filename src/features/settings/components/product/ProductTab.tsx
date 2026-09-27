@@ -10,7 +10,6 @@ import {
   ChevronDown,
   ChevronRight,
   CirclePlus,
-  GripVertical,
   Layers3,
   Plus,
   Ruler,
@@ -57,7 +56,13 @@ import { Button } from '@/features/shared/components/ui/button';
 import { Input } from '@/features/shared/components/ui/input';
 import { Routes } from '@/features/shared/types/routes';
 import { SettingsTab } from '@/features/settings/types/settings';
+import type { ProductCatalogEditor } from '@/features/settings/types/productCatalog';
+import {
+  isProductCatalogSection,
+  ProductCatalogSection,
+} from '@/features/settings/enums/productCatalogSection';
 import { CatalogRow } from '@/features/settings/components/product/ProductCatalogRow';
+import { ProductCategoryDragHandle } from '@/features/settings/components/product/ProductCategoryDragHandle';
 import { AttributeEditor } from '@/features/settings/components/product/editors/AttributeEditor';
 import { AttributeOptionsPanel } from '@/features/settings/components/product/editors/AttributeOptionsPanel';
 import { BrandEditor } from '@/features/settings/components/product/editors/BrandEditor';
@@ -69,20 +74,9 @@ import {
   type ProductCatalogDeleteTarget,
 } from '@/features/settings/components/product/ProductCatalogDeleteDialog';
 
-type CatalogSection = 'units' | 'brands' | 'categories' | 'attributes';
-const isCatalogSection = (value: string | null): value is CatalogSection =>
-  value === 'units' ||
-  value === 'brands' ||
-  value === 'categories' ||
-  value === 'attributes';
-type Editor =
-  | { type: 'unit'; item: ProductUnit | null }
-  | { type: 'brand'; item: Brand | null }
-  | { type: 'category'; item: ProductCategory | null }
-  | { type: 'attribute'; item: ProductAttributeDefinition | null }
-  | null;
 const fieldClass =
   'border-zinc-700 bg-zinc-900 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400';
+
 const EMPTY_BRANDS: Brand[] = [];
 const EMPTY_CATEGORIES: ProductCategory[] = [];
 const EMPTY_ATTRIBUTES: ProductAttributeDefinition[] = [];
@@ -95,11 +89,11 @@ export default function ProductTab() {
   const session = useSessionQuery();
   const isAdmin = session.data?.payload.role === UserRole.ADMIN;
   const productSectionParam = searchParams.get('productTab');
-  const section: CatalogSection = isCatalogSection(productSectionParam)
+  const section = isProductCatalogSection(productSectionParam)
     ? productSectionParam
-    : 'units';
+    : ProductCatalogSection.Units;
   const [search, setSearch] = useState('');
-  const [editor, setEditor] = useState<Editor>(null);
+  const [editor, setEditor] = useState<ProductCatalogEditor>(null);
   const [deleteTarget, setDeleteTarget] =
     useState<ProductCatalogDeleteTarget | null>(null);
   const [selectedAttributeId, setSelectedAttributeId] = useState<number | null>(
@@ -133,7 +127,7 @@ export default function ProductTab() {
   const updateUnit = useUpdateUnitMutation();
   const deleteUnit = useDeleteUnitMutation();
 
-  const onSectionChange = (nextSection: CatalogSection) => {
+  const onSectionChange = (nextSection: ProductCatalogSection) => {
     setSearch('');
     router.replace({
       pathname: Routes.Settings,
@@ -143,16 +137,16 @@ export default function ProductTab() {
 
   const openCreateEditor = () => {
     switch (section) {
-      case 'units':
+      case ProductCatalogSection.Units:
         setEditor({ type: 'unit', item: null });
         break;
-      case 'brands':
+      case ProductCatalogSection.Brands:
         setEditor({ type: 'brand', item: null });
         break;
-      case 'categories':
+      case ProductCatalogSection.Categories:
         setEditor({ type: 'category', item: null });
         break;
-      case 'attributes':
+      case ProductCatalogSection.Attributes:
         setEditor({ type: 'attribute', item: null });
         break;
     }
@@ -165,6 +159,7 @@ export default function ProductTab() {
   const selectedAttribute =
     attributes.find((item) => item.id === selectedAttributeId) ?? null;
   const normalizedSearch = search.trim().toLocaleLowerCase();
+
   const filteredBrands = useMemo(
     () =>
       brands.filter((item) =>
@@ -172,6 +167,7 @@ export default function ProductTab() {
       ),
     [brands, normalizedSearch],
   );
+
   const filteredCategories = useMemo(
     () =>
       categories.filter((item) =>
@@ -181,10 +177,12 @@ export default function ProductTab() {
       ),
     [categories, normalizedSearch],
   );
+
   const categoryTree = useMemo(
     () => buildCategoryTree(categories, normalizedSearch, collapsedCategoryIds),
     [categories, normalizedSearch, collapsedCategoryIds],
   );
+
   const filteredAttributes = useMemo(
     () =>
       attributes.filter((item) =>
@@ -194,6 +192,7 @@ export default function ProductTab() {
       ),
     [attributes, normalizedSearch],
   );
+
   const filteredUnits = useMemo(
     () =>
       units.filter((item) =>
@@ -220,6 +219,7 @@ export default function ProductTab() {
       notifyError(error);
     }
   };
+
   const saveUnit = async (request: {
     code: string;
     name: string;
@@ -236,6 +236,7 @@ export default function ProductTab() {
       notifyError(error);
     }
   };
+
   const saveCategory = async (request: {
     parentId: number | null;
     code: string;
@@ -270,6 +271,7 @@ export default function ProductTab() {
       notifyError(error);
     }
   };
+
   const dropCategory = async (targetId: number) => {
     if (draggedCategoryId === null || draggedCategoryId === targetId) return;
     const dragged = categories.find((item) => item.id === draggedCategoryId);
@@ -297,6 +299,7 @@ export default function ProductTab() {
       setDropCategoryId(null);
     }
   };
+
   const saveAttribute = async (request: {
     code: string;
     name: string;
@@ -391,25 +394,25 @@ export default function ProductTab() {
 
   const sectionItems = [
     {
-      id: 'units' as const,
+      id: ProductCatalogSection.Units,
       icon: Ruler,
       label: t('pages.settings.tabs.product.sections.units'),
       count: units.length,
     },
     {
-      id: 'brands' as const,
+      id: ProductCatalogSection.Brands,
       icon: Tags,
       label: t('pages.settings.tabs.product.sections.brands'),
       count: brands.length,
     },
     {
-      id: 'categories' as const,
+      id: ProductCatalogSection.Categories,
       icon: Layers3,
       label: t('pages.settings.tabs.product.sections.categories'),
       count: categories.length,
     },
     {
-      id: 'attributes' as const,
+      id: ProductCatalogSection.Attributes,
       icon: Boxes,
       label: t('pages.settings.tabs.product.sections.attributes'),
       count: attributes.length,
@@ -417,24 +420,24 @@ export default function ProductTab() {
   ];
   const currentSection = sectionItems.find((item) => item.id === section)!;
   const currentItemLabel = t(
-    `pages.settings.tabs.product.entity-names.${section === 'units' ? 'unit' : section === 'brands' ? 'brand' : section === 'categories' ? 'category' : 'attribute'}`,
+    `pages.settings.tabs.product.entity-names.${section === ProductCatalogSection.Units ? 'unit' : section === ProductCatalogSection.Brands ? 'brand' : section === ProductCatalogSection.Categories ? 'category' : 'attribute'}`,
   );
   const currentQuery =
-    section === 'units'
+    section === ProductCatalogSection.Units
       ? unitsQuery
-      : section === 'brands'
+      : section === ProductCatalogSection.Brands
         ? brandsQuery
-        : section === 'categories'
+        : section === ProductCatalogSection.Categories
           ? categoriesQuery
           : attributesQuery;
   const hasError = currentQuery.isError;
   const isLoading = currentQuery.isPending;
   const filteredCount =
-    section === 'units'
+    section === ProductCatalogSection.Units
       ? filteredUnits.length
-      : section === 'brands'
+      : section === ProductCatalogSection.Brands
         ? filteredBrands.length
-        : section === 'categories'
+        : section === ProductCatalogSection.Categories
           ? normalizedSearch
             ? filteredCategories.length
             : categoryTree.length
@@ -571,7 +574,7 @@ export default function ProductTab() {
               </Button>
             )}
           </div>
-        ) : section === 'units' ? (
+        ) : section === ProductCatalogSection.Units ? (
           <div className='grid gap-2'>
             {filteredUnits.map((item) => (
               <CatalogRow
@@ -596,7 +599,7 @@ export default function ProductTab() {
               />
             ))}
           </div>
-        ) : section === 'brands' ? (
+        ) : section === ProductCatalogSection.Brands ? (
           <div className='grid gap-2'>
             {filteredBrands.map((item) => (
               <CatalogRow
@@ -615,7 +618,7 @@ export default function ProductTab() {
               />
             ))}
           </div>
-        ) : section === 'categories' ? (
+        ) : section === ProductCatalogSection.Categories ? (
           <div className='grid gap-2'>
             {categoryTree.map(({ item, depth }) => {
               const dragged = categories.find(
@@ -689,45 +692,15 @@ export default function ProductTab() {
                     admin={isAdmin}
                     dragHandle={
                       isAdmin ? (
-                        <button
-                          type='button'
-                          draggable
-                          aria-label={t(
-                            'pages.settings.tabs.product.actions.drag-category',
-                            { name: item.name },
-                          )}
-                          title={t(
-                            'pages.settings.tabs.product.actions.drag-category',
-                            { name: item.name },
-                          )}
-                          className='grid size-8 cursor-grab place-items-center rounded-md text-zinc-500 hover:bg-zinc-700 hover:text-zinc-100 active:cursor-grabbing'
-                          onDragStart={(event) => {
-                            const row =
-                              event.currentTarget.closest<HTMLElement>(
-                                '[data-category-row]',
-                              );
-                            if (row) {
-                              const bounds = row.getBoundingClientRect();
-                              event.dataTransfer.setDragImage(
-                                row,
-                                event.clientX - bounds.left,
-                                event.clientY - bounds.top,
-                              );
-                            }
-                            event.dataTransfer.effectAllowed = 'move';
-                            event.dataTransfer.setData(
-                              'text/plain',
-                              String(item.id),
-                            );
-                            setDraggedCategoryId(item.id);
-                          }}
+                        <ProductCategoryDragHandle
+                          categoryId={item.id}
+                          categoryName={item.name}
+                          onDragStart={setDraggedCategoryId}
                           onDragEnd={() => {
                             setDraggedCategoryId(null);
                             setDropCategoryId(null);
                           }}
-                        >
-                          <GripVertical className='size-4' />
-                        </button>
+                        />
                       ) : undefined
                     }
                     onEdit={() => setEditor({ type: 'category', item })}
@@ -775,7 +748,7 @@ export default function ProductTab() {
             ))}
           </div>
         )}
-        {section === 'attributes' && selectedAttribute && (
+        {section === ProductCatalogSection.Attributes && selectedAttribute && (
           <AttributeOptionsPanel
             attribute={selectedAttribute}
             admin={isAdmin}
