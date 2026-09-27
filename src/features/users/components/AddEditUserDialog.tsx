@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogHeader,
+  DialogDescription,
   DialogTitle,
   DialogFooter,
 } from '@/features/shared/components/ui/dialog';
@@ -86,6 +87,9 @@ export function AddEditUserDialog({
               ? t('pages.users.dialog.edit')
               : t('pages.users.dialog.create')}
           </DialogTitle>
+          <DialogDescription className='sr-only'>
+            {t(user ? 'pages.users.dialog.edit-description' : 'pages.users.dialog.create-description')}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className='grid gap-3 py-3'>
