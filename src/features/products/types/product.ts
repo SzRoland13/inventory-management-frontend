@@ -69,8 +69,21 @@ export type ProductCategory = {
   sortOrder: number | null;
 };
 
+export type ProductCategoryRequest = {
+  parentId: number | null;
+  code: string;
+  name: string;
+  description: string | null;
+  sortOrder: number;
+};
+
 export type ProductAttributeOption = {
   id: number;
+  value: string;
+  sortOrder: number;
+};
+
+export type ProductAttributeOptionRequest = {
   value: string;
   sortOrder: number;
 };
@@ -82,6 +95,13 @@ export type ProductAttributeDefinition = {
   valueType: ProductAttributeValueType;
   required: boolean;
   options: ProductAttributeOption[];
+};
+
+export type ProductAttributeDefinitionRequest = {
+  code: string;
+  name: string;
+  valueType: ProductAttributeValueType;
+  required: boolean;
 };
 
 export type ProductAttributeValueRequest = {

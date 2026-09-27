@@ -157,15 +157,28 @@ function valuesFromProduct(
 function FieldLabel({
   children,
   required = false,
+  htmlFor,
 }: {
   children: ReactNode;
   required?: boolean;
+  htmlFor?: string;
 }) {
-  return (
-    <span className='mb-1 block text-sm font-medium text-zinc-200'>
+  const className = 'mb-1 block text-sm font-medium text-zinc-200';
+  const label = (
+    <>
       {children}
       {required && <span className='ml-1 text-red-400'>*</span>}
-    </span>
+    </>
+  );
+
+  if (!htmlFor) {
+    return <span className={className}>{label}</span>;
+  }
+
+  return (
+    <label htmlFor={htmlFor} className={className}>
+      {label}
+    </label>
   );
 }
 
@@ -198,6 +211,146 @@ function FormSection({
       {children}
     </section>
   );
+}
+
+type CategoryTreeNode = {
+  category: ProductCategory;
+  children: CategoryTreeNode[];
+};
+
+function CategoryPicker({
+  categories,
+  selectedIds,
+  onChange,
+}: {
+  categories: ProductCategory[];
+  selectedIds: string[];
+  onChange: (selectedIds: string[]) => void;
+}) {
+  const t = useTranslations();
+  const tree = useMemo(() => buildCategoryTree(categories), [categories]);
+  const selected = new Set(selectedIds);
+
+  const toggleCategory = (categoryId: number, checked: boolean) => {
+    const value = String(categoryId);
+    onChange(
+      checked
+        ? [...selectedIds, value]
+        : selectedIds.filter((selectedId) => selectedId !== value),
+    );
+  };
+
+  return (
+    <div className='rounded-xl border border-zinc-700/80 bg-zinc-900/35 p-3 sm:p-4'>
+      <div className='mb-3 flex items-center justify-between gap-3 px-1'>
+        <p className='text-xs text-zinc-400'>
+          {t('pages.products.dialog.category-picker.selected-count', {
+            count: selectedIds.length,
+          })}
+        </p>
+      </div>
+      <div className='max-h-64 space-y-2 overflow-y-auto pr-1'>
+        {tree.map((node) => (
+          <CategoryPickerNode
+            key={node.category.id}
+            node={node}
+            depth={0}
+            selected={selected}
+            onToggle={toggleCategory}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CategoryPickerNode({
+  node,
+  depth,
+  selected,
+  onToggle,
+}: {
+  node: CategoryTreeNode;
+  depth: number;
+  selected: Set<string>;
+  onToggle: (categoryId: number, checked: boolean) => void;
+}) {
+  const { category } = node;
+  const checked = selected.has(String(category.id));
+
+  return (
+    <div>
+      <label
+        className={`flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 transition-colors ${
+          checked
+            ? 'border-sky-400/40 bg-sky-400/[0.07]'
+            : 'border-zinc-700/80 bg-zinc-800/50 hover:border-zinc-600 hover:bg-zinc-800'
+        }`}
+      >
+        <Checkbox
+          name={`category-${category.id}`}
+          checked={checked}
+          onCheckedChange={(nextChecked) =>
+            onToggle(category.id, nextChecked === true)
+          }
+          className='mt-0.5 border-zinc-500 data-[state=checked]:border-sky-400 data-[state=checked]:bg-sky-500 data-[state=checked]:text-zinc-950'
+        />
+        <span className='min-w-0 flex-1'>
+          <span className='block text-sm font-medium leading-5 text-zinc-100'>
+            {category.name}
+          </span>
+          <span className='mt-0.5 block truncate text-xs text-zinc-500'>
+            {category.code}
+            {category.description ? ` · ${category.description}` : ''}
+          </span>
+        </span>
+      </label>
+      {node.children.length > 0 && (
+        <div
+          className={`ml-4 mt-2 space-y-2 border-l border-zinc-700/80 pl-3 sm:ml-5 sm:pl-4 ${
+            depth > 0 ? 'border-l-sky-400/20' : ''
+          }`}
+        >
+          {node.children.map((child) => (
+            <CategoryPickerNode
+              key={child.category.id}
+              node={child}
+              depth={depth + 1}
+              selected={selected}
+              onToggle={onToggle}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function buildCategoryTree(categories: ProductCategory[]): CategoryTreeNode[] {
+  const nodes = new Map<number, CategoryTreeNode>(
+    categories.map((category) => [category.id, { category, children: [] }]),
+  );
+  const roots: CategoryTreeNode[] = [];
+
+  for (const node of nodes.values()) {
+    const parent =
+      node.category.parentId === null
+        ? undefined
+        : nodes.get(node.category.parentId);
+    if (parent) parent.children.push(node);
+    else roots.push(node);
+  }
+
+  const sortTree = (siblings: CategoryTreeNode[]) => {
+    siblings.sort(
+      (a, b) =>
+        (a.category.sortOrder ?? 0) - (b.category.sortOrder ?? 0) ||
+        a.category.name.localeCompare(b.category.name),
+    );
+    siblings.forEach((node) => sortTree(node.children));
+  };
+  sortTree(roots);
+  return roots;
 }
 
 export function ProductFormDialog({
@@ -315,26 +468,40 @@ export function ProductFormDialog({
                 icon={ClipboardList}
               >
                 <div className='grid gap-4 sm:grid-cols-2'>
-                  <label>
-                    <FieldLabel required>
+                  <div>
+                    <FieldLabel htmlFor='product-sku' required>
                       {t('pages.products.fields.sku')}
                     </FieldLabel>
-                    <Input {...register('sku')} maxLength={100} />
+                    <Input
+                      id='product-sku'
+                      {...register('sku')}
+                      maxLength={100}
+                    />
                     <ValidationMessage messageKey={errors.sku?.message} />
-                  </label>
-                  <label>
-                    <FieldLabel required>
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor='product-name' required>
                       {t('pages.products.fields.name')}
                     </FieldLabel>
-                    <Input {...register('name')} maxLength={255} />
+                    <Input
+                      id='product-name'
+                      {...register('name')}
+                      maxLength={255}
+                    />
                     <ValidationMessage messageKey={errors.name?.message} />
-                  </label>
-                  <label>
-                    <FieldLabel>{t('pages.products.fields.ean')}</FieldLabel>
-                    <Input {...register('ean')} maxLength={20} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor='product-ean'>
+                      {t('pages.products.fields.ean')}
+                    </FieldLabel>
+                    <Input
+                      id='product-ean'
+                      {...register('ean')}
+                      maxLength={20}
+                    />
                     <ValidationMessage messageKey={errors.ean?.message} />
-                  </label>
-                  <label>
+                  </div>
+                  <div>
                     <FieldLabel>{t('pages.products.fields.brand')}</FieldLabel>
                     <Controller
                       control={control}
@@ -349,6 +516,7 @@ export function ProductFormDialog({
                               type='button'
                               variant='outline'
                               role='combobox'
+                              aria-label={t('pages.products.fields.brand')}
                               aria-expanded={brandDropdownOpen}
                               className={`${productSelectTriggerClassName} justify-between hover:text-white focus-visible:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-400/50`}
                             >
@@ -371,6 +539,7 @@ export function ProductFormDialog({
                               className='z-[100] w-[var(--radix-popover-trigger-width)] rounded-md border border-zinc-700 bg-zinc-800 p-2 text-zinc-100 shadow-lg'
                             >
                               <Input
+                                name='brand-search'
                                 autoFocus
                                 value={brandSearch}
                                 onChange={(event) =>
@@ -442,9 +611,9 @@ export function ProductFormDialog({
                       )}
                     />
                     <ValidationMessage messageKey={errors.brandId?.message} />
-                  </label>
+                  </div>
                   {editing && (
-                    <label>
+                    <div>
                       <FieldLabel>
                         {t('pages.products.fields.status')}
                       </FieldLabel>
@@ -453,10 +622,12 @@ export function ProductFormDialog({
                         name='status'
                         render={({ field }) => (
                           <Select
+                            name={field.name}
                             value={field.value}
                             onValueChange={field.onChange}
                           >
                             <SelectTrigger
+                              aria-label={t('pages.products.fields.status')}
                               className={productSelectTriggerClassName}
                             >
                               <SelectValue />
@@ -480,18 +651,19 @@ export function ProductFormDialog({
                           </Select>
                         )}
                       />
-                    </label>
+                    </div>
                   )}
-                  <label className='sm:col-span-2'>
-                    <FieldLabel>
+                  <div className='sm:col-span-2'>
+                    <FieldLabel htmlFor='product-description'>
                       {t('pages.products.fields.description')}
                     </FieldLabel>
                     <textarea
+                      id='product-description'
                       {...register('description')}
                       rows={3}
                       className='w-full rounded-md border border-zinc-500 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-ring'
                     />
-                  </label>
+                  </div>
                 </div>
               </FormSection>
 
@@ -505,7 +677,7 @@ export function ProductFormDialog({
                       {t('pages.products.dialog.groups.units')}
                     </h4>
                     <div className='grid gap-4 sm:grid-cols-2'>
-                      <label>
+                      <div>
                         <FieldLabel required>
                           {t('pages.products.fields.main-unit')}
                         </FieldLabel>
@@ -514,10 +686,14 @@ export function ProductFormDialog({
                           name='mainUnitId'
                           render={({ field }) => (
                             <Select
+                              name={field.name}
                               value={field.value}
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger
+                                aria-label={t(
+                                  'pages.products.fields.main-unit',
+                                )}
                                 className={productSelectTriggerClassName}
                               >
                                 <SelectValue
@@ -547,8 +723,8 @@ export function ProductFormDialog({
                         <ValidationMessage
                           messageKey={errors.mainUnitId?.message}
                         />
-                      </label>
-                      <label>
+                      </div>
+                      <div>
                         <FieldLabel>
                           {t('pages.products.fields.secondary-unit')}
                         </FieldLabel>
@@ -557,12 +733,16 @@ export function ProductFormDialog({
                           name='secondaryUnitId'
                           render={({ field }) => (
                             <Select
+                              name={field.name}
                               value={field.value || 'NONE'}
                               onValueChange={(value) =>
                                 field.onChange(value === 'NONE' ? '' : value)
                               }
                             >
                               <SelectTrigger
+                                aria-label={t(
+                                  'pages.products.fields.secondary-unit',
+                                )}
                                 className={productSelectTriggerClassName}
                               >
                                 <SelectValue />
@@ -591,12 +771,13 @@ export function ProductFormDialog({
                         <ValidationMessage
                           messageKey={errors.secondaryUnitId?.message}
                         />
-                      </label>
-                      <label>
-                        <FieldLabel>
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor='product-secondary-units-per-main'>
                           {t('pages.products.fields.secondary-units-per-main')}
                         </FieldLabel>
                         <Input
+                          id='product-secondary-units-per-main'
                           {...register('secondaryUnitsPerMainUnit')}
                           className={numberInputClassName}
                           type='number'
@@ -606,7 +787,7 @@ export function ProductFormDialog({
                         <ValidationMessage
                           messageKey={errors.secondaryUnitsPerMainUnit?.message}
                         />
-                      </label>
+                      </div>
                     </div>
                   </div>
                   <div className='rounded-lg border border-zinc-700/70 bg-zinc-900/60 p-4'>
@@ -614,7 +795,7 @@ export function ProductFormDialog({
                       {t('pages.products.dialog.groups.pricing')}
                     </h4>
                     <div className='grid gap-4 sm:grid-cols-2'>
-                      <label>
+                      <div>
                         <FieldLabel>
                           {t('pages.products.fields.currency')}
                         </FieldLabel>
@@ -623,12 +804,14 @@ export function ProductFormDialog({
                           name='currencyId'
                           render={({ field }) => (
                             <Select
+                              name={field.name}
                               value={field.value || 'NONE'}
                               onValueChange={(value) =>
                                 field.onChange(value === 'NONE' ? '' : value)
                               }
                             >
                               <SelectTrigger
+                                aria-label={t('pages.products.fields.currency')}
                                 className={productSelectTriggerClassName}
                               >
                                 <SelectValue />
@@ -657,12 +840,13 @@ export function ProductFormDialog({
                         <ValidationMessage
                           messageKey={errors.currencyId?.message}
                         />
-                      </label>
-                      <label>
-                        <FieldLabel required>
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor='product-net-price' required>
                           {t('pages.products.fields.net-price')}
                         </FieldLabel>
                         <Input
+                          id='product-net-price'
                           {...register('netPrice')}
                           className={numberInputClassName}
                           type='number'
@@ -672,12 +856,13 @@ export function ProductFormDialog({
                         <ValidationMessage
                           messageKey={errors.netPrice?.message}
                         />
-                      </label>
-                      <label>
-                        <FieldLabel>
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor='product-cost-price'>
                           {t('pages.products.fields.cost-price')}
                         </FieldLabel>
                         <Input
+                          id='product-cost-price'
                           {...register('costPrice')}
                           className={numberInputClassName}
                           type='number'
@@ -687,12 +872,13 @@ export function ProductFormDialog({
                         <ValidationMessage
                           messageKey={errors.costPrice?.message}
                         />
-                      </label>
-                      <label>
-                        <FieldLabel required>
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor='product-vat-rate' required>
                           {t('pages.products.fields.vat-rate')}
                         </FieldLabel>
                         <Input
+                          id='product-vat-rate'
                           {...register('vatRate')}
                           className={numberInputClassName}
                           type='number'
@@ -703,7 +889,7 @@ export function ProductFormDialog({
                         <ValidationMessage
                           messageKey={errors.vatRate?.message}
                         />
-                      </label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -716,11 +902,12 @@ export function ProductFormDialog({
                 <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
                   {(['weight', 'width', 'height', 'depth'] as const).map(
                     (fieldName) => (
-                      <label key={fieldName}>
-                        <FieldLabel>
+                      <div key={fieldName}>
+                        <FieldLabel htmlFor={`product-${fieldName}`}>
                           {t(`pages.products.fields.${fieldName}`)}
                         </FieldLabel>
                         <Input
+                          id={`product-${fieldName}`}
                           {...register(fieldName)}
                           className={numberInputClassName}
                           type='number'
@@ -730,7 +917,7 @@ export function ProductFormDialog({
                         <ValidationMessage
                           messageKey={errors[fieldName]?.message}
                         />
-                      </label>
+                      </div>
                     ),
                   )}
                 </div>
@@ -745,32 +932,11 @@ export function ProductFormDialog({
                     control={control}
                     name='categoryIds'
                     render={({ field }) => (
-                      <div className='grid gap-2 sm:grid-cols-2 lg:grid-cols-3'>
-                        {categories.map((category) => {
-                          const value = String(category.id);
-                          const checked = field.value.includes(value);
-                          return (
-                            <label
-                              key={category.id}
-                              className='flex items-center gap-2 text-sm'
-                            >
-                              <Checkbox
-                                checked={checked}
-                                onCheckedChange={(nextChecked) =>
-                                  field.onChange(
-                                    nextChecked
-                                      ? [...field.value, value]
-                                      : field.value.filter(
-                                          (item) => item !== value,
-                                        ),
-                                  )
-                                }
-                              />
-                              {category.name}
-                            </label>
-                          );
-                        })}
-                      </div>
+                      <CategoryPicker
+                        categories={categories}
+                        selectedIds={field.value}
+                        onChange={field.onChange}
+                      />
                     )}
                   />
                 </FormSection>
@@ -783,8 +949,18 @@ export function ProductFormDialog({
                 >
                   <div className='grid gap-4 sm:grid-cols-2'>
                     {definitions.map((definition, index) => (
-                      <label key={definition.id}>
-                        <FieldLabel required={definition.required}>
+                      <div key={definition.id}>
+                        <FieldLabel
+                          htmlFor={
+                            definition.valueType ===
+                              ProductAttributeValueType.FIXED ||
+                            definition.valueType ===
+                              ProductAttributeValueType.BOOLEAN
+                              ? undefined
+                              : `product-attribute-${definition.id}`
+                          }
+                          required={definition.required}
+                        >
                           {definition.name}
                         </FieldLabel>
                         <Controller
@@ -797,6 +973,7 @@ export function ProductFormDialog({
                             ) {
                               return (
                                 <Select
+                                  name={field.name}
                                   value={field.value || 'NONE'}
                                   onValueChange={(value) =>
                                     field.onChange(
@@ -805,6 +982,7 @@ export function ProductFormDialog({
                                   }
                                 >
                                   <SelectTrigger
+                                    aria-label={definition.name}
                                     className={productSelectTriggerClassName}
                                   >
                                     <SelectValue
@@ -840,6 +1018,7 @@ export function ProductFormDialog({
                             ) {
                               return (
                                 <Select
+                                  name={field.name}
                                   value={field.value || 'NONE'}
                                   onValueChange={(value) =>
                                     field.onChange(
@@ -848,6 +1027,7 @@ export function ProductFormDialog({
                                   }
                                 >
                                   <SelectTrigger
+                                    aria-label={definition.name}
                                     className={productSelectTriggerClassName}
                                   >
                                     <SelectValue
@@ -877,6 +1057,8 @@ export function ProductFormDialog({
                             }
                             return (
                               <Input
+                                id={`product-attribute-${definition.id}`}
+                                aria-label={definition.name}
                                 {...field}
                                 value={field.value}
                                 type={
@@ -909,7 +1091,7 @@ export function ProductFormDialog({
                             errors.attributes?.[index]?.value?.message
                           }
                         />
-                      </label>
+                      </div>
                     ))}
                   </div>
                 </FormSection>

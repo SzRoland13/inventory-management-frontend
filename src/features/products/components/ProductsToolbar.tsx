@@ -10,7 +10,10 @@ import {
   SelectValue,
 } from '@/features/shared/components/ui/select';
 import { ProductStatus } from '@/features/products/types/product';
-import type { ProductCategory, ProductUnit } from '@/features/products/types/product';
+import type {
+  ProductCategory,
+  ProductUnit,
+} from '@/features/products/types/product';
 import { Filter, Pencil, Plus, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 

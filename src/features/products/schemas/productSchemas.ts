@@ -148,7 +148,10 @@ export function createProductFormSchema(
       });
     }
 
-    if (values.brandId && (!/^\d+$/.test(values.brandId) || Number(values.brandId) <= 0)) {
+    if (
+      values.brandId &&
+      (!/^\d+$/.test(values.brandId) || Number(values.brandId) <= 0)
+    ) {
       context.addIssue({
         code: 'custom',
         path: ['brandId'],
@@ -284,16 +287,16 @@ export function productFormToRequest(
         if (!definition) return [];
 
         switch (definition.valueType) {
-        case ProductAttributeValueType.FIXED:
-          return [{ definitionId, optionId: Number(value) }];
-        case ProductAttributeValueType.NUMBER:
-          return [{ definitionId, numberValue: Number(value) }];
-        case ProductAttributeValueType.DATE:
-          return [{ definitionId, dateValue: value }];
-        case ProductAttributeValueType.TEXT:
-          return [{ definitionId, textValue: value }];
-        case ProductAttributeValueType.BOOLEAN:
-          return [{ definitionId, booleanValue: value === 'true' }];
+          case ProductAttributeValueType.FIXED:
+            return [{ definitionId, optionId: Number(value) }];
+          case ProductAttributeValueType.NUMBER:
+            return [{ definitionId, numberValue: Number(value) }];
+          case ProductAttributeValueType.DATE:
+            return [{ definitionId, dateValue: value }];
+          case ProductAttributeValueType.TEXT:
+            return [{ definitionId, textValue: value }];
+          case ProductAttributeValueType.BOOLEAN:
+            return [{ definitionId, booleanValue: value === 'true' }];
         }
       },
     ),

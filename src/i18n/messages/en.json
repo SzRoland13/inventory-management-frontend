@@ -218,6 +218,9 @@
           "categories": "Categories",
           "attributes": "Attributes"
         },
+        "category-picker": {
+          "selected-count": "{count, plural, =0 {No categories selected} one {# category selected} other {# categories selected}}"
+        },
         "tooltips": {
           "cancel": "Close this dialog and discard unsaved changes.",
           "save-draft": "Save this product as a draft. It will not be active yet.",
@@ -300,7 +303,121 @@
           }
         },
         "product": {
-          "title": "Product"
+          "title": "Product",
+          "eyebrow": "CATALOG SETTINGS",
+          "heading": "Shape your product catalog",
+          "description": "Keep the brands, categories, and product details used across your company organized in one place.",
+          "item-count": "{count, plural, =0 {No items} one {# item} other {# items}}",
+          "showing-count": "{count, plural, =0 {No results} one {# result} other {# results}}",
+          "search": "Search this list...",
+          "load-error": "We couldn't load this catalog section.",
+          "empty-search-title": "No matching items",
+          "empty-search-description": "Try another name or code.",
+          "sections": {
+            "units": "Units",
+            "brands": "Brands",
+            "categories": "Categories",
+            "attributes": "Attributes"
+          },
+          "section-description": {
+            "units": "Manage the units of measure available when creating and updating products.",
+            "brands": "Manage the brands available when creating and updating products.",
+            "categories": "Organize products into a clear, reusable category structure.",
+            "attributes": "Define the extra product details your team needs to capture."
+          },
+          "empty-title": {
+            "units": "No units found",
+            "brands": "No brands yet",
+            "categories": "No categories yet",
+            "attributes": "No attributes yet"
+          },
+          "empty-description": {
+            "units": "There are no selectable units in this catalog.",
+            "brands": "Add your first brand to make it available on products.",
+            "categories": "Create categories to make product browsing and filtering easier.",
+            "attributes": "Add attributes to capture details beyond the standard product fields."
+          },
+          "actions": {
+            "add": "Add {item}",
+            "create-first": "Create the first one",
+            "edit": "Edit",
+            "delete": "Delete",
+            "add-option": "Add value",
+            "save-option": "Save value",
+            "drag-category": "Reorder {name}",
+            "collapse-category": "Collapse {name}",
+            "expand-category": "Expand {name}"
+          },
+          "entity-names": {
+            "unit": "unit",
+            "brand": "brand",
+            "category": "category",
+            "attribute": "attribute"
+          },
+          "fields": {
+            "name": "Name",
+            "code": "Code",
+            "symbol": "Symbol",
+            "description": "Description",
+            "parent": "Parent category",
+            "root-category": "No parent (top level)",
+            "sort-order": "Display order",
+            "value-type": "Value type",
+            "required": "Required on products",
+            "required-description": "Products cannot be saved without this value."
+          },
+          "required": "Required",
+          "value-types": {
+            "FIXED": "Fixed options",
+            "TEXT": "Text",
+            "NUMBER": "Number",
+            "DATE": "Date",
+            "BOOLEAN": "Yes / no"
+          },
+          "form": {
+            "unit-description": "Define the code, display name, and symbol shown when working with product quantities.",
+            "brand-description": "Brand names must be unique within your company.",
+            "category-description": "Use a unique code to identify this category. Categories can be nested.",
+            "attribute-description": "Choose how product values for this attribute should be stored."
+          },
+          "create": {
+            "unit": "Add unit",
+            "brand": "Add brand",
+            "category": "Add category",
+            "attribute": "Add attribute"
+          },
+          "edit": {
+            "unit": "Edit unit",
+            "brand": "Edit brand",
+            "category": "Edit category",
+            "attribute": "Edit attribute"
+          },
+          "options": {
+            "title": "Values for {name}",
+            "allowed-values": "Allowed values",
+            "description": "Add the allowed choices for this fixed-option attribute.",
+            "empty": "No values added yet.",
+            "placeholder": "Enter an option value"
+          },
+          "units": {
+            "system": "Built-in unit",
+            "custom": "Company unit"
+          },
+          "delete": {
+            "title": "Delete catalog item?",
+            "description": {
+              "unit": "Delete “{name}”? Units used by products or documents cannot be deleted.",
+              "brand": "Delete “{name}”? Products using this brand will no longer have a brand assigned.",
+              "category": "Delete “{name}”? Products assigned to this category will lose this category.",
+              "attribute": "Delete “{name}”? Values for this attribute will be removed from products.",
+              "option": "Delete the value “{name}”? It may be in use by products."
+            }
+          },
+          "messages": {
+            "saved": "Catalog item saved.",
+            "deleted": "Catalog item deleted.",
+            "reordered": "Category order saved."
+          }
         },
         "company": {
           "title": "Company",
@@ -436,6 +553,11 @@
         "invalid_unit_configuration": "The secondary unit configuration is invalid.",
         "exactly_one_attribute_value": "Provide exactly one value for this attribute.",
         "page_size_limit": "Choose a page size of 100 or less."
+      }
+    },
+    "brand": {
+      "error": {
+        "already_exists": "A brand with this name already exists."
       }
     },
     "company": {

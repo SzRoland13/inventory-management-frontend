@@ -218,6 +218,9 @@
           "categories": "Kategóriák",
           "attributes": "Attribútumok"
         },
+        "category-picker": {
+          "selected-count": "{count, plural, =0 {Nincs kategória kiválasztva} one {# kategória kiválasztva} other {# kategória kiválasztva}}"
+        },
         "tooltips": {
           "cancel": "Bezárja az ablakot, és elveti a nem mentett módosításokat.",
           "save-draft": "Piszkozatként menti a terméket. Még nem lesz aktív.",
@@ -300,7 +303,121 @@
           }
         },
         "product": {
-          "title": "Termék"
+          "title": "Termék",
+          "eyebrow": "KATALÓGUSBEÁLLÍTÁSOK",
+          "heading": "Termékkatalógus beállítása",
+          "description": "Kezeld egy helyen a vállalatodnál használt márkákat, kategóriákat és terméktulajdonságokat.",
+          "item-count": "{count, plural, =0 {Nincs elem} one {# elem} other {# elem}}",
+          "showing-count": "{count, plural, =0 {Nincs találat} one {# találat} other {# találat}}",
+          "search": "Keresés a listában...",
+          "load-error": "A katalógus ezen része nem tölthető be.",
+          "empty-search-title": "Nincs ilyen elem",
+          "empty-search-description": "Próbálj más nevet vagy kódot.",
+          "sections": {
+            "units": "Mértékegységek",
+            "brands": "Márkák",
+            "categories": "Kategóriák",
+            "attributes": "Tulajdonságok"
+          },
+          "section-description": {
+            "units": "Kezeld a termékek létrehozásakor és módosításakor használható mértékegységeket.",
+            "brands": "Kezeld a termékeknél használható márkákat.",
+            "categories": "Rendezd a termékeket átlátható, újrahasználható kategóriákba.",
+            "attributes": "Határozd meg a termékekhez rögzítendő további adatokat."
+          },
+          "empty-title": {
+            "units": "Nincsenek mértékegységek",
+            "brands": "Még nincsenek márkák",
+            "categories": "Még nincsenek kategóriák",
+            "attributes": "Még nincsenek tulajdonságok"
+          },
+          "empty-description": {
+            "units": "Ebben a katalógusban nincsenek kiválasztható mértékegységek.",
+            "brands": "Adj hozzá egy márkát, hogy elérhető legyen a termékeknél.",
+            "categories": "Hozz létre kategóriákat a termékek böngészésének és szűrésének megkönnyítéséhez.",
+            "attributes": "Adj hozzá tulajdonságokat a termékek további adatainak rögzítéséhez."
+          },
+          "actions": {
+            "add": "{item} hozzáadása",
+            "create-first": "Első elem létrehozása",
+            "edit": "Szerkesztés",
+            "delete": "Törlés",
+            "add-option": "Érték hozzáadása",
+            "save-option": "Érték mentése",
+            "drag-category": "{name} átrendezése",
+            "collapse-category": "{name} összecsukása",
+            "expand-category": "{name} kibontása"
+          },
+          "entity-names": {
+            "unit": "mértékegység",
+            "brand": "márka",
+            "category": "kategória",
+            "attribute": "tulajdonság"
+          },
+          "fields": {
+            "name": "Név",
+            "code": "Kód",
+            "symbol": "Jelölés",
+            "description": "Leírás",
+            "parent": "Szülőkategória",
+            "root-category": "Nincs szülő (felső szint)",
+            "sort-order": "Megjelenítési sorrend",
+            "value-type": "Értéktípus",
+            "required": "Kötelező a termékeknél",
+            "required-description": "A termék nem menthető el ezen érték nélkül."
+          },
+          "required": "Kötelező",
+          "value-types": {
+            "FIXED": "Rögzített értékek",
+            "TEXT": "Szöveg",
+            "NUMBER": "Szám",
+            "DATE": "Dátum",
+            "BOOLEAN": "Igen / nem"
+          },
+          "form": {
+            "unit-description": "Add meg a kódot, a megjelenített nevet és a termékmennyiségeknél látható jelölést.",
+            "brand-description": "A márkaneveknek vállalaton belül egyedinek kell lenniük.",
+            "category-description": "Adj meg egyedi kódot. A kategóriák egymásba ágyazhatók.",
+            "attribute-description": "Válaszd ki, hogyan tároljuk a tulajdonság termékértékeit."
+          },
+          "create": {
+            "unit": "Mértékegység hozzáadása",
+            "brand": "Márka hozzáadása",
+            "category": "Kategória hozzáadása",
+            "attribute": "Tulajdonság hozzáadása"
+          },
+          "edit": {
+            "unit": "Mértékegység szerkesztése",
+            "brand": "Márka szerkesztése",
+            "category": "Kategória szerkesztése",
+            "attribute": "Tulajdonság szerkesztése"
+          },
+          "options": {
+            "title": "{name} értékei",
+            "allowed-values": "Engedélyezett értékek",
+            "description": "Add meg a rögzített értékű tulajdonságnál választható értékeket.",
+            "empty": "Még nincsenek hozzáadott értékek.",
+            "placeholder": "Érték megadása"
+          },
+          "units": {
+            "system": "Beépített mértékegység",
+            "custom": "Saját mértékegység"
+          },
+          "delete": {
+            "title": "Katalóguselem törlése?",
+            "description": {
+              "unit": "Törlöd ezt: „{name}”? A termékeknél vagy dokumentumoknál használt mértékegységek nem törölhetők.",
+              "brand": "Törlöd ezt: „{name}”? A márkát használó termékekhez többé nem tartozik márka.",
+              "category": "Törlöd ezt: „{name}”? A kategóriához rendelt termékek elveszítik ezt a kategóriát.",
+              "attribute": "Törlöd ezt: „{name}”? A tulajdonság értékei törlődnek a termékekről.",
+              "option": "Törlöd ezt az értéket: „{name}”? Lehet, hogy termékek használják."
+            }
+          },
+          "messages": {
+            "saved": "A katalóguselem mentése sikerült.",
+            "deleted": "A katalóguselem törlése sikerült.",
+            "reordered": "A kategóriák sorrendje mentve."
+          }
         },
         "company": {
           "title": "Vállalat",
@@ -436,6 +553,11 @@
         "invalid_unit_configuration": "A másodlagos mértékegység beállítása érvénytelen.",
         "exactly_one_attribute_value": "Pontosan egy értéket adj meg ehhez az attribútumhoz.",
         "page_size_limit": "Legfeljebb 100-as oldalméretet válassz."
+      }
+    },
+    "brand": {
+      "error": {
+        "already_exists": "Már létezik ilyen nevű márka."
       }
     },
     "company": {

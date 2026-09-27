@@ -17,7 +17,9 @@ export const ProductService = {
   get: async (id: number): Promise<ApiResponse<ProductResponse>> =>
     handleRequest(BaseService.get(`/products/${id}`)),
 
-  create: async (request: ProductRequest): Promise<ApiResponse<ProductResponse>> =>
+  create: async (
+    request: ProductRequest,
+  ): Promise<ApiResponse<ProductResponse>> =>
     handleRequest(BaseService.post('/products', request)),
 
   update: async (

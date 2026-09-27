@@ -4,10 +4,7 @@ import { Badge } from '@/features/shared/components/ui/badge';
 import { Checkbox } from '@/features/shared/components/ui/checkbox';
 import type { Currency } from '@/features/settings/types/currencyDtos';
 import type { ProductResponse } from '@/features/products/types/product';
-import {
-  type ColumnDef,
-  type HeaderContext,
-} from '@tanstack/react-table';
+import { type ColumnDef, type HeaderContext } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -46,12 +43,16 @@ function ProductSortableHeader({
   );
 }
 
-export function useProductsColumns(currencies: Currency[]): ColumnDef<ProductResponse>[] {
+export function useProductsColumns(
+  currencies: Currency[],
+): ColumnDef<ProductResponse>[] {
   const t = useTranslations();
   const locale = useLocale();
 
   return useMemo(() => {
-    const currenciesById = new Map(currencies.map((currency) => [currency.id, currency]));
+    const currenciesById = new Map(
+      currencies.map((currency) => [currency.id, currency]),
+    );
 
     return [
       {
@@ -91,7 +92,9 @@ export function useProductsColumns(currencies: Currency[]): ColumnDef<ProductRes
         header: ProductSortableHeader,
         cell: ({ row }) => {
           const { currencyId, netPrice } = row.original.pricing;
-          const currency = currencyId ? currenciesById.get(currencyId) : undefined;
+          const currency = currencyId
+            ? currenciesById.get(currencyId)
+            : undefined;
           if (!currency) return new Intl.NumberFormat(locale).format(netPrice);
 
           return new Intl.NumberFormat(locale, {
