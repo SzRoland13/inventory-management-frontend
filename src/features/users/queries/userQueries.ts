@@ -45,17 +45,9 @@ export function useSetUserSuspendedMutation() {
   const invalidateUsers = useInvalidateUsers();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      suspended,
-    }: {
-      id: number;
-      suspended: boolean;
-    }) =>
+    mutationFn: ({ id, suspended }: { id: number; suspended: boolean }) =>
       requireSuccessfulResponse(
-        suspended
-          ? UserService.suspendUser(id)
-          : UserService.activateUser(id),
+        suspended ? UserService.suspendUser(id) : UserService.activateUser(id),
       ),
     onSuccess: invalidateUsers,
   });

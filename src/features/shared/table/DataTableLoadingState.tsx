@@ -15,10 +15,7 @@ export function DataTableLoadingState({
       role='status'
     >
       {Array.from({ length: rows }, (_, index) => (
-        <div
-          key={index}
-          className='h-10 animate-pulse rounded bg-zinc-800'
-        />
+        <div key={index} className='h-10 animate-pulse rounded bg-zinc-800' />
       ))}
     </div>
   );

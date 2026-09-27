@@ -88,7 +88,11 @@ export function AddEditUserDialog({
               : t('pages.users.dialog.create')}
           </DialogTitle>
           <DialogDescription className='sr-only'>
-            {t(user ? 'pages.users.dialog.edit-description' : 'pages.users.dialog.create-description')}
+            {t(
+              user
+                ? 'pages.users.dialog.edit-description'
+                : 'pages.users.dialog.create-description',
+            )}
           </DialogDescription>
         </DialogHeader>
 

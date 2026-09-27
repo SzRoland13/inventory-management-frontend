@@ -8,7 +8,10 @@ import { Button } from '@/features/shared/components/ui/button';
 import { Sheet, SheetContent } from '@/features/shared/components/ui/sheet';
 import { ScrollArea } from '@/features/shared/components/ui/scroll-area';
 import { cn } from '@/features/shared/utils/css';
-import { DialogDescription, DialogTitle } from '@/features/shared/components/ui/dialog';
+import {
+  DialogDescription,
+  DialogTitle,
+} from '@/features/shared/components/ui/dialog';
 import { useTranslations } from 'next-intl';
 import { useSidebar } from '@/features/shared/providers/SidebarContext';
 import SidebarHeader from '@/features/shared/components/sidebar/SidebarHeader';

@@ -1,7 +1,11 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/features/shared/components/ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/features/shared/components/ui/avatar';
 import { Badge } from '@/features/shared/components/ui/badge';
 import { Checkbox } from '@/features/shared/components/ui/checkbox';
 import { UserStatus } from '@/features/users/types/user';

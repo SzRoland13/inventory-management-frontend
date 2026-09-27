@@ -1,5 +1,9 @@
 import { Button } from '@/features/shared/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/features/shared/components/ui/avatar';
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from '@/features/shared/components/ui/avatar';
 import { Upload } from 'lucide-react';
 import { useAvatarStore } from '@/features/shared/media/avatarStore';
 import { useTranslations } from 'next-intl';
