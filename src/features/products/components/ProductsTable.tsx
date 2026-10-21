@@ -6,6 +6,8 @@ import {
   type PaginationState,
   type RowSelectionState,
   type SortingState,
+  type VisibilityState,
+  functionalUpdate,
   useReactTable,
 } from '@tanstack/react-table';
 import { PackageSearch, Plus } from 'lucide-react';
@@ -23,7 +25,9 @@ import { DataTablePagination } from '@/features/shared/table/DataTablePagination
 import { ProductFormDialog } from '@/features/products/components/ProductFormDialog';
 import { ProductArchiveDialog } from '@/features/products/components/ProductArchiveDialog';
 import { ProductsToolbar } from '@/features/products/components/ProductsToolbar';
+import { ProductColumnVisibilityDialog } from '@/features/products/components/ProductColumnVisibilityDialog';
 import { useProductsColumns } from '@/features/products/hooks/useProductsColumns';
+import { useProductTablePreferencesStore } from '@/features/products/stores/productTablePreferencesStore';
 import {
   useArchiveProductMutation,
   useProductAttributeDefinitionsQuery,
@@ -47,6 +51,22 @@ import {
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_PAGE_SIZE = 25;
+const DEFAULT_PRODUCT_COLUMN_VISIBILITY: VisibilityState = {
+  ean: false,
+  description: false,
+  secondaryUnit: false,
+  costPrice: false,
+  secondaryNetPrice: false,
+  vatRate: false,
+  weight: false,
+  width: false,
+  height: false,
+  depth: false,
+  categories: false,
+  attributes: false,
+  createdAt: false,
+  updatedAt: false,
+};
 
 const sortFieldByColumn: Record<string, ProductSortField> = {
   sku: ProductSortField.SKU,
@@ -61,6 +81,21 @@ export function ProductsTable() {
   const sessionQuery = useSessionQuery();
   const role = sessionQuery.data?.payload.role;
   const canManage = role === UserRole.ADMIN || role === UserRole.MANAGER;
+  const userId = sessionQuery.data?.payload.id;
+  const preferencesHydrated = useProductTablePreferencesStore(
+    (state) => state.hasHydrated,
+  );
+  const savedColumnVisibility = useProductTablePreferencesStore((state) =>
+    !preferencesHydrated || userId === undefined
+      ? undefined
+      : state.visibilityByUser[String(userId)],
+  );
+  const setSavedColumnVisibility = useProductTablePreferencesStore(
+    (state) => state.setVisibility,
+  );
+  const resetSavedColumnVisibility = useProductTablePreferencesStore(
+    (state) => state.resetVisibility,
+  );
 
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -80,6 +115,11 @@ export function ProductsTable() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState<number | null>(null);
   const [archiveOpen, setArchiveOpen] = useState(false);
+  const [columnPickerOpen, setColumnPickerOpen] = useState(false);
+
+  useEffect(() => {
+    void useProductTablePreferencesStore.persist.rehydrate();
+  }, []);
 
   const sort = sorting[0];
   const sortBy = sortFieldByColumn[sort?.id ?? ''] ?? 'NAME';
@@ -138,7 +178,11 @@ export function ProductsTable() {
   const editingProduct =
     selectedProductQuery.data?.payload ??
     products.find((product) => product.id === editingProductId);
-  const columns = useProductsColumns(currencies);
+  const columns = useProductsColumns(currencies, categories);
+  const columnVisibility = {
+    ...DEFAULT_PRODUCT_COLUMN_VISIBILITY,
+    ...savedColumnVisibility,
+  };
 
   const lookupsReady =
     unitsQuery.isSuccess &&
@@ -197,7 +241,7 @@ export function ProductsTable() {
   const table = useReactTable({
     data: products,
     columns,
-    state: { sorting, rowSelection, pagination },
+    state: { sorting, rowSelection, pagination, columnVisibility },
     manualPagination: true,
     manualSorting: true,
     enableMultiSort: false,
@@ -205,6 +249,19 @@ export function ProductsTable() {
     getRowId: (row) => String(row.id),
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
+    onColumnVisibilityChange: (updater) => {
+      if (userId === undefined) return;
+      const previous = {
+        ...DEFAULT_PRODUCT_COLUMN_VISIBILITY,
+        ...useProductTablePreferencesStore.getState().visibilityByUser[
+          String(userId)
+        ],
+      };
+      setSavedColumnVisibility(
+        userId,
+        functionalUpdate(updater, previous),
+      );
+    },
     onSortingChange: (updater) => {
       setSorting(updater);
       setPagination((current) => ({ ...current, pageIndex: 0 }));
@@ -299,6 +356,7 @@ export function ProductsTable() {
           }
         }}
         onArchive={() => setArchiveOpen(true)}
+        onManageColumns={() => setColumnPickerOpen(true)}
       />
 
       {!lookupsReady && !lookupsLoading && (
@@ -345,7 +403,11 @@ export function ProductsTable() {
           }
         />
       ) : (
-        <DataTable table={table} />
+        <DataTable
+          table={table}
+          horizontalScroll
+          stickyColumnId='sku'
+        />
       )}
 
       <DataTablePagination
@@ -392,6 +454,15 @@ export function ProductsTable() {
         saving={archiveProduct.isPending}
         canArchive={!!selectedProduct}
         onArchive={() => void handleArchive()}
+      />
+
+      <ProductColumnVisibilityDialog
+        open={columnPickerOpen}
+        table={table}
+        onOpenChange={setColumnPickerOpen}
+        onReset={() => {
+          if (userId !== undefined) resetSavedColumnVisibility(userId);
+        }}
       />
     </section>
   );

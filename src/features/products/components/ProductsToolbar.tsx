@@ -14,7 +14,7 @@ import type {
   ProductCategory,
   ProductUnit,
 } from '@/features/products/types/product';
-import { Filter, Pencil, Plus, Search } from 'lucide-react';
+import { Columns3, Filter, Pencil, Plus, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface ProductsToolbarProps {
@@ -34,6 +34,7 @@ interface ProductsToolbarProps {
   onAdd: () => void;
   onEdit: () => void;
   onArchive: () => void;
+  onManageColumns: () => void;
 }
 
 export function ProductsToolbar({
@@ -53,6 +54,7 @@ export function ProductsToolbar({
   onAdd,
   onEdit,
   onArchive,
+  onManageColumns,
 }: ProductsToolbarProps) {
   const t = useTranslations();
 
@@ -83,6 +85,15 @@ export function ProductsToolbar({
           </Button>
         </>
       )}
+
+      <Button
+        variant='outline'
+        onClick={onManageColumns}
+        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white'
+      >
+        <Columns3 />
+        {t('pages.products.columns.button')}
+      </Button>
 
       <div className='ml-auto flex w-full flex-wrap gap-2 sm:w-auto'>
         <label className='relative min-w-52 flex-1 sm:w-64 sm:flex-none'>

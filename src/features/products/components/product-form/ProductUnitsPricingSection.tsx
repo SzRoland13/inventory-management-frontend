@@ -1,4 +1,9 @@
+import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
+import type {
+  UseFormGetValues,
+  UseFormSetValue,
+} from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { BadgeDollarSign } from 'lucide-react';
 import { Input } from '@/features/shared/components/ui/input';
@@ -12,11 +17,18 @@ import {
 import { ValidationMessage } from '@/features/shared/components/ValidationMessage';
 import type { ProductUnit } from '@/features/products/types/product';
 import type { Currency } from '@/features/settings/types/currencyDtos';
+import type { ProductFormValues } from '@/features/products/schemas/productSchemas';
+import {
+  calculateGrossPriceInput,
+  calculateNetPriceInput,
+} from '@/features/products/helpers/productPricing';
 import type { ProductFormFields } from './formTypes';
 import { FieldLabel, FormSection } from './FormSection';
 import { numberInputClassName, productSelectTriggerClassName } from './styles';
 
 type ProductUnitsPricingSectionProps = ProductFormFields & {
+  getValues: UseFormGetValues<ProductFormValues>;
+  setValue: UseFormSetValue<ProductFormValues>;
   units: ProductUnit[];
   currencies: Currency[];
 };
@@ -25,10 +37,21 @@ export function ProductUnitsPricingSection({
   control,
   register,
   errors,
+  getValues,
+  setValue,
   units,
   currencies,
 }: ProductUnitsPricingSectionProps) {
   const t = useTranslations();
+  const lastEditedPrice = useRef<'netPrice' | 'grossPrice'>('netPrice');
+  const netPriceField = register('netPrice');
+  const grossPriceField = register('grossPrice');
+  const vatRateField = register('vatRate');
+  const calculatedValueOptions = {
+    shouldDirty: true,
+    shouldValidate: true,
+  } as const;
+
   return (
     <FormSection
       title={t('pages.products.dialog.sections.units-pricing')}
@@ -190,13 +213,51 @@ export function ProductUnitsPricingSection({
               </FieldLabel>
               <Input
                 id='product-net-price'
-                {...register('netPrice')}
+                {...netPriceField}
+                onChange={(event) => {
+                  netPriceField.onChange(event);
+                  const value = event.currentTarget.value;
+                  lastEditedPrice.current =
+                    value === '' ? 'grossPrice' : 'netPrice';
+                  const grossPrice = calculateGrossPriceInput(
+                    value,
+                    getValues('vatRate'),
+                  );
+                  if (grossPrice !== null)
+                    setValue('grossPrice', grossPrice, calculatedValueOptions);
+                }}
                 className={numberInputClassName}
                 type='number'
                 min='0'
                 step='any'
               />
               <ValidationMessage messageKey={errors.netPrice?.message} />
+            </div>
+            <div>
+              <FieldLabel htmlFor='product-gross-price'>
+                {t('pages.products.fields.gross-price')}
+              </FieldLabel>
+              <Input
+                id='product-gross-price'
+                {...grossPriceField}
+                onChange={(event) => {
+                  grossPriceField.onChange(event);
+                  const value = event.currentTarget.value;
+                  lastEditedPrice.current =
+                    value === '' ? 'netPrice' : 'grossPrice';
+                  const netPrice = calculateNetPriceInput(
+                    value,
+                    getValues('vatRate'),
+                  );
+                  if (netPrice !== null)
+                    setValue('netPrice', netPrice, calculatedValueOptions);
+                }}
+                className={numberInputClassName}
+                type='number'
+                min='0'
+                step='any'
+              />
+              <ValidationMessage messageKey={errors.grossPrice?.message} />
             </div>
             <div>
               <FieldLabel htmlFor='product-cost-price'>
@@ -218,7 +279,29 @@ export function ProductUnitsPricingSection({
               </FieldLabel>
               <Input
                 id='product-vat-rate'
-                {...register('vatRate')}
+                {...vatRateField}
+                onChange={(event) => {
+                  vatRateField.onChange(event);
+                  if (lastEditedPrice.current === 'grossPrice') {
+                    const netPrice = calculateNetPriceInput(
+                      getValues('grossPrice'),
+                      event.currentTarget.value,
+                    );
+                    if (netPrice !== null)
+                      setValue('netPrice', netPrice, calculatedValueOptions);
+                  } else {
+                    const grossPrice = calculateGrossPriceInput(
+                      getValues('netPrice'),
+                      event.currentTarget.value,
+                    );
+                    if (grossPrice !== null)
+                      setValue(
+                        'grossPrice',
+                        grossPrice,
+                        calculatedValueOptions,
+                      );
+                  }
+                }}
                 className={numberInputClassName}
                 type='number'
                 min='0'
@@ -227,6 +310,9 @@ export function ProductUnitsPricingSection({
               />
               <ValidationMessage messageKey={errors.vatRate?.message} />
             </div>
+            <p className='text-xs text-zinc-400 sm:col-span-2'>
+              {t('pages.products.fields.price-calculation-help')}
+            </p>
           </div>
         </div>
       </div>

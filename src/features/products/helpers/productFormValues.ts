@@ -5,6 +5,7 @@ import {
   type ProductResponse,
 } from '@/features/products/types/product';
 import type { ProductFormValues } from '@/features/products/schemas/productSchemas';
+import { calculateGrossPriceInput } from '@/features/products/helpers/productPricing';
 
 export function valuesFromProduct(
   product: ProductResponse | undefined,
@@ -40,6 +41,12 @@ export function valuesFromProduct(
         ? ''
         : String(product.pricing.currencyId),
     netPrice: product ? String(product.pricing.netPrice) : '',
+    grossPrice: product
+      ? calculateGrossPriceInput(
+          String(product.pricing.netPrice),
+          String(product.pricing.vatRate),
+        ) ?? ''
+      : '',
     costPrice:
       product?.pricing.costPrice == null
         ? ''

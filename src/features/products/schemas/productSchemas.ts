@@ -78,6 +78,7 @@ const productFormBaseSchema = z.object({
   secondaryUnitsPerMainUnit: decimalText('decimal-precision', 16, 8),
   currencyId: z.string(),
   netPrice: decimalText('decimal-precision', 16, 8, true),
+  grossPrice: decimalText('decimal-precision', 16, 8),
   costPrice: decimalText('decimal-precision', 16, 8),
   vatRate: decimalText('vat-rate', 2, 3, true),
   weight: decimalText('dimension-precision', 12, 3),

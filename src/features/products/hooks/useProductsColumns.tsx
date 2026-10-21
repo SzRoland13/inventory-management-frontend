@@ -3,7 +3,11 @@
 import { Badge } from '@/features/shared/components/ui/badge';
 import { Checkbox } from '@/features/shared/components/ui/checkbox';
 import type { Currency } from '@/features/settings/types/currencyDtos';
-import type { ProductResponse } from '@/features/products/types/product';
+import type {
+  ProductCategory,
+  ProductResponse,
+} from '@/features/products/types/product';
+import { ProductStockCell } from '@/features/products/components/ProductStockCell';
 import { type ColumnDef, type HeaderContext } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -15,7 +19,26 @@ const sortableLabels: Record<string, string> = {
   brand: 'pages.products.table.brand',
   netPrice: 'pages.products.table.net-price',
   status: 'pages.products.table.status',
+  stock: 'pages.products.table.stock',
 };
+
+function formatNumber(value: number | null, locale: string) {
+  return value === null ? '—' : new Intl.NumberFormat(locale).format(value);
+}
+
+function getAttributeValue(
+  value: ProductResponse['attributes'][number],
+  yesLabel: string,
+  noLabel: string,
+) {
+  if (value.optionValue !== null) return value.optionValue;
+  if (value.textValue !== null) return value.textValue;
+  if (value.numberValue !== null) return String(value.numberValue);
+  if (value.dateValue !== null) return value.dateValue;
+  if (value.booleanValue !== null)
+    return value.booleanValue ? yesLabel : noLabel;
+  return '—';
+}
 
 function ProductSortableHeader({
   column,
@@ -45,6 +68,7 @@ function ProductSortableHeader({
 
 export function useProductsColumns(
   currencies: Currency[],
+  categories: ProductCategory[],
 ): ColumnDef<ProductResponse>[] {
   const t = useTranslations();
   const locale = useLocale();
@@ -53,22 +77,33 @@ export function useProductsColumns(
     const currenciesById = new Map(
       currencies.map((currency) => [currency.id, currency]),
     );
+    const categoriesById = new Map(
+      categories.map((category) => [category.id, category.name]),
+    );
+    const formatPrice = (currencyId: number | null, value: number | null) => {
+      if (value === null) return '—';
+      const currency = currencyId ? currenciesById.get(currencyId) : undefined;
+      return new Intl.NumberFormat(
+        locale,
+        currency ? { style: 'currency', currency: currency.code } : undefined,
+      ).format(value);
+    };
 
     return [
       {
-        id: 'select',
-        header: () => null,
+        accessorKey: 'sku',
+        header: ProductSortableHeader,
         cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(checked) => row.toggleSelected(!!checked)}
-            aria-label={t('common.select-row')}
-          />
+          <div className='flex items-center gap-2'>
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(checked) => row.toggleSelected(!!checked)}
+              aria-label={t('common.select-row')}
+            />
+            <span>{row.original.sku}</span>
+          </div>
         ),
-        enableSorting: false,
-        enableHiding: false,
       },
-      { accessorKey: 'sku', header: ProductSortableHeader },
       { accessorKey: 'name', header: ProductSortableHeader },
       {
         accessorKey: 'brand',
@@ -76,14 +111,19 @@ export function useProductsColumns(
         cell: ({ row }) => row.original.brand?.name ?? '—',
       },
       {
-        id: 'unit',
-        header: t('pages.products.table.unit'),
+        id: 'mainUnit',
+        header: t('pages.products.table.mainUnit'),
+        enableSorting: false,
+        cell: ({ row }) =>
+          row.original.units.main.symbol || row.original.units.main.name,
+      },
+      {
+        id: 'secondaryUnit',
+        header: t('pages.products.table.secondaryUnit'),
         enableSorting: false,
         cell: ({ row }) => {
-          const { main, secondary } = row.original.units;
-          return secondary
-            ? `${main.symbol} / ${secondary.symbol}`
-            : main.symbol || main.name;
+          const unit = row.original.units.secondary;
+          return unit ? unit.symbol || unit.name : '—';
         },
       },
       {
@@ -92,15 +132,16 @@ export function useProductsColumns(
         header: ProductSortableHeader,
         cell: ({ row }) => {
           const { currencyId, netPrice } = row.original.pricing;
-          const currency = currencyId
-            ? currenciesById.get(currencyId)
-            : undefined;
-          if (!currency) return new Intl.NumberFormat(locale).format(netPrice);
-
-          return new Intl.NumberFormat(locale, {
-            style: 'currency',
-            currency: currency.code,
-          }).format(netPrice);
+          return formatPrice(currencyId, netPrice);
+        },
+      },
+      {
+        id: 'grossPrice',
+        header: t('pages.products.table.grossPrice'),
+        enableSorting: false,
+        cell: ({ row }) => {
+          const { currencyId, netPrice, vatRate } = row.original.pricing;
+          return formatPrice(currencyId, netPrice * (1 + vatRate / 100));
         },
       },
       {
@@ -114,6 +155,88 @@ export function useProductsColumns(
           </Badge>
         ),
       },
+      {
+        id: 'stock',
+        header: t('pages.products.table.stock'),
+        enableSorting: false,
+        cell: ({ row }) => <ProductStockCell product={row.original} />,
+      },
+      {
+        accessorKey: 'ean',
+        header: t('pages.products.table.ean'),
+        cell: ({ row }) => row.original.ean ?? '—',
+      },
+      {
+        accessorKey: 'description',
+        header: t('pages.products.table.description'),
+        cell: ({ row }) => row.original.description ?? '—',
+      },
+      {
+        id: 'costPrice',
+        header: t('pages.products.table.costPrice'),
+        cell: ({ row }) =>
+          formatPrice(row.original.pricing.currencyId, row.original.pricing.costPrice),
+      },
+      {
+        id: 'secondaryNetPrice',
+        header: t('pages.products.table.secondaryNetPrice'),
+        cell: ({ row }) =>
+          formatPrice(
+            row.original.pricing.currencyId,
+            row.original.pricing.secondaryNetPrice,
+          ),
+      },
+      {
+        id: 'vatRate',
+        header: t('pages.products.table.vatRate'),
+        cell: ({ row }) => `${formatNumber(row.original.pricing.vatRate, locale)}%`,
+      },
+      ...(['weight', 'width', 'height', 'depth'] as const).map((dimension) => ({
+        id: dimension,
+        header: t(`pages.products.table.${dimension}`),
+        cell: ({ row }: { row: { original: ProductResponse } }) =>
+          formatNumber(row.original.dimensions[dimension], locale),
+      })),
+      {
+        id: 'categories',
+        header: t('pages.products.table.categories'),
+        cell: ({ row }) =>
+          row.original.categoryIds
+            .map((id) => categoriesById.get(id))
+            .filter((name): name is string => !!name)
+            .join(', ') || '—',
+      },
+      {
+        id: 'attributes',
+        header: t('pages.products.table.attributes'),
+        cell: ({ row }) =>
+          row.original.attributes
+            .map(
+              (attribute) =>
+                `${attribute.definitionName}: ${getAttributeValue(
+                  attribute,
+                  t('common.yes'),
+                  t('common.no'),
+                )}`,
+            )
+            .join(', ') || '—',
+      },
+      {
+        id: 'createdAt',
+        header: t('pages.products.table.createdAt'),
+        cell: ({ row }) =>
+          new Intl.DateTimeFormat(locale).format(
+            new Date(row.original.createdAt),
+          ),
+      },
+      {
+        id: 'updatedAt',
+        header: t('pages.products.table.updatedAt'),
+        cell: ({ row }) =>
+          new Intl.DateTimeFormat(locale).format(
+            new Date(row.original.updatedAt),
+          ),
+      },
     ];
-  }, [currencies, locale, t]);
+  }, [categories, currencies, locale, t]);
 }

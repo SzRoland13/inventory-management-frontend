@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dialog } from '@/features/shared/components/ui/dialog';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
@@ -72,14 +72,26 @@ export function ProductFormDialog({
     control,
     reset,
     handleSubmit,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isSubmitting },
   } = form;
+  const wasOpen = useRef(false);
+  const lastProductId = useRef<number | null>(null);
 
   useEffect(() => {
-    if (open && !isLoadingProduct && !isDirty) {
-      reset(valuesFromProduct(product, definitions));
+    if (!open) {
+      wasOpen.current = false;
+      return;
     }
-  }, [definitions, isDirty, isLoadingProduct, open, product, reset]);
+
+    if (isLoadingProduct) return;
+
+    const productId = product?.id ?? null;
+    if (!wasOpen.current || productId !== lastProductId.current) {
+      reset(valuesFromProduct(product, definitions));
+      lastProductId.current = productId;
+    }
+    wasOpen.current = true;
+  }, [definitions, isLoadingProduct, open, product, reset]);
 
   const submit = (status?: ProductRequest['status']) =>
     handleSubmit(async (values) => {
@@ -117,6 +129,8 @@ export function ProductFormDialog({
                 control={control}
                 register={register}
                 errors={errors}
+                getValues={form.getValues}
+                setValue={form.setValue}
                 units={units}
                 currencies={currencies}
               />

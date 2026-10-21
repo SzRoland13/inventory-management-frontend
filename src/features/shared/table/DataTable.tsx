@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 'use client';
 
 import {
@@ -16,9 +15,16 @@ import { useTranslations } from 'next-intl';
 interface DataTableProps<T> {
   table: ReactTable<T>;
   className?: string;
+  horizontalScroll?: boolean;
+  stickyColumnId?: string;
 }
 
-export function DataTable<T>({ table, className }: DataTableProps<T>) {
+export function DataTable<T>({
+  table,
+  className,
+  horizontalScroll = false,
+  stickyColumnId,
+}: DataTableProps<T>) {
   const t = useTranslations();
   const rows = table.getRowModel().rows;
   const headers = table.getHeaderGroups()[0]?.headers ?? [];
@@ -26,12 +32,19 @@ export function DataTable<T>({ table, className }: DataTableProps<T>) {
   return (
     <div className={cn('w-full bg-zinc-800', className)}>
       <div className='hidden md:block'>
-        <Table className='w-full'>
+        <Table className={cn('w-full', horizontalScroll && 'min-w-max')}>
           <TableHeader className='bg-gradient-to-b from-zinc-600 to-zinc-600/80 text-zinc-100'>
             {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
+              <TableRow key={hg.id} className='hover:bg-transparent'>
                 {hg.headers.map((header) => (
-                  <TableHead key={header.id} className='text-zinc-100'>
+                  <TableHead
+                    key={header.id}
+                    className={cn(
+                      'text-zinc-100',
+                      stickyColumnId === header.column.id &&
+                        'sticky left-0 z-20 bg-zinc-600 shadow-[2px_0_4px_rgba(0,0,0,0.25)]',
+                    )}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -52,12 +65,21 @@ export function DataTable<T>({ table, className }: DataTableProps<T>) {
                   data-state={row.getIsSelected() ? 'selected' : ''}
                   className={cn(
                     'data-[state=selected]:bg-zinc-750',
-                    'hover:bg-zinc-700/60 cursor-pointer transition-colors',
+                    'group hover:bg-zinc-700/60 cursor-pointer transition-colors',
                     row.getIsSelected() && 'bg-zinc-700',
                   )}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={cn(
+                        stickyColumnId === cell.column.id &&
+                          'sticky left-0 z-10 bg-zinc-800 shadow-[2px_0_4px_rgba(0,0,0,0.25)] group-hover:bg-zinc-700',
+                        row.getIsSelected() &&
+                          stickyColumnId === cell.column.id &&
+                          'bg-zinc-700',
+                      )}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
