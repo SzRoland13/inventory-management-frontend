@@ -55,6 +55,7 @@ export function ProductAttributesSection({
             <Controller
               control={control}
               name={`attributes.${index}.value`}
+              defaultValue=''
               render={({ field }) => {
                 if (definition.valueType === ProductAttributeValueType.FIXED) {
                   return (
@@ -130,7 +131,7 @@ export function ProductAttributesSection({
                     id={`product-attribute-${definition.id}`}
                     aria-label={definition.name}
                     {...field}
-                    value={field.value}
+                    value={field.value ?? ''}
                     type={
                       definition.valueType === ProductAttributeValueType.DATE
                         ? 'date'

@@ -63,6 +63,15 @@ export function ProductFormDialog({
     () => createProductFormSchema(definitions),
     [definitions],
   );
+  const availableUnits = useMemo(() => {
+    const unitsById = new Map(units.map((unit) => [unit.id, unit]));
+    if (product?.units.main) {
+      unitsById.set(product.units.main.id, product.units.main);
+    }
+    if (product?.units.secondary)
+      unitsById.set(product.units.secondary.id, product.units.secondary);
+    return [...unitsById.values()];
+  }, [product, units]);
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(schema),
     defaultValues: valuesFromProduct(undefined, definitions),
@@ -131,7 +140,7 @@ export function ProductFormDialog({
                 errors={errors}
                 getValues={form.getValues}
                 setValue={form.setValue}
-                units={units}
+                units={availableUnits}
                 currencies={currencies}
               />
 

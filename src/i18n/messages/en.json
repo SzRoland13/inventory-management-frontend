@@ -159,6 +159,7 @@
       "title": "Product Management",
       "actions": {
         "add": "Add product",
+        "view": "View",
         "edit": "Edit product",
         "archive": "Archive",
         "publish": "Publish"
@@ -217,6 +218,16 @@
         "total": "{quantity} total stock",
         "by-warehouse": "Stock by warehouse",
         "no-warehouse-stock": "No warehouse stock"
+      },
+      "details": {
+        "back-to-list": "Back to products",
+        "loading": "Loading product details…",
+        "error-title": "Product details could not be loaded",
+        "error-description": "Check your connection and try again.",
+        "not-found-title": "Product not found",
+        "not-found-description": "This product may have been removed or is no longer available.",
+        "metadata": "Record information",
+        "archivedAt": "Archived"
       },
       "messages": {
         "created": "Product created successfully.",

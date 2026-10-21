@@ -159,6 +159,7 @@
       "title": "Termékkezelés",
       "actions": {
         "add": "Termék hozzáadása",
+        "view": "Megtekintés",
         "edit": "Termék szerkesztése",
         "archive": "Archiválás",
         "publish": "Közzététel"
@@ -217,6 +218,16 @@
         "total": "Összes készlet: {quantity}",
         "by-warehouse": "Készlet raktáranként",
         "no-warehouse-stock": "Nincs raktárkészlet"
+      },
+      "details": {
+        "back-to-list": "Vissza a termékekhez",
+        "loading": "Termékadatok betöltése…",
+        "error-title": "A termékadatok betöltése nem sikerült",
+        "error-description": "Ellenőrizd a kapcsolatot, majd próbáld újra.",
+        "not-found-title": "A termék nem található",
+        "not-found-description": "Lehet, hogy a terméket eltávolították vagy már nem érhető el.",
+        "metadata": "Nyilvántartási adatok",
+        "archivedAt": "Archiválva"
       },
       "messages": {
         "created": "A termék sikeresen létrejött.",

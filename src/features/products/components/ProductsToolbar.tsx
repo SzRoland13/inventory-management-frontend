@@ -14,7 +14,7 @@ import type {
   ProductCategory,
   ProductUnit,
 } from '@/features/products/types/product';
-import { Columns3, Filter, Pencil, Plus, Search } from 'lucide-react';
+import { Archive, Columns3, Eye, Filter, Pencil, Plus, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface ProductsToolbarProps {
@@ -32,6 +32,7 @@ interface ProductsToolbarProps {
   onCategoryFilterChange: (value: string) => void;
   onUnitFilterChange: (value: string) => void;
   onAdd: () => void;
+  onView: () => void;
   onEdit: () => void;
   onArchive: () => void;
   onManageColumns: () => void;
@@ -52,6 +53,7 @@ export function ProductsToolbar({
   onCategoryFilterChange,
   onUnitFilterChange,
   onAdd,
+  onView,
   onEdit,
   onArchive,
   onManageColumns,
@@ -79,12 +81,23 @@ export function ProductsToolbar({
             variant='outline'
             onClick={onArchive}
             disabled={!hasSelection}
-            className='border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+            className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
           >
+            <Archive />
             {t('pages.products.actions.archive')}
           </Button>
         </>
       )}
+
+      <Button
+        variant='outline'
+        onClick={onView}
+        disabled={!hasSelection}
+        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+      >
+        <Eye />
+        {t('pages.products.actions.view')}
+      </Button>
 
       <Button
         variant='outline'

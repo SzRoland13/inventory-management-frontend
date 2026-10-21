@@ -13,6 +13,7 @@ import {
 import { PackageSearch, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { useRouter } from '@/i18n/navigation';
 import { useSessionQuery } from '@/features/auth/queries/authQueries';
 import { UserRole } from '@/features/users/types/user';
 import { useCurrenciesQuery } from '@/features/settings/queries/companyQueries';
@@ -32,7 +33,6 @@ import {
   useArchiveProductMutation,
   useProductAttributeDefinitionsQuery,
   useProductCategoriesQuery,
-  useProductQuery,
   useProductUnitsQuery,
   useProductsQuery,
   useCreateProductMutation,
@@ -48,6 +48,7 @@ import {
   ProductSortField,
   ProductStatus as ProductStatusValue,
 } from '@/features/products/types/product';
+import { Routes } from '@/features/shared/types/routes';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_PAGE_SIZE = 25;
@@ -78,6 +79,7 @@ const sortFieldByColumn: Record<string, ProductSortField> = {
 
 export function ProductsTable() {
   const t = useTranslations();
+  const router = useRouter();
   const sessionQuery = useSessionQuery();
   const role = sessionQuery.data?.payload.role;
   const canManage = role === UserRole.ADMIN || role === UserRole.MANAGER;
@@ -171,13 +173,9 @@ export function ProductsTable() {
   const selectedProduct = products.find(
     (product) => String(product.id) === selectedId,
   );
-  const selectedProductQuery = useProductQuery(
-    editorOpen && canManage ? editingProductId : null,
-    editorOpen && editingProductId !== null,
+  const editingProduct = products.find(
+    (product) => product.id === editingProductId,
   );
-  const editingProduct =
-    selectedProductQuery.data?.payload ??
-    products.find((product) => product.id === editingProductId);
   const columns = useProductsColumns(currencies, categories);
   const columnVisibility = {
     ...DEFAULT_PRODUCT_COLUMN_VISIBILITY,
@@ -214,11 +212,6 @@ export function ProductsTable() {
     t,
     unitsQuery.error,
   ]);
-  useEffect(() => {
-    if (selectedProductQuery.error)
-      toastApiError(t, selectedProductQuery.error);
-  }, [selectedProductQuery.error, t]);
-
   useEffect(() => {
     if (
       pageMetadata &&
@@ -349,6 +342,11 @@ export function ProductsTable() {
           setEditingProductId(null);
           setEditorOpen(true);
         }}
+        onView={() => {
+          if (selectedProduct) {
+            router.push(`${Routes.Products}/${selectedProduct.id}`);
+          }
+        }}
         onEdit={() => {
           if (selectedProduct) {
             setEditingProductId(selectedProduct.id);
@@ -436,9 +434,6 @@ export function ProductsTable() {
           if (!open) setEditingProductId(null);
         }}
         product={editingProduct}
-        isLoadingProduct={
-          editingProductId !== null && selectedProductQuery.isPending
-        }
         saving={createProduct.isPending || updateProduct.isPending}
         units={units}
         currencies={currencies}
