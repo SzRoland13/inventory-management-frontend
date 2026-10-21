@@ -212,7 +212,15 @@
         "button": "Columns",
         "title": "Choose columns",
         "description": "Choose which product details to show in the table.",
-        "reset": "Reset to defaults"
+        "reset": "Reset to defaults",
+        "search": "Search columns",
+        "product-fields": "Product fields",
+        "attributes": "Attributes",
+        "attribute-tag": "Attribute",
+        "no-matches": "No columns match your search.",
+        "drag": "Drag to reorder {column}",
+        "move-up": "Move {column} up",
+        "move-down": "Move {column} down"
       },
       "stock": {
         "total": "{quantity} total stock",

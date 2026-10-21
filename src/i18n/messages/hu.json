@@ -212,7 +212,15 @@
         "button": "Oszlopok",
         "title": "Oszlopok kiválasztása",
         "description": "Válaszd ki, mely termékadatok jelenjenek meg a táblázatban.",
-        "reset": "Alapértelmezések visszaállítása"
+        "reset": "Alapértelmezések visszaállítása",
+        "search": "Oszlopok keresése",
+        "product-fields": "Termékadatok",
+        "attributes": "Tulajdonságok",
+        "attribute-tag": "Tulajdonság",
+        "no-matches": "Nincs a keresésnek megfelelő oszlop.",
+        "drag": "Húzd az oszlop átrendezéséhez: {column}",
+        "move-up": "{column} mozgatása feljebb",
+        "move-down": "{column} mozgatása lejjebb"
       },
       "stock": {
         "total": "Összes készlet: {quantity}",

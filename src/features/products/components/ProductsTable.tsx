@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   getCoreRowModel,
+  type ColumnDef,
+  type ColumnOrderState,
   type PaginationState,
   type RowSelectionState,
   type SortingState,
@@ -39,8 +41,10 @@ import {
   useUpdateProductMutation,
 } from '@/features/products/queries/productQueries';
 import type {
+  ProductAttributeDefinition,
   ProductListRequest,
   ProductRequest,
+  ProductResponse,
   ProductStatus,
 } from '@/features/products/types/product';
 import {
@@ -52,6 +56,7 @@ import { Routes } from '@/features/shared/types/routes';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_PAGE_SIZE = 25;
+const EMPTY_ATTRIBUTE_DEFINITIONS: ProductAttributeDefinition[] = [];
 const DEFAULT_PRODUCT_COLUMN_VISIBILITY: VisibilityState = {
   ean: false,
   description: false,
@@ -64,10 +69,45 @@ const DEFAULT_PRODUCT_COLUMN_VISIBILITY: VisibilityState = {
   height: false,
   depth: false,
   categories: false,
-  attributes: false,
   createdAt: false,
   updatedAt: false,
 };
+const PINNED_COLUMN_ID = 'sku';
+const ATTRIBUTE_COLUMN_ID_PREFIX = 'attribute-';
+
+function getProductColumnId(column: ColumnDef<ProductResponse>) {
+  if (column.id) return column.id;
+  if ('accessorKey' in column && column.accessorKey)
+    return String(column.accessorKey);
+  return undefined;
+}
+
+function normalizeColumnOrder(
+  savedOrder: string[] | undefined,
+  currentIds: string[],
+): ColumnOrderState {
+  const currentIdsSet = new Set(currentIds);
+  const savedIds = [
+    ...new Set(
+      (savedOrder ?? []).filter(
+        (id) => id !== PINNED_COLUMN_ID && currentIdsSet.has(id),
+      ),
+    ),
+  ];
+  const missingIds = currentIds.filter(
+    (id) => id !== PINNED_COLUMN_ID && !savedIds.includes(id),
+  );
+  const standardIds = [...savedIds, ...missingIds].filter(
+    (id) => !id.startsWith(ATTRIBUTE_COLUMN_ID_PREFIX),
+  );
+  const attributeIds = [...savedIds, ...missingIds].filter((id) =>
+    id.startsWith(ATTRIBUTE_COLUMN_ID_PREFIX),
+  );
+
+  return currentIdsSet.has(PINNED_COLUMN_ID)
+    ? [PINNED_COLUMN_ID, ...standardIds, ...attributeIds]
+    : [...standardIds, ...attributeIds];
+}
 
 const sortFieldByColumn: Record<string, ProductSortField> = {
   sku: ProductSortField.SKU,
@@ -92,11 +132,19 @@ export function ProductsTable() {
       ? undefined
       : state.visibilityByUser[String(userId)],
   );
+  const savedColumnOrder = useProductTablePreferencesStore((state) =>
+    !preferencesHydrated || userId === undefined
+      ? undefined
+      : state.columnOrderByUser[String(userId)],
+  );
   const setSavedColumnVisibility = useProductTablePreferencesStore(
     (state) => state.setVisibility,
   );
-  const resetSavedColumnVisibility = useProductTablePreferencesStore(
-    (state) => state.resetVisibility,
+  const setSavedColumnOrder = useProductTablePreferencesStore(
+    (state) => state.setColumnOrder,
+  );
+  const resetSavedPreferences = useProductTablePreferencesStore(
+    (state) => state.resetPreferences,
   );
 
   const [search, setSearch] = useState('');
@@ -167,7 +215,8 @@ export function ProductsTable() {
   const pageMetadata = productsQuery.data?.payload.page;
   const units = unitsQuery.data?.payload ?? [];
   const categories = categoriesQuery.data?.payload ?? [];
-  const definitions = attributesQuery.data?.payload ?? [];
+  const definitions =
+    attributesQuery.data?.payload ?? EMPTY_ATTRIBUTE_DEFINITIONS;
   const currencies = currenciesQuery.data?.payload.currencies ?? [];
   const selectedId = Object.keys(rowSelection).find((id) => rowSelection[id]);
   const selectedProduct = products.find(
@@ -176,11 +225,31 @@ export function ProductsTable() {
   const editingProduct = products.find(
     (product) => product.id === editingProductId,
   );
-  const columns = useProductsColumns(currencies, categories);
+  const columns = useProductsColumns(currencies, categories, definitions);
+  const columnIds = useMemo(
+    () => columns.map(getProductColumnId).filter((id): id is string => !!id),
+    [columns],
+  );
+  const defaultColumnVisibility = useMemo(
+    () => ({
+      ...DEFAULT_PRODUCT_COLUMN_VISIBILITY,
+      ...Object.fromEntries(
+        definitions.map((definition) => [
+          `${ATTRIBUTE_COLUMN_ID_PREFIX}${definition.id}`,
+          false,
+        ]),
+      ),
+    }),
+    [definitions],
+  );
   const columnVisibility = {
-    ...DEFAULT_PRODUCT_COLUMN_VISIBILITY,
+    ...defaultColumnVisibility,
     ...savedColumnVisibility,
   };
+  const columnOrder = useMemo(
+    () => normalizeColumnOrder(savedColumnOrder, columnIds),
+    [columnIds, savedColumnOrder],
+  );
 
   const lookupsReady =
     unitsQuery.isSuccess &&
@@ -234,7 +303,13 @@ export function ProductsTable() {
   const table = useReactTable({
     data: products,
     columns,
-    state: { sorting, rowSelection, pagination, columnVisibility },
+    state: {
+      sorting,
+      rowSelection,
+      pagination,
+      columnVisibility,
+      columnOrder,
+    },
     manualPagination: true,
     manualSorting: true,
     enableMultiSort: false,
@@ -245,7 +320,7 @@ export function ProductsTable() {
     onColumnVisibilityChange: (updater) => {
       if (userId === undefined) return;
       const previous = {
-        ...DEFAULT_PRODUCT_COLUMN_VISIBILITY,
+        ...defaultColumnVisibility,
         ...useProductTablePreferencesStore.getState().visibilityByUser[
           String(userId)
         ],
@@ -253,6 +328,19 @@ export function ProductsTable() {
       setSavedColumnVisibility(
         userId,
         functionalUpdate(updater, previous),
+      );
+    },
+    onColumnOrderChange: (updater) => {
+      if (userId === undefined) return;
+      const previous = normalizeColumnOrder(
+        useProductTablePreferencesStore.getState().columnOrderByUser[
+          String(userId)
+        ],
+        columnIds,
+      );
+      setSavedColumnOrder(
+        userId,
+        normalizeColumnOrder(functionalUpdate(updater, previous), columnIds),
       );
     },
     onSortingChange: (updater) => {
@@ -456,7 +544,7 @@ export function ProductsTable() {
         table={table}
         onOpenChange={setColumnPickerOpen}
         onReset={() => {
-          if (userId !== undefined) resetSavedColumnVisibility(userId);
+          if (userId !== undefined) resetSavedPreferences(userId);
         }}
       />
     </section>

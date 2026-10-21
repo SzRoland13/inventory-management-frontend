@@ -4,11 +4,16 @@ import { Badge } from '@/features/shared/components/ui/badge';
 import { Checkbox } from '@/features/shared/components/ui/checkbox';
 import type { Currency } from '@/features/settings/types/currencyDtos';
 import type {
+  ProductAttributeDefinition,
   ProductCategory,
   ProductResponse,
 } from '@/features/products/types/product';
 import { ProductStockCell } from '@/features/products/components/ProductStockCell';
-import { type ColumnDef, type HeaderContext } from '@tanstack/react-table';
+import {
+  type CellContext,
+  type ColumnDef,
+  type HeaderContext,
+} from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -69,6 +74,7 @@ function ProductSortableHeader({
 export function useProductsColumns(
   currencies: Currency[],
   categories: ProductCategory[],
+  attributeDefinitions: ProductAttributeDefinition[],
 ): ColumnDef<ProductResponse>[] {
   const t = useTranslations();
   const locale = useLocale();
@@ -92,6 +98,7 @@ export function useProductsColumns(
     return [
       {
         accessorKey: 'sku',
+        enableHiding: false,
         header: ProductSortableHeader,
         cell: ({ row }) => (
           <div className='flex items-center gap-2'>
@@ -206,21 +213,24 @@ export function useProductsColumns(
             .filter((name): name is string => !!name)
             .join(', ') || '—',
       },
-      {
-        id: 'attributes',
-        header: t('pages.products.table.attributes'),
-        cell: ({ row }) =>
-          row.original.attributes
-            .map(
-              (attribute) =>
-                `${attribute.definitionName}: ${getAttributeValue(
-                  attribute,
-                  t('common.yes'),
-                  t('common.no'),
-                )}`,
-            )
-            .join(', ') || '—',
-      },
+      ...attributeDefinitions.map((definition) => ({
+        id: `attribute-${definition.id}`,
+        header: definition.name,
+        enableSorting: false,
+        meta: { label: definition.name, isProductAttribute: true },
+        accessorFn: (product: ProductResponse) =>
+          product.attributes.find(
+            (attribute) => attribute.definitionId === definition.id,
+          ),
+        cell: ({ getValue }: CellContext<ProductResponse, unknown>) => {
+          const attribute = getValue() as
+            | ProductResponse['attributes'][number]
+            | undefined;
+          return attribute
+            ? getAttributeValue(attribute, t('common.yes'), t('common.no'))
+            : '—';
+        },
+      })),
       {
         id: 'createdAt',
         header: t('pages.products.table.createdAt'),
@@ -238,5 +248,5 @@ export function useProductsColumns(
           ),
       },
     ];
-  }, [categories, currencies, locale, t]);
+  }, [attributeDefinitions, categories, currencies, locale, t]);
 }
