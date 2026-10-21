@@ -10,8 +10,7 @@ import { UserDto } from '@/features/users/types/userDtos';
 export const SESSION_HEADER_NAME = 'x-verified-session';
 
 export type VerifiedSession =
-  | { authenticated: true; user: UserDto }
-  | { authenticated: false; user: null };
+  { authenticated: true; user: UserDto } | { authenticated: false; user: null };
 
 export function encodeSessionHeader(session: VerifiedSession): string {
   return Buffer.from(JSON.stringify(session), 'utf-8').toString('base64');

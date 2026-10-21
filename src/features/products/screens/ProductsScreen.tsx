@@ -1,16 +1,20 @@
+'use client';
+
+import { ProductsTable } from '@/features/products/components/ProductsTable';
 import MainHeader from '@/features/shared/components/MainHeader';
 import { PackageSearch } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
 
-export default async function ProductsPage() {
-  const t = await getTranslations();
+export default function ProductsScreen() {
+  const t = useTranslations();
 
   return (
-    <div className='flex flex-col w-full'>
+    <div className='flex w-full flex-col'>
       <MainHeader
         title={t('pages.products.title')}
-        icon={<PackageSearch className='w-6 h-6 self-center' />}
+        icon={<PackageSearch className='h-6 w-6 self-center' />}
       />
+      <ProductsTable />
     </div>
   );
 }

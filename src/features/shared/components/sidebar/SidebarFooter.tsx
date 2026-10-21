@@ -1,8 +1,15 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/features/shared/components/ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/features/shared/components/ui/avatar';
 import { useRouter } from '@/i18n/navigation';
-import { useLogoutMutation, useSessionQuery } from '@/features/auth/queries/authQueries';
+import {
+  useLogoutMutation,
+  useSessionQuery,
+} from '@/features/auth/queries/authQueries';
 import { toastApiError } from '@/features/shared/api/apiResponse';
 import { useCompanyStore } from '@/features/settings/stores/companyStore';
 import { useAvatarStore } from '@/features/shared/media/avatarStore';
