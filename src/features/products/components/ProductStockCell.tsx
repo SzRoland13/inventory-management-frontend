@@ -4,6 +4,8 @@ import type {
   ProductResponse,
   ProductStock,
 } from '@/features/products/types/product';
+import { Link } from '@/i18n/navigation';
+import { Routes } from '@/features/shared/types/routes';
 import {
   Tooltip,
   TooltipContent,
@@ -38,15 +40,15 @@ export function ProductStockCell({ product }: { product: ProductResponse }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
-          type='button'
-          className='cursor-help rounded-sm text-left underline decoration-dotted underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+        <Link
+          href={`${Routes.Stocks}?productId=${product.id}`}
+          className='rounded-sm text-left underline decoration-dotted underline-offset-4 hover:text-sky-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
           aria-label={t('pages.products.stock.total', {
             quantity: `${formatQuantity(total, locale)} ${unit.symbol}`,
           })}
         >
           {formatQuantity(total, locale)} {unit.symbol}
-        </button>
+        </Link>
       </TooltipTrigger>
       <TooltipContent className='max-w-80 space-y-2 p-3' side='top'>
         <p className='font-semibold'>{t('pages.products.stock.by-warehouse')}</p>

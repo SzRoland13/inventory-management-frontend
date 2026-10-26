@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, PackageSearch, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
@@ -9,6 +10,7 @@ import { useSessionQuery } from '@/features/auth/queries/authQueries';
 import { useCurrenciesQuery } from '@/features/settings/queries/companyQueries';
 import { ProductFormDialog } from '@/features/products/components/ProductFormDialog';
 import { ProductDetailsOverview } from '@/features/products/components/ProductDetailsOverview';
+import { ProductInventorySections } from '@/features/products/components/ProductInventorySections';
 import {
   useProductAttributeDefinitionsQuery,
   useProductCategoriesQuery,
@@ -27,6 +29,10 @@ import { UserRole } from '@/features/users/types/user';
 
 export function ProductDetailsScreen({ productId }: { productId: number }) {
   const t = useTranslations();
+  const searchParams = useSearchParams();
+  const returnToStocks = searchParams.get('from') === 'stocks';
+  const stockView =
+    searchParams.get('view') === 'movements' ? 'movements' : 'balances';
   const sessionQuery = useSessionQuery();
   const role = sessionQuery.data?.payload.role;
   const canManage = role === UserRole.ADMIN || role === UserRole.MANAGER;
@@ -87,9 +93,19 @@ export function ProductDetailsScreen({ productId }: { productId: number }) {
               asChild
               className='-ml-2 gap-2 text-zinc-300 hover:bg-zinc-800 hover:text-white'
             >
-              <Link href={Routes.Products}>
+              <Link
+                href={
+                  returnToStocks
+                    ? `${Routes.Stocks}?view=${stockView}&productId=${productId}`
+                    : Routes.Products
+                }
+              >
                 <ArrowLeft aria-hidden='true' />
-                {t('pages.products.details.back-to-list')}
+                {t(
+                  returnToStocks
+                    ? 'pages.products.details.back-to-stocks'
+                    : 'pages.products.details.back-to-list',
+                )}
               </Link>
             </Button>
             {canManage && product && (
@@ -137,11 +153,14 @@ export function ProductDetailsScreen({ productId }: { productId: number }) {
               }
             />
           ) : product ? (
-            <ProductDetailsOverview
-              product={product}
-              categories={categories}
-              currencies={currencies}
-            />
+            <div className='space-y-4'>
+              <ProductDetailsOverview
+                product={product}
+                categories={categories}
+                currencies={currencies}
+              />
+              <ProductInventorySections product={product} />
+            </div>
           ) : (
             <DataTableEmptyState
               icon={<PackageSearch className='h-10 w-10 text-zinc-500' />}

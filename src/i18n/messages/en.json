@@ -241,13 +241,36 @@
       },
       "details": {
         "back-to-list": "Back to products",
+        "back-to-stocks": "Back to stock management",
         "loading": "Loading product details…",
         "error-title": "Product details could not be loaded",
         "error-description": "Check your connection and try again.",
         "not-found-title": "Product not found",
         "not-found-description": "This product may have been removed or is no longer available.",
         "metadata": "Record information",
-        "archivedAt": "Archived"
+        "archivedAt": "Archived",
+        "inventory": {
+          "stock-title": "Stock by warehouse",
+          "warehouse-count": "{count, plural, =0 {No warehouses} one {# warehouse} other {# warehouses}}",
+          "total": "Total on hand",
+          "loading-stock": "Loading stock…",
+          "stock-error": "Stock could not be loaded",
+          "no-stock": "No stock records found",
+          "activity-title": "Movement history",
+          "loading-activity": "Loading movement history…",
+          "activity-error": "Movement history could not be loaded",
+          "no-activity": "No stock movements found",
+          "source-warehouse": "Source warehouse",
+          "destination-warehouse": "Destination warehouse",
+          "columns": {
+            "warehouse": "Warehouse",
+            "quantity": "On hand",
+            "date": "Date",
+            "type": "Movement",
+            "change": "Quantity change",
+            "transaction": "Reference"
+          }
+        }
       },
       "messages": {
         "created": "Product created successfully.",
@@ -439,7 +462,51 @@
       "validation": { "required": "This field is required.", "too-long": "This value is too long.", "country": "Select a country from the list.", "email": "Enter a valid email address." }
     },
     "stocks": {
-      "title": "Stock Management"
+      "title": "Stock Management",
+      "views": {
+        "balances": "On-hand balances",
+        "movements": "Movement history"
+      },
+      "search": "Search product name or SKU",
+      "product-search": "Find a product",
+      "product-search-hint": "Enter at least {minCharacters} characters to search.",
+      "searching-products": "Searching products…",
+      "no-products-found": "No matching products found.",
+      "product-search-more": "Showing the first {count} matches. Refine your search to narrow the list.",
+      "product-search-error": "Could not search products.",
+      "filters": {
+        "product": "Product",
+        "warehouse": "Warehouse",
+        "all-products": "All products",
+        "selected-product": "Selected product",
+        "all-warehouses": "All warehouses",
+        "from": "From",
+        "to": "To"
+      },
+      "columns": {
+        "product": "Product",
+        "warehouse": "Warehouse",
+        "quantity": "On hand",
+        "date": "Date",
+        "change": "Change",
+        "type": "Movement type",
+        "document": "Source document"
+      },
+      "loading-balances": "Loading stock balances",
+      "loading-movements": "Loading stock movements",
+      "load-error": "Could not load stock data",
+      "empty-balances": "No stock balances found.",
+      "empty-movements": "No stock movements found.",
+      "movement-types": {
+        "PURCHASE_INBOUND": "Purchase inbound",
+        "SALE_OUTBOUND": "Sale outbound",
+        "TRANSFER_OUT": "Transfer out",
+        "TRANSFER_IN": "Transfer in",
+        "ADJUSTMENT_INCREASE": "Adjustment increase",
+        "ADJUSTMENT_DECREASE": "Adjustment decrease",
+        "RETURN_IN": "Return in",
+        "RETURN_OUT": "Return out"
+      }
     },
     "documents": {
       "title": "Document Managemet"

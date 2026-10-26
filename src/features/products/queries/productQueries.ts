@@ -11,11 +11,12 @@ import type {
   ProductRequest,
 } from '@/features/products/types/product';
 
-export function useProductsQuery(params: ProductListRequest) {
+export function useProductsQuery(params: ProductListRequest, enabled = true) {
   return useQuery({
     queryKey: queryKeys.products.list(params),
     queryFn: () => requireSuccessfulResponse(ProductService.list(params)),
     placeholderData: (previous) => previous,
+    enabled,
   });
 }
 
