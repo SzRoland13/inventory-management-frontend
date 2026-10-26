@@ -1,14 +1,16 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Archive } from 'lucide-react';
 import { Button } from '@/features/shared/components/ui/button';
+import { Dialog } from '@/features/shared/components/ui/dialog';
 import {
-  Dialog,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/features/shared/components/ui/dialog';
+  AppDialogBody,
+  AppDialogCard,
+  AppDialogFooter,
+  AppDialogHeader,
+  appDialogCancelButtonClass,
+} from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 
 interface ProductArchiveDialogProps {
@@ -33,17 +35,25 @@ export function ProductArchiveDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <ThemedDialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('pages.products.archive.title')}</DialogTitle>
-        </DialogHeader>
-        <DialogDescription className='text-sm text-zinc-300'>
-          {t('pages.products.archive.description', {
+        <AppDialogHeader
+          title={t('pages.products.archive.title')}
+          description={t('pages.products.archive.description', {
             name: productName ?? '',
           })}
-        </DialogDescription>
-        <DialogFooter>
+          icon={Archive}
+          hideDescription
+        />
+        <AppDialogBody>
+          <AppDialogCard>
+            {t('pages.products.archive.description', {
+              name: productName ?? '',
+            })}
+          </AppDialogCard>
+        </AppDialogBody>
+        <AppDialogFooter>
           <Button
-            variant='secondary'
+            variant='outline'
+            className={appDialogCancelButtonClass}
             onClick={() => onOpenChange(false)}
             disabled={saving}
           >
@@ -54,11 +64,9 @@ export function ProductArchiveDialog({
             onClick={onArchive}
             disabled={saving || !canArchive}
           >
-            {saving
-              ? t('common.saving')
-              : t('pages.products.actions.archive')}
+            {saving ? t('common.saving') : t('pages.products.actions.archive')}
           </Button>
-        </DialogFooter>
+        </AppDialogFooter>
       </ThemedDialogContent>
     </Dialog>
   );

@@ -5,16 +5,23 @@ import type { ProductResponse } from '@/features/products/types/product';
 import { Button } from '@/features/shared/components/ui/button';
 import { Checkbox } from '@/features/shared/components/ui/checkbox';
 import { Input } from '@/features/shared/components/ui/input';
+import { Dialog } from '@/features/shared/components/ui/dialog';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/features/shared/components/ui/dialog';
+  AppDialogBody,
+  AppDialogFooter,
+  AppDialogHeader,
+  appDialogCancelButtonClass,
+  appDialogPrimaryButtonClass,
+} from '@/features/shared/components/AppDialogLayout';
+import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import type { Table } from '@tanstack/react-table';
-import { ChevronDown, ChevronUp, GripVertical, Search } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Columns3,
+  GripVertical,
+  Search,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 const ATTRIBUTE_COLUMN_ID_PREFIX = 'attribute-';
@@ -79,14 +86,10 @@ export function ProductColumnVisibilityDialog({
     onOpenChange(nextOpen);
   }
 
-  function getColumnLabel(
-    columnId: string,
-    meta: unknown,
-  ): string {
+  function getColumnLabel(columnId: string, meta: unknown): string {
     const customLabel = (meta as { label?: string } | undefined)?.label;
     if (customLabel) return customLabel;
-    const messageId =
-      columnId === 'netPrice' ? 'net-price' : columnId;
+    const messageId = columnId === 'netPrice' ? 'net-price' : columnId;
     return t(`pages.products.table.${messageId}`);
   }
 
@@ -118,7 +121,11 @@ export function ProductColumnVisibilityDialog({
     const groupColumnIds = getGroupColumnIds(columnId);
     const currentIndex = groupColumnIds.indexOf(columnId);
     const targetIndex = currentIndex + offset;
-    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= groupColumnIds.length)
+    if (
+      currentIndex < 0 ||
+      targetIndex < 0 ||
+      targetIndex >= groupColumnIds.length
+    )
       return;
     const nextIds = [...groupColumnIds];
     nextIds.splice(currentIndex, 1);
@@ -222,7 +229,9 @@ export function ProductColumnVisibilityDialog({
             type='button'
             variant='ghost'
             size='icon-sm'
-            aria-label={t('pages.products.columns.move-down', { column: label })}
+            aria-label={t('pages.products.columns.move-down', {
+              column: label,
+            })}
             title={t('pages.products.columns.move-down', { column: label })}
             disabled={columnIndex === groupColumnIds.length - 1}
             onClick={() => moveColumn(column.id, 1)}
@@ -236,82 +245,80 @@ export function ProductColumnVisibilityDialog({
   }
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={handleOpenChange}
-    >
-      <DialogContent className='flex max-h-[85dvh] flex-col overflow-hidden border-zinc-700 bg-zinc-900 text-zinc-100 sm:max-w-2xl'>
-        <DialogHeader>
-          <DialogTitle>{t('pages.products.columns.title')}</DialogTitle>
-          <DialogDescription className='text-zinc-400'>
-            {t('pages.products.columns.description')}
-          </DialogDescription>
-        </DialogHeader>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <ThemedDialogContent className='!w-[96vw] !max-w-2xl max-h-[85dvh]'>
+        <AppDialogHeader
+          title={t('pages.products.columns.title')}
+          description={t('pages.products.columns.description')}
+          icon={Columns3}
+        />
 
-        <label className='relative block shrink-0'>
-          <Search
-            aria-hidden='true'
-            className='pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400'
-          />
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder={t('pages.products.columns.search')}
-            aria-label={t('pages.products.columns.search')}
-            className='border-zinc-700 bg-zinc-800 pl-9 text-zinc-100 placeholder:text-zinc-500'
-          />
-        </label>
+        <AppDialogBody className='flex flex-col gap-4 overflow-hidden'>
+          <label className='relative block shrink-0'>
+            <Search
+              aria-hidden='true'
+              className='pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400'
+            />
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={t('pages.products.columns.search')}
+              aria-label={t('pages.products.columns.search')}
+              className='border-zinc-700 bg-zinc-800 pl-9 text-zinc-100 placeholder:text-zinc-500'
+            />
+          </label>
 
-        <div
-          role='list'
-          aria-label={t('pages.products.columns.title')}
-          className='min-h-0 flex-1 space-y-5 overflow-y-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
-        >
-          {productColumns.length > 0 && (
-            <section className='space-y-2'>
-              <h3 className='px-1 text-xs font-semibold uppercase tracking-wider text-zinc-400'>
-                {t('pages.products.columns.product-fields')}
-              </h3>
-              <div className='grid gap-2'>
-                {productColumns.map(renderColumn)}
-              </div>
-            </section>
-          )}
-          {attributeColumns.length > 0 && (
-            <section className='space-y-2'>
-              <h3 className='px-1 text-xs font-semibold uppercase tracking-wider text-zinc-400'>
-                {t('pages.products.columns.attributes')}
-              </h3>
-              <div className='grid gap-2'>
-                {attributeColumns.map(renderColumn)}
-              </div>
-            </section>
-          )}
-          {filteredColumns.length === 0 && (
-            <p className='py-8 text-center text-sm text-zinc-400'>
-              {t('pages.products.columns.no-matches')}
-            </p>
-          )}
-        </div>
+          <div
+            role='list'
+            aria-label={t('pages.products.columns.title')}
+            className='min-h-0 flex-1 space-y-5 overflow-y-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+          >
+            {productColumns.length > 0 && (
+              <section className='space-y-2'>
+                <h3 className='px-1 text-xs font-semibold uppercase tracking-wider text-zinc-400'>
+                  {t('pages.products.columns.product-fields')}
+                </h3>
+                <div className='grid gap-2'>
+                  {productColumns.map(renderColumn)}
+                </div>
+              </section>
+            )}
+            {attributeColumns.length > 0 && (
+              <section className='space-y-2'>
+                <h3 className='px-1 text-xs font-semibold uppercase tracking-wider text-zinc-400'>
+                  {t('pages.products.columns.attributes')}
+                </h3>
+                <div className='grid gap-2'>
+                  {attributeColumns.map(renderColumn)}
+                </div>
+              </section>
+            )}
+            {filteredColumns.length === 0 && (
+              <p className='py-8 text-center text-sm text-zinc-400'>
+                {t('pages.products.columns.no-matches')}
+              </p>
+            )}
+          </div>
+        </AppDialogBody>
 
-        <DialogFooter className='shrink-0 justify-between border-t border-zinc-700 pt-4 sm:flex-row'>
+        <AppDialogFooter className='justify-between sm:flex-row'>
           <Button
             type='button'
             variant='outline'
-            className='border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white'
+            className={appDialogCancelButtonClass}
             onClick={onReset}
           >
             {t('pages.products.columns.reset')}
           </Button>
           <Button
             type='button'
-            className='bg-sky-600 text-white hover:bg-sky-500'
+            className={appDialogPrimaryButtonClass}
             onClick={() => handleOpenChange(false)}
           >
             {t('common.done')}
           </Button>
-        </DialogFooter>
-      </DialogContent>
+        </AppDialogFooter>
+      </ThemedDialogContent>
     </Dialog>
   );
 }

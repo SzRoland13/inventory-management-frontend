@@ -1,6 +1,10 @@
 import { useTranslations } from 'next-intl';
 import { Button } from '@/features/shared/components/ui/button';
-import { DialogFooter } from '@/features/shared/components/ui/dialog';
+import {
+  AppDialogFooter,
+  appDialogCancelButtonClass,
+  appDialogPrimaryButtonClass,
+} from '@/features/shared/components/AppDialogLayout';
 import {
   Tooltip,
   TooltipContent,
@@ -25,13 +29,13 @@ export function ProductFormDialogFooter({
   const t = useTranslations();
 
   return (
-    <DialogFooter className='shrink-0 border-t border-zinc-700/80 bg-zinc-900 px-6 py-4 sm:px-8'>
+    <AppDialogFooter>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
             type='button'
             variant='outline'
-            className='border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white'
+            className={appDialogCancelButtonClass}
             onClick={onCancel}
           >
             {t('common.cancel')}
@@ -46,7 +50,7 @@ export function ProductFormDialogFooter({
         <TooltipTrigger asChild>
           <Button
             type='button'
-            className='bg-indigo-500 text-white hover:bg-indigo-400 disabled:bg-zinc-700 disabled:text-zinc-400 disabled:opacity-100'
+            className={appDialogPrimaryButtonClass}
             disabled={busy}
             onClick={onSave}
           >
@@ -77,6 +81,6 @@ export function ProductFormDialogFooter({
           </TooltipContent>
         </Tooltip>
       )}
-    </DialogFooter>
+    </AppDialogFooter>
   );
 }

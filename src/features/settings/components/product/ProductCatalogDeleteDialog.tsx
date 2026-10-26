@@ -3,14 +3,15 @@
 import { useTranslations } from 'next-intl';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@/features/shared/components/ui/button';
+import { Dialog } from '@/features/shared/components/ui/dialog';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/features/shared/components/ui/dialog';
+  AppDialogBody,
+  AppDialogCard,
+  AppDialogFooter,
+  AppDialogHeader,
+  appDialogCancelButtonClass,
+} from '@/features/shared/components/AppDialogLayout';
+import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 
 export interface ProductCatalogDeleteTarget {
   type: 'unit' | 'brand' | 'category' | 'attribute' | 'option';
@@ -36,23 +37,29 @@ export function ProductCatalogDeleteDialog({
 
   return (
     <Dialog open={!!target} onOpenChange={onOpenChange}>
-      <DialogContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>
-        <DialogHeader>
-          <DialogTitle>
-            {t('pages.settings.tabs.product.delete.title')}
-          </DialogTitle>
-          <DialogDescription className='text-zinc-400'>
+      <ThemedDialogContent>
+        <AppDialogHeader
+          title={t('pages.settings.tabs.product.delete.title')}
+          description={t(
+            `pages.settings.tabs.product.delete.description.${target?.type ?? 'brand'}`,
+            { name: target?.name ?? '' },
+          )}
+          icon={Trash2}
+          hideDescription
+        />
+        <AppDialogBody>
+          <AppDialogCard>
             {t(
               `pages.settings.tabs.product.delete.description.${target?.type ?? 'brand'}`,
               { name: target?.name ?? '' },
             )}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
+          </AppDialogCard>
+        </AppDialogBody>
+        <AppDialogFooter>
           <Button
             type='button'
             variant='outline'
-            className='border-zinc-700 text-zinc-900'
+            className={appDialogCancelButtonClass}
             onClick={() => onOpenChange(false)}
           >
             {t('common.cancel')}
@@ -66,8 +73,8 @@ export function ProductCatalogDeleteDialog({
             <Trash2 />
             {t('pages.settings.tabs.product.actions.delete')}
           </Button>
-        </DialogFooter>
-      </DialogContent>
+        </AppDialogFooter>
+      </ThemedDialogContent>
     </Dialog>
   );
 }

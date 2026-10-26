@@ -14,9 +14,7 @@ export default function UsersPage() {
         title={t('pages.users.title')}
         icon={<Users className='w-6 h-6 self-center' />}
       />
-      <div className='flex m-3 border-1 rounded-lg bg-zinc-900 overflow-hidden'>
-        <UsersTable />
-      </div>
+      <UsersTable />
     </div>
   );
 }

@@ -20,6 +20,9 @@ export const queryKeys = {
   users: {
     all: ['users'] as const,
   },
+  warehouses: {
+    all: ['warehouses'] as const,
+  },
   brands: {
     all: ['brands'] as const,
     list: (query: string) => ['brands', 'list', query] as const,

@@ -16,8 +16,7 @@ export function ThemedDialogContent({
   return (
     <DialogContent
       className={cn(
-        'max-w-md bg-zinc-700 text-zinc-100 border border-zinc-800',
-        'rounded-xl shadow-2xl backdrop-blur-md p-6',
+        'flex max-h-[92dvh] max-w-md flex-col gap-0 overflow-hidden rounded-xl border border-zinc-700 bg-zinc-900 p-0 text-zinc-100 shadow-2xl shadow-black/50',
         className,
       )}
       {...props}
