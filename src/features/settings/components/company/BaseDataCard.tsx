@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   CompanyBaseDataUpdateRequest,
   CompanyExtendedResponse,
@@ -14,6 +15,7 @@ import { useFormChanges } from '@/features/shared/hooks/useFormChanges';
 import CardWrapper from '@/features/shared/components/CardWrapper';
 import { useUpdateCompanyBaseDataMutation } from '@/features/settings/queries/companyQueries';
 import { toastApiError } from '@/features/shared/api/apiResponse';
+import { companyBaseDataSchema } from '@/features/settings/schemas/companySchemas';
 
 type Props = {
   initialCompanyData?: CompanyExtendedResponse | null;
@@ -25,8 +27,10 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
     handleSubmit,
     reset,
     watch,
-    formState: { isSubmitting },
-  } = useForm<CompanyBaseDataUpdateRequest>();
+    formState: { isSubmitting, errors },
+  } = useForm<CompanyBaseDataUpdateRequest>({
+    resolver: zodResolver(companyBaseDataSchema),
+  });
 
   const values = watch();
 
@@ -139,9 +143,15 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
             {t('pages.settings.tabs.company.data.fields.phone')}
           </Label>
           <Input
+            type='tel'
             {...register('phone')}
             className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
           />
+          {errors.phone?.message && (
+            <p className='text-sm text-red-400' role='alert'>
+              {t(errors.phone.message)}
+            </p>
+          )}
         </div>
 
         <div className='flex flex-col gap-2'>

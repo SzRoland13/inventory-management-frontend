@@ -28,6 +28,17 @@
       "required": "Az e-mail cím megadása kötelező",
       "invalid": "Érvénytelen e-mail cím"
     },
+    "phone": {
+      "invalid": "Adj meg egy 5–15 számjegyből álló telefonszámot. Csak számjegyeket és szokásos elválasztókat használj (+, szóköz, zárójel, kötőjel vagy pont).",
+      "too-long": "A telefonszám túl hosszú."
+    },
+    "country": {
+      "label": "Ország",
+      "placeholder": "Válassz országot",
+      "search": "Ország vagy országkód keresése",
+      "no-results": "Nem található ország.",
+      "invalid": "Válassz országot a listából."
+    },
     "two-fa-status": {
       "title": "2FA státusz",
       "enabled": "Beállítva",
@@ -338,7 +349,7 @@
         "type": "Típus",
         "address": "Cím",
         "addressEnabled": "Cím hozzáadása",
-        "country": "Országkód",
+        "country": "Ország",
         "city": "Város",
         "addressLine1": "Cím első sora",
         "addressLine2": "Cím második sora",
@@ -383,6 +394,49 @@
         "too-long": "A megadott érték túl hosszú.",
         "country": "Kétbetűs országkódot adj meg."
       }
+    },
+    "partners": {
+      "title": "Partnerkezelés",
+      "form-details": "Partneradatok",
+      "form-description": "Add meg a partner nevét, típusát és opcionális adószámát.",
+      "details-description": "Partner- és kapcsolattartói adatok",
+      "contact-form-description": "Add meg a kapcsolattartó címét és elérhetőségeit.",
+      "contact-details": "Elérhetőségek",
+      "loading": "Partnerek betöltése",
+      "load-error": "A partnerek nem tölthetők be.",
+      "empty": "Még nincs partner.",
+      "search": "Partnerek keresése",
+      "fields": {
+        "name": "Név",
+        "type": "Partner típusa",
+        "taxNumber": "Adószám",
+        "status": "Állapot",
+        "contacts": "Kapcsolattartók",
+        "contactType": "Kapcsolattartó típusa",
+        "address": "Cím",
+        "addressLine1": "Cím első sora",
+        "addressLine2": "Cím második sora",
+        "city": "Város",
+        "country": "Ország",
+        "phone": "Telefon",
+        "email": "E-mail"
+      },
+      "types": { "CUSTOMER": "Vevő", "SUPPLIER": "Beszállító", "BOTH": "Vevő és beszállító" },
+      "contactTypes": { "BILLING": "Számlázási", "SHIPPING": "Szállítási", "BOTH": "Számlázási és szállítási", "OTHER": "Egyéb" },
+      "status": { "ACTIVE": "Aktív", "ARCHIVED": "Archivált" },
+      "filters": { "status": "Szűrés állapot szerint", "all": "Minden partner", "active": "Aktív partnerek", "archived": "Archivált partnerek" },
+      "actions": { "add": "Partner hozzáadása", "edit": "Szerkesztés", "view": "Megtekintés", "archive": "Archiválás", "restore": "Visszaállítás" },
+      "contacts": { "title": "Kapcsolattartók – {name}", "description": "A partner kapcsolattartóinak megtekintése és kezelése.", "manage": "Kapcsolattartók kezelése", "view": "Kapcsolattartók", "add": "Kapcsolattartó hozzáadása", "edit": "Kapcsolattartó szerkesztése", "remove": "Kapcsolattartó eltávolítása", "removed": "Eltávolítva", "empty": "Ehhez a partnerhez nincs kapcsolattartó.", "archived-read-only": "Az archivált partnerek csak olvashatók." },
+      "confirm": {
+        "archive-title": "Partner archiválása?",
+        "archive-description": "Archiválod ezt a partnert: {name}? A korábbi nyilvántartásokban továbbra is elérhető marad.",
+        "restore-title": "Partner visszaállítása?",
+        "restore-description": "Újra aktívvá teszed ezt a partnert: {name}?",
+        "remove-contact-title": "Kapcsolattartó eltávolítása?",
+        "remove-contact-description": "Eltávolítod ezt a kapcsolattartót? Az előzményekben továbbra is látható marad."
+      },
+      "messages": { "created": "A partner létrejött.", "updated": "A partner frissült.", "archived": "A partner archiválva lett.", "restored": "A partner visszaállt.", "contact-created": "A kapcsolattartó létrejött.", "contact-updated": "A kapcsolattartó frissült.", "contact-removed": "A kapcsolattartó eltávolítva." },
+      "validation": { "required": "A mező kitöltése kötelező.", "too-long": "A megadott érték túl hosszú.", "country": "Válassz országot a listából.", "email": "Érvényes e-mail címet adj meg." }
     },
     "stocks": {
       "title": "Készletkezelés"
@@ -677,6 +731,20 @@
         "company_mismatch": "A raktár és a termék különböző cégekhez tartozik."
       }
     },
+    "partner": {
+      "error": {
+        "tax_number_exists": "Már létezik ilyen adószámú partner a vállalatban.",
+        "already_archived": "Ez a partner már archiválva van.",
+        "not_archived": "Ez a partner nincs archiválva.",
+        "archived_for_transaction": "Archivált partner nem használható új tranzakcióhoz."
+      }
+    },
+    "contact": {
+      "error": {
+        "already_removed": "Ez a kapcsolattartó már el lett távolítva.",
+        "removed_read_only": "Az eltávolított kapcsolattartó nem szerkeszthető."
+      }
+    },
     "brand": {
       "error": {
         "already_exists": "Már létezik ilyen nevű márka."
@@ -715,6 +783,7 @@
     "dashboard": "Irányítópult",
     "products": "Termékek",
     "warehouses": "Raktárak",
+    "partners": "Partnerek",
     "stocks": "Készletek",
     "documents": "Dokumentumok",
     "reports": "Riportok",

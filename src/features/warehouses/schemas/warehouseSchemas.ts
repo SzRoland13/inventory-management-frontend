@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { optionalPhoneSchema } from '@/features/shared/schemas/commonSchemas';
+import { isIsoCountryCode } from '@/features/shared/helpers/countries';
 import {
   WarehouseType,
   type WarehouseRequest,
@@ -18,7 +20,7 @@ export const warehouseFormSchema = z
     city: z.string(),
     addressLine1: z.string(),
     addressLine2: z.string().max(255, tooLong),
-    phone: z.string().max(50, tooLong),
+    phone: optionalPhoneSchema(50),
     email: z.string().max(255, tooLong),
   })
   .superRefine((value, context) => {
@@ -41,11 +43,11 @@ export const warehouseFormSchema = z
           message: tooLong.error,
         });
     }
-    if (!/^[a-zA-Z]{2}$/.test(value.country.trim())) {
+    if (!isIsoCountryCode(value.country)) {
       context.addIssue({
         code: 'custom',
         path: ['country'],
-        message: 'pages.warehouses.validation.country',
+        message: 'common.country.invalid',
       });
     }
   });
