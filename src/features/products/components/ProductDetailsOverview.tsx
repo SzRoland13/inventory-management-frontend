@@ -122,12 +122,6 @@ export function ProductDetailsOverview({
       currency ? { style: 'currency', currency: currency.code } : undefined,
     ).format(value);
   };
-  const totalStock = product.stockByWarehouse.reduce(
-    (total, warehouse) => total + warehouse.stockQuantity.amount,
-    0,
-  );
-  const stockUnit =
-    product.stockByWarehouse[0]?.stockQuantity.unit ?? product.units.main;
   const unitLabel = (unit: ProductResponse['units']['main'] | null) =>
     unit ? unit.symbol || unit.name : '—';
   const timestamp = (value: string | null) =>
@@ -158,19 +152,6 @@ export function ProductDetailsOverview({
                 {product.sku}
               </p>
             </div>
-          </div>
-          <div className='shrink-0 rounded-lg border border-zinc-700 bg-zinc-950/40 px-4 py-3 sm:min-w-40'>
-            <p className='text-xs font-medium uppercase tracking-wide text-zinc-400'>
-              {t('pages.products.table.stock')}
-            </p>
-            <p className='mt-1 text-xl font-semibold text-zinc-100'>
-              {new Intl.NumberFormat(locale, {
-                maximumFractionDigits: 3,
-              }).format(totalStock)}{' '}
-              <span className='text-sm font-normal text-zinc-400'>
-                {stockUnit.symbol || stockUnit.name}
-              </span>
-            </p>
           </div>
         </CardContent>
       </Card>

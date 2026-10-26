@@ -23,6 +23,10 @@ export const queryKeys = {
   warehouses: {
     all: ['warehouses'] as const,
   },
+  stocks: {
+    balances: (params: unknown) => ['stocks', 'balances', params] as const,
+    movements: (params: unknown) => ['stocks', 'movements', params] as const,
+  },
   partners: {
     all: ['partners'] as const,
     detail: (id: number) => ['partners', id] as const,

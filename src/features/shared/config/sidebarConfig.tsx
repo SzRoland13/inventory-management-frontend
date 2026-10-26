@@ -49,7 +49,7 @@ export const sidebarItems: SidebarItem[] = [
     label: 'sidebar.stocks',
     path: Routes.Stocks,
     icon: <Barcode className='w-4 h-4' />,
-    roles: [UserRole.MANAGER, UserRole.SALES, UserRole.ADMIN],
+    roles: [UserRole.MANAGER, UserRole.ADMIN],
   },
   {
     label: 'sidebar.documents',

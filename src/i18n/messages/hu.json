@@ -241,13 +241,36 @@
       },
       "details": {
         "back-to-list": "Vissza a termékekhez",
+        "back-to-stocks": "Vissza a készletkezeléshez",
         "loading": "Termékadatok betöltése…",
         "error-title": "A termékadatok betöltése nem sikerült",
         "error-description": "Ellenőrizd a kapcsolatot, majd próbáld újra.",
         "not-found-title": "A termék nem található",
         "not-found-description": "Lehet, hogy a terméket eltávolították vagy már nem érhető el.",
         "metadata": "Nyilvántartási adatok",
-        "archivedAt": "Archiválva"
+        "archivedAt": "Archiválva",
+        "inventory": {
+          "stock-title": "Készlet raktáranként",
+          "warehouse-count": "{count} raktár",
+          "total": "Teljes készlet",
+          "loading-stock": "Készlet betöltése…",
+          "stock-error": "A készlet betöltése nem sikerült",
+          "no-stock": "Nem található készletadat",
+          "activity-title": "Készletmozgások",
+          "loading-activity": "Készletmozgások betöltése…",
+          "activity-error": "A készletmozgások betöltése nem sikerült",
+          "no-activity": "Nem található készletmozgás",
+          "source-warehouse": "Forrásraktár",
+          "destination-warehouse": "Célraktár",
+          "columns": {
+            "warehouse": "Raktár",
+            "quantity": "Készleten",
+            "date": "Dátum",
+            "type": "Mozgás",
+            "change": "Mennyiségváltozás",
+            "transaction": "Hivatkozás"
+          }
+        }
       },
       "messages": {
         "created": "A termék sikeresen létrejött.",
@@ -439,7 +462,51 @@
       "validation": { "required": "A mező kitöltése kötelező.", "too-long": "A megadott érték túl hosszú.", "country": "Válassz országot a listából.", "email": "Érvényes e-mail címet adj meg." }
     },
     "stocks": {
-      "title": "Készletkezelés"
+      "title": "Készletkezelés",
+      "views": {
+        "balances": "Aktuális készlet",
+        "movements": "Készletmozgások"
+      },
+      "search": "Terméknév vagy cikkszám keresése",
+      "product-search": "Termék keresése",
+      "product-search-hint": "A kereséshez írj be legalább {minCharacters} karaktert.",
+      "searching-products": "Termékek keresése…",
+      "no-products-found": "Nem található ilyen termék.",
+      "product-search-more": "Az első {count} találat látható. Szűkítsd a keresést a lista pontosításához.",
+      "product-search-error": "A termékkeresés nem sikerült.",
+      "filters": {
+        "product": "Termék",
+        "warehouse": "Raktár",
+        "all-products": "Minden termék",
+        "selected-product": "Kiválasztott termék",
+        "all-warehouses": "Minden raktár",
+        "from": "Ettől",
+        "to": "Eddig"
+      },
+      "columns": {
+        "product": "Termék",
+        "warehouse": "Raktár",
+        "quantity": "Készleten",
+        "date": "Dátum",
+        "change": "Változás",
+        "type": "Mozgás típusa",
+        "document": "Forrásbizonylat"
+      },
+      "loading-balances": "Készletek betöltése",
+      "loading-movements": "Készletmozgások betöltése",
+      "load-error": "A készletadatok betöltése nem sikerült",
+      "empty-balances": "Nem található készletadat.",
+      "empty-movements": "Nem található készletmozgás.",
+      "movement-types": {
+        "PURCHASE_INBOUND": "Beszerzési bevételezés",
+        "SALE_OUTBOUND": "Értékesítési kiadás",
+        "TRANSFER_OUT": "Áthelyezés ki",
+        "TRANSFER_IN": "Áthelyezés be",
+        "ADJUSTMENT_INCREASE": "Készletnövelő korrekció",
+        "ADJUSTMENT_DECREASE": "Készletcsökkentő korrekció",
+        "RETURN_IN": "Visszáru bevételezés",
+        "RETURN_OUT": "Visszáru kiadás"
+      }
     },
     "documents": {
       "title": "Dokumentumkezelés"
