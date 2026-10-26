@@ -4,6 +4,7 @@ export const PROTECTED_ROUTES: readonly Routes[] = [
   Routes.Dashboard,
   Routes.Products,
   Routes.Warehouses,
+  Routes.Partners,
   Routes.Stocks,
   Routes.Documents,
   Routes.Reports,
