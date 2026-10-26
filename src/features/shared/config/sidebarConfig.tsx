@@ -10,6 +10,7 @@ import {
   Clipboard,
   Warehouse,
   BadgeDollarSign,
+  ContactRound,
 } from 'lucide-react';
 
 export interface SidebarItem {
@@ -36,6 +37,12 @@ export const sidebarItems: SidebarItem[] = [
     label: 'sidebar.warehouses',
     path: Routes.Warehouses,
     icon: <Warehouse className='w-4 h-4' />,
+    roles: [UserRole.MANAGER, UserRole.SALES, UserRole.ADMIN],
+  },
+  {
+    label: 'sidebar.partners',
+    path: Routes.Partners,
+    icon: <ContactRound className='w-4 h-4' />,
     roles: [UserRole.MANAGER, UserRole.SALES, UserRole.ADMIN],
   },
   {

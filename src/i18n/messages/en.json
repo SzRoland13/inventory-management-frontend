@@ -28,6 +28,17 @@
       "required": "Email is required",
       "invalid": "Invalid email address"
     },
+    "phone": {
+      "invalid": "Enter a phone number with 5–15 digits. Use only digits and common separators (+, spaces, parentheses, hyphens, or periods).",
+      "too-long": "Phone number is too long."
+    },
+    "country": {
+      "label": "Country",
+      "placeholder": "Select a country",
+      "search": "Search country or code",
+      "no-results": "No countries found.",
+      "invalid": "Select a country from the list."
+    },
     "two-fa-status": {
       "title": "2FA status",
       "enabled": "Enabled",
@@ -338,7 +349,7 @@
         "type": "Type",
         "address": "Address",
         "addressEnabled": "Add an address",
-        "country": "Country code",
+        "country": "Country",
         "city": "City",
         "addressLine1": "Address line 1",
         "addressLine2": "Address line 2",
@@ -383,6 +394,49 @@
         "too-long": "This value is too long.",
         "country": "Enter a two-letter country code."
       }
+    },
+    "partners": {
+      "title": "Partner Management",
+      "form-details": "Partner details",
+      "form-description": "Set the partner name, type, and optional tax number.",
+      "details-description": "Partner and contact details",
+      "contact-form-description": "Add an address and communication details for this contact.",
+      "contact-details": "Communication details",
+      "loading": "Loading partners",
+      "load-error": "Could not load partners.",
+      "empty": "No partners yet.",
+      "search": "Search partners",
+      "fields": {
+        "name": "Name",
+        "type": "Partner type",
+        "taxNumber": "Tax number",
+        "status": "Status",
+        "contacts": "Contacts",
+        "contactType": "Contact type",
+        "address": "Address",
+        "addressLine1": "Address line 1",
+        "addressLine2": "Address line 2",
+        "city": "City",
+        "country": "Country",
+        "phone": "Phone",
+        "email": "Email"
+      },
+      "types": { "CUSTOMER": "Customer", "SUPPLIER": "Supplier", "BOTH": "Customer and supplier" },
+      "contactTypes": { "BILLING": "Billing", "SHIPPING": "Shipping", "BOTH": "Billing and shipping", "OTHER": "Other" },
+      "status": { "ACTIVE": "Active", "ARCHIVED": "Archived" },
+      "filters": { "status": "Filter by status", "all": "All partners", "active": "Active partners", "archived": "Archived partners" },
+      "actions": { "add": "Add partner", "edit": "Edit", "view": "View", "archive": "Archive", "restore": "Restore" },
+      "contacts": { "title": "Contacts for {name}", "description": "View and manage this partner's contacts.", "manage": "Manage contacts", "view": "Contacts", "add": "Add contact", "edit": "Edit contact", "remove": "Remove contact", "removed": "Removed", "empty": "No contacts for this partner.", "archived-read-only": "Archived partners are read-only." },
+      "confirm": {
+        "archive-title": "Archive partner?",
+        "archive-description": "Archive {name}? It will remain available for historical records.",
+        "restore-title": "Restore partner?",
+        "restore-description": "Restore {name} to active use?",
+        "remove-contact-title": "Remove contact?",
+        "remove-contact-description": "Remove this contact? It will remain visible in the contact history."
+      },
+      "messages": { "created": "Partner created.", "updated": "Partner updated.", "archived": "Partner archived.", "restored": "Partner restored.", "contact-created": "Contact created.", "contact-updated": "Contact updated.", "contact-removed": "Contact removed." },
+      "validation": { "required": "This field is required.", "too-long": "This value is too long.", "country": "Select a country from the list.", "email": "Enter a valid email address." }
     },
     "stocks": {
       "title": "Stock Management"
@@ -677,6 +731,20 @@
         "company_mismatch": "This warehouse and product belong to different companies."
       }
     },
+    "partner": {
+      "error": {
+        "tax_number_exists": "A partner with this tax number already exists in your company.",
+        "already_archived": "This partner is already archived.",
+        "not_archived": "This partner is not archived.",
+        "archived_for_transaction": "Archived partners cannot be used for new transactions."
+      }
+    },
+    "contact": {
+      "error": {
+        "already_removed": "This contact has already been removed.",
+        "removed_read_only": "Removed contacts cannot be edited."
+      }
+    },
     "brand": {
       "error": {
         "already_exists": "A brand with this name already exists."
@@ -715,6 +783,7 @@
     "dashboard": "Dashboard",
     "products": "Products",
     "warehouses": "Warehouses",
+    "partners": "Partners",
     "stocks": "Stocks",
     "documents": "Documents",
     "reports": "Reports",

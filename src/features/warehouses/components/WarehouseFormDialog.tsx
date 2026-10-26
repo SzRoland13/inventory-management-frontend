@@ -18,6 +18,7 @@ import { Checkbox } from '@/features/shared/components/ui/checkbox';
 import { Dialog } from '@/features/shared/components/ui/dialog';
 import { Input } from '@/features/shared/components/ui/input';
 import { Label } from '@/features/shared/components/ui/label';
+import { CountrySelect } from '@/features/shared/components/CountrySelect';
 import {
   Select,
   SelectContent,
@@ -85,7 +86,6 @@ export function WarehouseFormDialog({
     name:
       | 'name'
       | 'code'
-      | 'country'
       | 'city'
       | 'addressLine1'
       | 'addressLine2'
@@ -99,6 +99,7 @@ export function WarehouseFormDialog({
       </Label>
       <Input
         id={`warehouse-${name}`}
+        type={name === 'phone' ? 'tel' : name === 'email' ? 'email' : 'text'}
         maxLength={maxLength}
         aria-invalid={!!errors[name]}
         className='border-zinc-700 bg-zinc-900 text-zinc-100 placeholder:text-zinc-500'
@@ -200,7 +201,23 @@ export function WarehouseFormDialog({
               />
               {addressEnabled && (
                 <div className='mt-4 grid gap-4 border-t border-zinc-700 pt-4 sm:grid-cols-2'>
-                  {field('country', 2)}
+                  <div className='space-y-1'>
+                    <Label htmlFor='warehouse-country'>{t('pages.warehouses.fields.country')}</Label>
+                    <Controller
+                      name='country'
+                      control={control}
+                      render={({ field: countryField }) => (
+                        <CountrySelect
+                          id='warehouse-country'
+                          value={countryField.value}
+                          onValueChange={countryField.onChange}
+                          invalid={!!errors.country}
+                          ariaLabel={t('pages.warehouses.fields.country')}
+                        />
+                      )}
+                    />
+                    {errors.country?.message && <p className='text-sm text-red-400' role='alert'>{t(errors.country.message)}</p>}
+                  </div>
                   {field('city', 100)}
                   {field('addressLine1', 255)}
                   {field('addressLine2', 255)}

@@ -9,6 +9,7 @@ export enum Routes {
   Dashboard = '/dashboard',
   Products = '/products',
   Warehouses = '/warehouses',
+  Partners = '/partners',
   Stocks = '/stocks',
   Documents = '/documents',
   Reports = '/reports',
