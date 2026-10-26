@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AuthService } from '@/features/auth/services/AuthService';
 import { requireSuccessfulResponse } from '@/features/shared/api/apiResponse';
 import { queryKeys } from '@/features/shared/api/queryKeys';
@@ -42,9 +38,8 @@ export function useValidateOneTimeCodeMutation() {
 
 export function useSetupNewPasswordMutation() {
   return useMutation({
-    mutationFn: (
-      request: Parameters<typeof AuthService.setupNewPassword>[0],
-    ) => requireSuccessfulResponse(AuthService.setupNewPassword(request)),
+    mutationFn: (request: Parameters<typeof AuthService.setupNewPassword>[0]) =>
+      requireSuccessfulResponse(AuthService.setupNewPassword(request)),
   });
 }
 

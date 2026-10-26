@@ -10,6 +10,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -177,6 +178,9 @@ export default function SetupPasswordPage() {
               <DialogContent className='bg-zinc-900 border-zinc-700 text-zinc-100 max-w-md'>
                 <DialogHeader>
                   <DialogTitle>{t('common.password.title')}</DialogTitle>
+                  <DialogDescription className='sr-only'>
+                    {t('common.password.rules-description')}
+                  </DialogDescription>
                 </DialogHeader>
                 <ul className='list-disc list-inside space-y-1 text-zinc-300 text-sm mt-2'>
                   <li>{t('common.password.rules.min-8-chars')}</li>

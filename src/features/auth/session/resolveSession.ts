@@ -29,11 +29,16 @@ function buildCookieHeader(pairs: Record<string, string | undefined>): string {
     .join('; ');
 }
 
-function extractCookieValue(setCookie: string, name: string): string | undefined {
+function extractCookieValue(
+  setCookie: string,
+  name: string,
+): string | undefined {
   return new RegExp(`^${name}=([^;]+)`).exec(setCookie)?.[1];
 }
 
-async function fetchCheckSession(cookieHeader: string): Promise<UserDto | null> {
+async function fetchCheckSession(
+  cookieHeader: string,
+): Promise<UserDto | null> {
   const res = await fetch(`${getServerApiUrl()}/auth/check-session`, {
     headers: { Cookie: cookieHeader },
     cache: 'no-store',
@@ -87,7 +92,12 @@ export async function resolveSession(
       );
 
       if (user) {
-        return { authenticated: true, user, setCookies: [], clearCookies: false };
+        return {
+          authenticated: true,
+          user,
+          setCookies: [],
+          clearCookies: false,
+        };
       }
 
       if (!input.refreshToken) {

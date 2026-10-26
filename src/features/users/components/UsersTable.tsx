@@ -8,7 +8,7 @@ import {
   RowSelectionState,
 } from '@tanstack/react-table';
 import { ModificationUser } from '@/features/users/types/userDtos';
-import { useUserColumns } from '@/features/users/components/UsersColumns';
+import { useUsersColumns } from '@/features/users/hooks/useUsersColumns';
 import { UsersToolbar } from '@/features/users/components/UsersToolbar';
 import { AddEditUserDialog } from '@/features/users/components/AddEditUserDialog';
 import { DataTable } from '@/features/shared/table/DataTable';
@@ -55,9 +55,10 @@ export function UsersTable() {
   const resetPassword = useResetUserPasswordMutation();
   const resetTwoFa = useResetUserTwoFaMutation();
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
-    columns: useUserColumns(),
+    columns: useUsersColumns(),
     getCoreRowModel: getCoreRowModel(),
     state: { rowSelection },
     onRowSelectionChange: setRowSelection,
