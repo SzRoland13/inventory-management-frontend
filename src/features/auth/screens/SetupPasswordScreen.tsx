@@ -7,14 +7,13 @@ import {
   passwordSetupSchema,
   type PasswordSetupFormValues,
 } from '@/features/auth/schemas/authSchemas';
+import { Dialog, DialogTrigger } from '@/features/shared/components/ui/dialog';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/features/shared/components/ui/dialog';
+  AppDialogBody,
+  AppDialogCard,
+  AppDialogHeader,
+} from '@/features/shared/components/AppDialogLayout';
+import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { Input } from '@/features/shared/components/ui/input';
 import { useSetupNewPasswordMutation } from '@/features/auth/queries/authQueries';
 import { getApiErrorMessageKey } from '@/features/shared/api/apiResponse';
@@ -175,23 +174,27 @@ export default function SetupPasswordPage() {
                   {t('common.password.show-rules')}
                 </button>
               </DialogTrigger>
-              <DialogContent className='bg-zinc-900 border-zinc-700 text-zinc-100 max-w-md'>
-                <DialogHeader>
-                  <DialogTitle>{t('common.password.title')}</DialogTitle>
-                  <DialogDescription className='sr-only'>
-                    {t('common.password.rules-description')}
-                  </DialogDescription>
-                </DialogHeader>
-                <ul className='list-disc list-inside space-y-1 text-zinc-300 text-sm mt-2'>
-                  <li>{t('common.password.rules.min-8-chars')}</li>
-                  <li>{t('common.password.rules.min-1-upper')}</li>
-                  <li>{t('common.password.rules.min-1-lower')}</li>
-                  <li>{t('common.password.rules.min-1-number')}</li>
-                  <li>{t('common.password.rules.min-1-special')}</li>
-                  <li>{t('common.password.rules.no-repeating-chars')}</li>
-                  <li>{t('common.password.rules.no-sequences')}</li>
-                </ul>
-              </DialogContent>
+              <ThemedDialogContent>
+                <AppDialogHeader
+                  title={t('common.password.title')}
+                  description={t('common.password.rules-description')}
+                  icon={Info}
+                  hideDescription
+                />
+                <AppDialogBody>
+                  <AppDialogCard>
+                    <ul className='list-disc list-inside space-y-1'>
+                      <li>{t('common.password.rules.min-8-chars')}</li>
+                      <li>{t('common.password.rules.min-1-upper')}</li>
+                      <li>{t('common.password.rules.min-1-lower')}</li>
+                      <li>{t('common.password.rules.min-1-number')}</li>
+                      <li>{t('common.password.rules.min-1-special')}</li>
+                      <li>{t('common.password.rules.no-repeating-chars')}</li>
+                      <li>{t('common.password.rules.no-sequences')}</li>
+                    </ul>
+                  </AppDialogCard>
+                </AppDialogBody>
+              </ThemedDialogContent>
             </Dialog>
           </div>
 

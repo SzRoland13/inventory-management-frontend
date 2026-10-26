@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   useReactTable,
@@ -59,21 +58,22 @@ export function UsersTable() {
   const table = useReactTable({
     data,
     columns: useUsersColumns(),
+    getRowId: (row) => String(row.id),
     getCoreRowModel: getCoreRowModel(),
     state: { rowSelection },
     onRowSelectionChange: setRowSelection,
     enableMultiRowSelection: false, // Only allow single selection
   });
 
-  const selectedIds = React.useMemo(
+  const selectedIds = useMemo(
     () =>
       Object.keys(rowSelection)
-        .map((id) => Number(table.getRow(id)?.original.id))
-        .filter((v) => !isNaN(v)),
-    [rowSelection, table],
+        .filter((id) => rowSelection[id])
+        .map(Number),
+    [rowSelection],
   );
 
-  const selectedUser = React.useMemo(
+  const selectedUser = useMemo(
     () =>
       selectedIds.length === 1
         ? data.find((u) => u.id === selectedIds[0])
@@ -94,31 +94,20 @@ export function UsersTable() {
     }
   };
 
-  const handleSave = (user: ModificationUser) => {
+  const handleSave = async (user: ModificationUser) => {
     const userRequest = mapModificationUserToAddEditUserRequest(user);
-    const onError = (error: unknown) => toastApiError(t, error);
-
-    if (user.id) {
-      updateUser.mutate(
-        { id: user.id, request: userRequest },
-        {
-          onSuccess: () => {
-            toast.success(t('messagekey.user.update-success'));
-            setRowSelection({});
-            setDialogOpen(false);
-          },
-          onError,
-        },
-      );
-    } else {
-      registerUser.mutate(userRequest, {
-        onSuccess: () => {
-          toast.success(t('messagekey.user.registration-successful'));
-          setRowSelection({});
-          setDialogOpen(false);
-        },
-        onError,
-      });
+    try {
+      if (user.id) {
+        await updateUser.mutateAsync({ id: user.id, request: userRequest });
+        toast.success(t('messagekey.user.update-success'));
+      } else {
+        await registerUser.mutateAsync(userRequest);
+        toast.success(t('messagekey.user.registration-successful'));
+      }
+      setRowSelection({});
+      setDialogOpen(false);
+    } catch (error) {
+      toastApiError(t, error);
     }
   };
 
@@ -170,7 +159,7 @@ export function UsersTable() {
   };
 
   return (
-    <div className='flex flex-col w-full rounded-lg bg-zinc-900'>
+    <section className='m-3 overflow-hidden rounded-lg border bg-zinc-900'>
       <UsersToolbar
         selectedUser={selectedUser}
         onAdd={handleAdd}
@@ -186,8 +175,9 @@ export function UsersTable() {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         user={editingUser}
+        saving={registerUser.isPending || updateUser.isPending}
         onSave={handleSave}
       />
-    </div>
+    </section>
   );
 }

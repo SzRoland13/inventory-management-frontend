@@ -56,51 +56,47 @@ export function UsersToolbar({
       : t('pages.users.toolbar.suspend');
 
   return (
-    <div className='flex flex-wrap gap-2 items-center p-2 bg-zinc-600 rounded-t-lg'>
-      <Button
-        variant='ghost'
-        onClick={onAdd}
-        className='flex items-center gap-2'
-      >
+    <div className='flex flex-wrap items-center gap-2 border-b border-zinc-700 bg-zinc-800 p-3'>
+      <Button onClick={onAdd} className='gap-2'>
         <PlusCircle className='h-4 w-4' />
         {t('pages.users.toolbar.add')}
       </Button>
 
       <Button
-        variant='ghost'
+        variant='outline'
         disabled={!hasSelection}
         onClick={onEdit}
-        className='flex items-center gap-2'
+        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
       >
         <Edit className='h-4 w-4' />
         {t('pages.users.toolbar.edit')}
       </Button>
 
       <Button
-        variant='ghost'
+        variant='outline'
         disabled={!canResetPassword}
         onClick={onResetPassword}
-        className='flex items-center gap-2'
+        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
       >
         <KeyRound className='h-4 w-4' />
         {t('pages.users.toolbar.reset-password')}
       </Button>
 
       <Button
-        variant='ghost'
+        variant='outline'
         disabled={!canReset2FA}
         onClick={onReset2FA}
-        className='flex items-center gap-2'
+        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
       >
         <RotateCcw className='h-4 w-4' />
         {t('pages.users.toolbar.reset-2fa')}
       </Button>
 
       <Button
-        variant='ghost'
+        variant='outline'
         disabled={!canToggleSuspend}
         onClick={onToggleSuspend}
-        className='flex items-center gap-2'
+        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
       >
         {suspendButtonIcon}
         {suspendButtonText}

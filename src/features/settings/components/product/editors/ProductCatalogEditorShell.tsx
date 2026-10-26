@@ -2,15 +2,18 @@
 
 import type { SubmitEvent } from 'react';
 import { useTranslations } from 'next-intl';
+import { Boxes } from 'lucide-react';
 import { Button } from '@/features/shared/components/ui/button';
+import { Dialog } from '@/features/shared/components/ui/dialog';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/features/shared/components/ui/dialog';
+  AppDialogBody,
+  AppDialogFooter,
+  AppDialogHeader,
+  AppDialogSection,
+  appDialogCancelButtonClass,
+  appDialogPrimaryButtonClass,
+} from '@/features/shared/components/AppDialogLayout';
+import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { Label } from '@/features/shared/components/ui/label';
 
 export function EditorShell({
@@ -33,20 +36,19 @@ export function EditorShell({
   const t = useTranslations();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='max-h-[90dvh] overflow-y-auto border-zinc-700 bg-zinc-900 text-zinc-100'>
-        <form onSubmit={onSubmit} className='space-y-5'>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription className='text-zinc-400'>
-              {description}
-            </DialogDescription>
-          </DialogHeader>
-          {children}
-          <DialogFooter>
+      <ThemedDialogContent className='!w-[96vw] !max-w-2xl'>
+        <AppDialogHeader title={title} description={description} icon={Boxes} />
+        <form onSubmit={onSubmit} className='flex min-h-0 flex-1 flex-col'>
+          <AppDialogBody>
+            <AppDialogSection title={title} icon={Boxes}>
+              <div className='space-y-5'>{children}</div>
+            </AppDialogSection>
+          </AppDialogBody>
+          <AppDialogFooter>
             <Button
               type='button'
               variant='outline'
-              className='border-zinc-700 text-zinc-900'
+              className={appDialogCancelButtonClass}
               onClick={() => onOpenChange(false)}
             >
               {t('common.cancel')}
@@ -54,13 +56,13 @@ export function EditorShell({
             <Button
               type='submit'
               disabled={pending}
-              className='bg-sky-500 text-zinc-950 hover:bg-sky-400 disabled:bg-sky-900/70 disabled:text-sky-100/70'
+              className={appDialogPrimaryButtonClass}
             >
               {pending ? t('common.saving') : t('common.save')}
             </Button>
-          </DialogFooter>
+          </AppDialogFooter>
         </form>
-      </DialogContent>
+      </ThemedDialogContent>
     </Dialog>
   );
 }

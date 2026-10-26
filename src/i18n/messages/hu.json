@@ -139,6 +139,7 @@
       "dialog": {
         "edit": "Felhasználó szerkesztése",
         "create": "Új felhasználó hozzáadása",
+        "details": "Fiókadatok",
         "edit-description": "Frissítsd a felhasználó fiókadatait és szerepkörét.",
         "create-description": "Add meg az új felhasználó fiókadatait és szerepkörét."
       },
@@ -322,7 +323,66 @@
       }
     },
     "warehouses": {
-      "title": "Raktárkezelés"
+      "title": "Raktárkezelés",
+      "form-details": "Raktáradatok",
+      "loading": "Raktárak betöltése",
+      "load-error": "A raktárak nem tölthetők be.",
+      "empty": "Még nincs raktár.",
+      "search": "Raktárak keresése",
+      "form-description": "Add meg a raktár adatait és opcionális címét.",
+      "details-description": "Raktáradatok",
+      "transit-hint": "A tranzitraktárak csak az átszállítási folyamatokban használhatók.",
+      "fields": {
+        "name": "Név",
+        "code": "Kód",
+        "type": "Típus",
+        "address": "Cím",
+        "addressEnabled": "Cím hozzáadása",
+        "country": "Országkód",
+        "city": "Város",
+        "addressLine1": "Cím első sora",
+        "addressLine2": "Cím második sora",
+        "phone": "Telefon",
+        "email": "E-mail",
+        "status": "Állapot"
+      },
+      "types": {
+        "STANDARD": "Normál",
+        "VIRTUAL": "Virtuális",
+        "TRANSIT": "Tranzit"
+      },
+      "status": {
+        "ACTIVE": "Aktív",
+        "ARCHIVED": "Archivált"
+      },
+      "filters": {
+        "status": "Szűrés állapot szerint",
+        "all": "Minden állapot"
+      },
+      "actions": {
+        "add": "Raktár hozzáadása",
+        "edit": "Szerkesztés",
+        "view": "Megtekintés",
+        "archive": "Archiválás",
+        "restore": "Visszaállítás"
+      },
+      "confirm": {
+        "archive-title": "Raktár archiválása?",
+        "archive-description": "Archiválod ezt a raktárat: {name}? Ez csak akkor lehetséges, ha minden termék készlete nulla.",
+        "restore-title": "Raktár visszaállítása?",
+        "restore-description": "Újra aktívvá teszed ezt a raktárat: {name}?"
+      },
+      "messages": {
+        "created": "A raktár létrejött.",
+        "updated": "A raktár frissült.",
+        "archived": "A raktár archiválva lett.",
+        "restored": "A raktár visszaállt."
+      },
+      "validation": {
+        "required": "A mező kitöltése kötelező.",
+        "too-long": "A megadott érték túl hosszú.",
+        "country": "Kétbetűs országkódot adj meg."
+      }
     },
     "stocks": {
       "title": "Készletkezelés"
@@ -604,6 +664,19 @@
         "page_size_limit": "Legfeljebb 100-as oldalméretet válassz."
       }
     },
+    "warehouse": {
+      "error": {
+        "name_exists": "Már létezik ilyen nevű raktár.",
+        "code_exists": "Már létezik ilyen kódú raktár.",
+        "non_zero_balance": "A raktár nem archiválható, amíg valamelyik termék készlete nem nulla.",
+        "already_archived": "A raktár már archivált.",
+        "not_archived": "A raktár nincs archiválva.",
+        "archived_for_posting": "Archivált raktárhoz nem rögzíthető készletmozgás.",
+        "type_cannot_change_with_stock": "A tranzittípus nem módosítható, amíg a raktárban van készlet.",
+        "invalid_transit_document": "Ez a tranzitraktár nem használható ehhez a dokumentumhoz.",
+        "company_mismatch": "A raktár és a termék különböző cégekhez tartozik."
+      }
+    },
     "brand": {
       "error": {
         "already_exists": "Már létezik ilyen nevű márka."
@@ -627,6 +700,7 @@
     "not-found": {
       "user": "A felhasználó nem található.",
       "product": "A termék nem található.",
+      "warehouse": "A raktár nem található.",
       "one-time-code": "Az egyszer használatos kód nem található.",
       "refresh-token": "A frissítő token nem található.",
       "company": "A vállalat nem található.",

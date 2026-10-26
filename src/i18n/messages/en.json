@@ -139,6 +139,7 @@
       "dialog": {
         "edit": "Edit User",
         "create": "Add New User",
+        "details": "Account details",
         "edit-description": "Update this user's account details and role.",
         "create-description": "Enter the account details and role for the new user."
       },
@@ -322,7 +323,66 @@
       }
     },
     "warehouses": {
-      "title": "Warehouse Management"
+      "title": "Warehouse Management",
+      "form-details": "Warehouse details",
+      "loading": "Loading warehouses",
+      "load-error": "Could not load warehouses.",
+      "empty": "No warehouses yet.",
+      "search": "Search warehouses",
+      "form-description": "Set the warehouse details and optional address.",
+      "details-description": "Warehouse details",
+      "transit-hint": "Transit warehouses are restricted to transfer workflows.",
+      "fields": {
+        "name": "Name",
+        "code": "Code",
+        "type": "Type",
+        "address": "Address",
+        "addressEnabled": "Add an address",
+        "country": "Country code",
+        "city": "City",
+        "addressLine1": "Address line 1",
+        "addressLine2": "Address line 2",
+        "phone": "Phone",
+        "email": "Email",
+        "status": "Status"
+      },
+      "types": {
+        "STANDARD": "Standard",
+        "VIRTUAL": "Virtual",
+        "TRANSIT": "Transit"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "ARCHIVED": "Archived"
+      },
+      "filters": {
+        "status": "Filter by status",
+        "all": "All statuses"
+      },
+      "actions": {
+        "add": "Add warehouse",
+        "edit": "Edit",
+        "view": "View",
+        "archive": "Archive",
+        "restore": "Restore"
+      },
+      "confirm": {
+        "archive-title": "Archive warehouse?",
+        "archive-description": "Archive {name}? This is allowed only when every product balance is zero.",
+        "restore-title": "Restore warehouse?",
+        "restore-description": "Restore {name} to active use?"
+      },
+      "messages": {
+        "created": "Warehouse created.",
+        "updated": "Warehouse updated.",
+        "archived": "Warehouse archived.",
+        "restored": "Warehouse restored."
+      },
+      "validation": {
+        "required": "This field is required.",
+        "too-long": "This value is too long.",
+        "country": "Enter a two-letter country code."
+      }
     },
     "stocks": {
       "title": "Stock Management"
@@ -604,6 +664,19 @@
         "page_size_limit": "Choose a page size of 100 or less."
       }
     },
+    "warehouse": {
+      "error": {
+        "name_exists": "A warehouse with this name already exists.",
+        "code_exists": "A warehouse with this code already exists.",
+        "non_zero_balance": "This warehouse cannot be archived while it has a nonzero product balance.",
+        "already_archived": "This warehouse is already archived.",
+        "not_archived": "This warehouse is not archived.",
+        "archived_for_posting": "Archived warehouses cannot receive stock movements.",
+        "type_cannot_change_with_stock": "The transit type cannot be changed while this warehouse has stock.",
+        "invalid_transit_document": "This transit warehouse cannot be used for that document.",
+        "company_mismatch": "This warehouse and product belong to different companies."
+      }
+    },
     "brand": {
       "error": {
         "already_exists": "A brand with this name already exists."
@@ -627,6 +700,7 @@
     "not-found": {
       "user": "User not found.",
       "product": "Product not found.",
+      "warehouse": "Warehouse not found.",
       "one-time-code": "One-time code not found.",
       "refresh-token": "Refresh token not found.",
       "company": "Company not found.",
