@@ -35,7 +35,7 @@ export default function AvatarCard() {
     const file = e.target.files[0];
 
     try {
-      await uploadMedia.mutateAsync(file);
+      await uploadMedia.mutateAsync({ file });
     } catch (error) {
       toastApiError(t, error);
     }

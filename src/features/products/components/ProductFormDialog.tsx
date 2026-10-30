@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dialog } from '@/features/shared/components/ui/dialog';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
@@ -28,6 +28,11 @@ import { ProductUnitsPricingSection } from './product-form/ProductUnitsPricingSe
 import { ProductFormDialogFooter } from './product-form/ProductFormDialogFooter';
 import { ProductFormDialogHeader } from './product-form/ProductFormDialogHeader';
 import { ProductFormDialogLoading } from './product-form/ProductFormDialogLoading';
+import {
+  ProductImagesSection,
+  productImagesFromResponse,
+  type ProductImageEditorItem,
+} from './product-form/ProductImagesSection';
 
 interface ProductFormDialogProps {
   open: boolean;
@@ -76,6 +81,7 @@ export function ProductFormDialog({
     resolver: zodResolver(schema),
     defaultValues: valuesFromProduct(undefined, definitions),
   });
+  const [images, setImages] = useState<ProductImageEditorItem[]>([]);
   const {
     register,
     control,
@@ -97,6 +103,7 @@ export function ProductFormDialog({
     const productId = product?.id ?? null;
     if (!wasOpen.current || productId !== lastProductId.current) {
       reset(valuesFromProduct(product, definitions));
+      setImages(productImagesFromResponse(product?.images));
       lastProductId.current = productId;
     }
     wasOpen.current = true;
@@ -105,7 +112,15 @@ export function ProductFormDialog({
   const submit = (status?: ProductRequest['status']) =>
     handleSubmit(async (values) => {
       const request = productFormToRequest(values, definitions);
-      await onSave(request, editing ? request.status : status);
+      await onSave(
+        {
+          ...request,
+          imageAssetIds: images.flatMap((image) =>
+            image.mediaAssetId === null ? [] : [image.mediaAssetId],
+          ),
+        },
+        editing ? request.status : status,
+      );
     })();
 
   return (
@@ -156,11 +171,18 @@ export function ProductFormDialog({
                 errors={errors}
                 definitions={definitions}
               />
+
+              <ProductImagesSection
+                images={images}
+                onImagesChange={setImages}
+                disabled={saving || isSubmitting}
+              />
             </div>
 
             <ProductFormDialogFooter
               editing={editing}
               busy={saving || isSubmitting}
+              canSave={images.every((image) => image.uploadState === 'ready')}
               onCancel={() => onOpenChange(false)}
               onSave={() =>
                 void submit(editing ? undefined : ProductStatus.DRAFT)

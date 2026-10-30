@@ -10,6 +10,7 @@ import { useSessionQuery } from '@/features/auth/queries/authQueries';
 import { useCurrenciesQuery } from '@/features/settings/queries/companyQueries';
 import { ProductFormDialog } from '@/features/products/components/ProductFormDialog';
 import { ProductDetailsOverview } from '@/features/products/components/ProductDetailsOverview';
+import { ProductImagesGallery } from '@/features/products/components/ProductImagesGallery';
 import { ProductInventorySections } from '@/features/products/components/ProductInventorySections';
 import {
   useProductAttributeDefinitionsQuery,
@@ -159,6 +160,7 @@ export function ProductDetailsScreen({ productId }: { productId: number }) {
                 categories={categories}
                 currencies={currencies}
               />
+              <ProductImagesGallery product={product} />
               <ProductInventorySections product={product} />
             </div>
           ) : (

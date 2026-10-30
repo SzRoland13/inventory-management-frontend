@@ -19,4 +19,5 @@ export type MediaPreviewResponse = {
 export type FileUpload = {
   url: string;
   file: File;
+  onProgress?: (progress: number) => void;
 };

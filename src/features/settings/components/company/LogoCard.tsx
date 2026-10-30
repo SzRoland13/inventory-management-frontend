@@ -33,7 +33,7 @@ export default function LogoCard() {
     const file = e.target.files[0];
 
     try {
-      await uploadMedia.mutateAsync(file);
+      await uploadMedia.mutateAsync({ file });
     } catch (error) {
       toastApiError(t, error);
     }

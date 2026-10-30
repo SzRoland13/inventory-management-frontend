@@ -25,11 +25,12 @@ const getMsUntilRefreshNeeded = (expiry: string, minMs: number) => {
 export function useMediaPreviewQuery(
   id: number | null,
   initialPreview?: MediaPreviewResponse,
+  enabled = true,
 ) {
   return useQuery({
     queryKey: queryKeys.media.preview(id ?? 0),
     queryFn: () => requireSuccessfulResponse(MediaService.getPreview(id!)),
-    enabled: id !== null,
+    enabled: id !== null && enabled,
     initialData: initialPreview
       ? toInitialPreviewResponse(initialPreview)
       : undefined,
@@ -46,7 +47,11 @@ export function useMediaPreviewQuery(
 
 export function useMediaUploadMutation() {
   return useMutation({
-    mutationFn: async (file: File) => {
+    mutationFn: async (input: {
+      file: File;
+      onProgress?: (progress: number) => void;
+    }) => {
+      const { file, onProgress } = input;
       const initializeResponse = await requireSuccessfulResponse(
         MediaService.initializeUpload({
           filename: file.name,
@@ -58,6 +63,7 @@ export function useMediaUploadMutation() {
       await ObjectStorageService.putImage({
         url: initializeResponse.payload.putUrl,
         file,
+        onProgress,
       });
 
       return requireSuccessfulResponse(
