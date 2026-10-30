@@ -272,9 +272,12 @@ export default function ProductTab() {
     }
   };
 
-  const dropCategory = async (targetId: number) => {
-    if (draggedCategoryId === null || draggedCategoryId === targetId) return;
-    const dragged = categories.find((item) => item.id === draggedCategoryId);
+  const dropCategory = async (
+    targetId: number,
+    sourceId = draggedCategoryId,
+  ) => {
+    if (sourceId === null || sourceId === targetId) return;
+    const dragged = categories.find((item) => item.id === sourceId);
     const target = categories.find((item) => item.id === targetId);
     if (!dragged || !target || dragged.parentId !== target.parentId) return;
     const siblings = categories
@@ -665,6 +668,7 @@ export default function ProductTab() {
               return (
                 <div
                   key={item.id}
+                  data-category-drop-id={item.id}
                   onDragOver={(event) => {
                     if (canDrop) {
                       event.preventDefault();
@@ -696,6 +700,25 @@ export default function ProductTab() {
                           categoryId={item.id}
                           categoryName={item.name}
                           onDragStart={setDraggedCategoryId}
+                          onPointerTargetChange={(targetId) => {
+                            if (targetId === null) {
+                              setDropCategoryId(null);
+                              return;
+                            }
+                            const target = categories.find(
+                              (category) => category.id === targetId,
+                            );
+                            setDropCategoryId(
+                              target &&
+                                targetId !== item.id &&
+                                target.parentId === item.parentId
+                                ? targetId
+                                : null,
+                            );
+                          }}
+                          onPointerDrop={(targetId) =>
+                            void dropCategory(targetId, item.id)
+                          }
                           onDragEnd={() => {
                             setDraggedCategoryId(null);
                             setDropCategoryId(null);
