@@ -602,6 +602,7 @@
         "preview": "Készlethatás ellenőrzése",
         "previewValid": "Jóváhagyható. A készletellenőrzés sikeres.",
         "previewInvalid": "Jóváhagyás előtt javítsd az alábbi hibákat.",
+        "resultingQuantity": "készleten: {quantity}",
         "shortfall": "{warehouse}: {available} elérhető, hiány {shortfall}",
         "post": "Teljesítés rögzítése",
         "posted": "Teljesítés rögzítve"

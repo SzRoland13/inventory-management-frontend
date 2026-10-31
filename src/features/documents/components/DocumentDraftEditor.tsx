@@ -23,6 +23,9 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
   const editSequence = useRef(0);
   const saveInFlight = useRef(false);
   const queuedSave = useRef(false);
+  const savePromise = useRef<Promise<boolean> | null>(null);
+  const saveTimer = useRef<number | null>(null);
+  const saveStateRef = useRef<SaveState>('saved');
   const [date, setDate] = useState(current?.date ?? '');
   const [notes, setNotes] = useState(current?.notes ?? '');
   const [quantities, setQuantities] = useState<Record<number, number>>(() => Object.fromEntries((current?.lines ?? []).map((line) => [line.id, line.orderedQuantity])));
@@ -31,8 +34,8 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
   draftState.current = { current, date, notes, quantities };
 
   useEffect(() => {
-    versionRef.current = current?.version ?? '';
     if (!dirtyRef.current && current) {
+      versionRef.current = current.version;
       setDate(current.date);
       setNotes(current.notes ?? '');
       setQuantities(Object.fromEntries(current.lines.map((line) => [line.id, line.orderedQuantity])));
@@ -42,29 +45,38 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
   useEffect(() => {
     if (!current || !dirtyRef.current || saveState === 'conflict') return;
     setSaveState('saving');
-    const timeout = window.setTimeout(() => {
+    saveStateRef.current = 'saving';
+    saveTimer.current = window.setTimeout(() => {
       void saveDraft();
     }, 800);
-    return () => window.clearTimeout(timeout);
+    return () => {
+      if (saveTimer.current !== null) window.clearTimeout(saveTimer.current);
+    };
     // saveDraft reads the latest form state after the debounce.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date, notes, quantities]);
 
-  async function saveDraft(version = versionRef.current) {
+  async function saveDraft(version = versionRef.current): Promise<boolean> {
     if (saveInFlight.current) {
       queuedSave.current = true;
-      return;
+      await savePromise.current;
+      if (queuedSave.current && dirtyRef.current && saveStateRef.current !== 'conflict') {
+        queuedSave.current = false;
+        return saveDraft(versionRef.current);
+      }
+      return !dirtyRef.current;
     }
     const snapshot = draftState.current;
-    if (!snapshot.current) return;
+    const documentSnapshot = snapshot.current;
+    if (!documentSnapshot) return false;
     const sequence = editSequence.current;
     const request: DocumentDraftRequest = {
-      type: snapshot.current.type as DocumentDraftRequest['type'],
-      partnerId: snapshot.current.partnerId,
-      warehouseId: snapshot.current.warehouseId,
+      type: documentSnapshot.type as DocumentDraftRequest['type'],
+      partnerId: documentSnapshot.partnerId,
+      warehouseId: documentSnapshot.warehouseId,
       date: snapshot.date,
       notes: snapshot.notes,
-      lines: snapshot.current.lines.map((line) => ({
+      lines: documentSnapshot.lines.map((line) => ({
         productId: line.productId,
         unitId: line.unitId,
         quantity: snapshot.quantities[line.id] ?? line.orderedQuantity,
@@ -72,27 +84,46 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
       })),
     };
     saveInFlight.current = true;
+    const operation = (async () => {
     try {
-      const saved = await update.mutateAsync({ id: snapshot.current.id, request: { version, draft: request } });
+      const saved = await update.mutateAsync({ id: documentSnapshot.id, request: { version, draft: request } });
       versionRef.current = saved.payload.version;
       if (sequence === editSequence.current) {
         dirtyRef.current = false;
         setSaveState('saved');
+        saveStateRef.current = 'saved';
       } else {
         dirtyRef.current = true;
       }
+      return true;
     } catch (error) {
       const status = (error as { response?: { status?: number } })?.response?.status;
       setSaveState(status === 409 ? 'conflict' : 'error');
+      saveStateRef.current = status === 409 ? 'conflict' : 'error';
       if (status === 409) queuedSave.current = false;
       if (status !== 409) toastApiError(t, error);
+      return false;
     } finally {
       saveInFlight.current = false;
-      if (queuedSave.current) {
-        queuedSave.current = false;
-        window.setTimeout(() => void saveDraft(versionRef.current), 0);
-      }
     }
+    })();
+    savePromise.current = operation;
+    const saved = await operation;
+    savePromise.current = null;
+    if (queuedSave.current && dirtyRef.current && saveStateRef.current !== 'conflict') {
+      queuedSave.current = false;
+      return saveDraft(versionRef.current);
+    }
+    return saved && !dirtyRef.current;
+  }
+
+  async function closeEditor() {
+    if (saveTimer.current !== null) {
+      window.clearTimeout(saveTimer.current);
+      saveTimer.current = null;
+    }
+    if (dirtyRef.current && !(await saveDraft())) return;
+    onClose();
   }
 
   async function reloadServerVersion() {
@@ -104,6 +135,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     setNotes(latest.data.payload.notes ?? '');
     setQuantities(Object.fromEntries(latest.data.payload.lines.map((line) => [line.id, line.orderedQuantity])));
     setSaveState('saved');
+    saveStateRef.current = 'saved';
   }
 
   async function saveLocalAgainstLatest() {
@@ -111,6 +143,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     if (latest.data?.payload) {
       versionRef.current = latest.data.payload.version;
       setSaveState('saving');
+      saveStateRef.current = 'saving';
       await saveDraft(latest.data.payload.version);
     }
   }
@@ -118,6 +151,9 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
   function change<T>(setter: (value: T) => void, value: T) {
     dirtyRef.current = true;
     editSequence.current += 1;
+    if (saveStateRef.current === 'saved' || saveStateRef.current === 'error') {
+      saveStateRef.current = 'saving';
+    }
     setter(value);
   }
 
@@ -130,7 +166,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
   }[saveState];
 
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
+    <Dialog open onOpenChange={(open) => !open && void closeEditor()}>
       <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto border-zinc-700 bg-zinc-900 text-zinc-100'>
         <DialogHeader>
           <DialogTitle>{t('pages.documents.editor.title', { number: current.number || t('pages.documents.draft') })}</DialogTitle>
@@ -157,7 +193,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
             {current.lines.map((line) => <div key={line.id} className='grid grid-cols-[minmax(0,1fr)_110px] items-center gap-3 rounded-lg border border-zinc-700 bg-zinc-800/40 p-3'><div className='min-w-0'><p className='truncate text-sm font-medium'>{line.productName}</p><p className='text-xs text-zinc-500'>{line.productCode} · {line.unitName}</p></div><Input type='number' min='0.001' step='any' aria-label={t('pages.documents.create.quantity')} value={quantities[line.id] ?? line.orderedQuantity} onChange={(event) => change(setQuantities, { ...quantities, [line.id]: Number(event.target.value) })} className='border-zinc-600 bg-zinc-950 text-right tabular-nums' /></div>)}
           </section>
         </div>
-        <DialogFooter className='mt-5'><Button variant='outline' onClick={onClose} className='border-zinc-600 bg-zinc-800'>{t('common.done')}</Button></DialogFooter>
+        <DialogFooter className='mt-5'><Button variant='outline' onClick={() => void closeEditor()} className='border-zinc-600 bg-zinc-800'>{t('common.done')}</Button></DialogFooter>
       </DialogContent>
     </Dialog>
   );

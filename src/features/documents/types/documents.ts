@@ -157,6 +157,8 @@ export type FulfillmentPreviewResponse = {
     productName: string;
     warehouseName?: string;
     availableQuantity?: number;
+    quantityDelta?: number;
+    resultingQuantity?: number;
     shortfall?: number;
     errorMessageKey?: string;
   }>;

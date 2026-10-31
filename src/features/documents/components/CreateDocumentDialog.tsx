@@ -91,6 +91,18 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
     setProductSearch('');
   }
 
+  function resetForm() {
+    setType(DocumentType.PURCHASE_ORDER);
+    setDate(format(new Date(), 'yyyy-MM-dd'));
+    setPartnerId('');
+    setWarehouseId('');
+    setNotes('');
+    setProductSearch('');
+    setDebouncedSearch('');
+    setLines([]);
+    setErrors({});
+  }
+
   async function submit(event: { preventDefault: () => void }) {
     event.preventDefault();
     const validation = documentDraftSchema.safeParse({
@@ -110,6 +122,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
     try {
       await createDraft.mutateAsync(request);
       toast.success(t('pages.documents.create.created'));
+      resetForm();
       onOpenChange(false);
     } catch (error) {
       toastApiError(t, error);

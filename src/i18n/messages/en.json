@@ -629,6 +629,7 @@
         "preview": "Check stock impact",
         "previewValid": "Ready to post. Stock checks passed.",
         "previewInvalid": "Review the issues below before posting.",
+        "resultingQuantity": "on hand: {quantity}",
         "shortfall": "{warehouse}: {available} available, short by {shortfall}",
         "post": "Post fulfillment",
         "posted": "Fulfillment posted"

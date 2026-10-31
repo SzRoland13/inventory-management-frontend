@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useConfirmOrderMutation, useDocumentQuery, useRetryPdfMutation } from '@/features/documents/queries/documentQueries';
 import { DocumentService } from '@/features/documents/services/DocumentService';
-import { DocumentAction, DocumentFileStatus } from '@/features/documents/enums/documentEnums';
+import { DocumentAction, DocumentFileSource, DocumentFileStatus } from '@/features/documents/enums/documentEnums';
 import type { BusinessDocument } from '@/features/documents/types/documents';
 import { requireSuccessfulResponse, toastApiError } from '@/features/shared/api/apiResponse';
 import { Badge } from '@/features/shared/components/ui/badge';
@@ -32,10 +32,14 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   const [closeRemainingOpen, setCloseRemainingOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const current = detailQuery.data?.payload ?? (activeId === document?.id ? document : null);
+  function closeDetails() {
+    if (editorOpen) return;
+    onClose();
+  }
   if (!document) return null;
 
   if (!current) {
-    return <Dialog open onOpenChange={(open) => !open && onClose()}><DialogContent className='max-w-lg border-zinc-700 bg-zinc-900 text-zinc-100'>
+    return <Dialog open onOpenChange={(open) => !open && closeDetails()}><DialogContent className='max-w-lg border-zinc-700 bg-zinc-900 text-zinc-100'>
       <DialogTitle>{detailQuery.isError ? t('pages.documents.details.loadError') : t('pages.documents.loading')}</DialogTitle>
       {detailQuery.isError ? <Button variant='outline' onClick={() => void detailQuery.refetch()} className='mt-3 border-zinc-600 bg-zinc-800'>{t('common.retry')}</Button> : <div role='status' aria-busy='true' className='mt-4 h-20 animate-pulse rounded-xl bg-zinc-800' />}
     </DialogContent></Dialog>;
@@ -85,7 +89,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   }
 
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
+    <Dialog open onOpenChange={(open) => !open && closeDetails()}>
       <DialogContent showCloseButton={false} className='max-h-[90vh] max-w-4xl overflow-y-auto border-zinc-700 bg-zinc-900 p-0 text-zinc-100'>
         <div className='sticky top-0 z-10 flex items-start justify-between border-b border-zinc-700 bg-zinc-900/95 px-6 py-5 backdrop-blur'>
           <div className='flex min-w-0 items-start gap-3'>
@@ -95,7 +99,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
             <DialogDescription className='mt-1 text-zinc-400'>{documentTypeLabel(current.type, t)} · {current.partnerName || current.routeName || t('pages.documents.noPartner')}</DialogDescription>
             </div>
           </div>
-          <Button variant='ghost' size='icon' onClick={onClose} aria-label={t('common.done')}><X /></Button>
+          <Button variant='ghost' size='icon' onClick={closeDetails} aria-label={t('common.done')}><X /></Button>
         </div>
 
         <div className='grid gap-6 p-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(240px,0.8fr)]'>
@@ -161,7 +165,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                     <span className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300'><FileText className='h-4 w-4' /></span>
                     <div className='min-w-0 flex-1'><p className='truncate text-sm font-medium'>{file.fileName}</p><p className='text-xs text-zinc-500'>{t(`pages.documents.files.sources.${file.source}`)}{file.status ? ` · ${t(`pages.documents.files.status.${file.status}`)}` : ''}</p>{file.errorMessage && <p role='alert' className='mt-1 text-xs text-rose-300'>{file.errorMessage}</p>}</div>
                     {file.status === DocumentFileStatus.FAILED && current.allowedActions.includes(DocumentAction.RETRY_PDF) && <Button variant='ghost' size='icon-sm' disabled={retryPdf.isPending} onClick={() => void retry()} aria-label={t('pages.documents.files.retry')}><RefreshCw className='h-4 w-4' /></Button>}
-                    {file.status === DocumentFileStatus.COMPLETED && file.downloadUrl && <><Button asChild variant='ghost' size='icon-sm' aria-label={t('pages.documents.files.open')}><a href={file.downloadUrl} target='_blank' rel='noreferrer'><ExternalLink className='h-4 w-4' /></a></Button><Button asChild variant='ghost' size='icon-sm' aria-label={t('pages.documents.files.download')}><a href={file.downloadUrl} download><Download className='h-4 w-4' /></a></Button></>}
+                    {(file.source !== DocumentFileSource.GENERATED_PDF || file.status === DocumentFileStatus.COMPLETED) && file.downloadUrl && <><Button asChild variant='ghost' size='icon-sm' aria-label={t('pages.documents.files.open')}><a href={file.downloadUrl} target='_blank' rel='noreferrer'><ExternalLink className='h-4 w-4' /></a></Button><Button asChild variant='ghost' size='icon-sm' aria-label={t('pages.documents.files.download')}><a href={file.downloadUrl} download><Download className='h-4 w-4' /></a></Button></>}
                   </div>
                 ))}
                 {!current.files.length && <p className='py-3 text-sm text-zinc-500'>{t('pages.documents.files.empty')}</p>}
@@ -178,7 +182,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
           </aside>
         </div>
       </DialogContent>
-      <FulfillmentDialog source={fulfillmentOpen ? current : null} onClose={() => setFulfillmentOpen(false)} onComplete={() => { setFulfillmentOpen(false); onClose(); }} />
+      {fulfillmentOpen && <FulfillmentDialog key={`${current.id}-${fulfillmentOpen}`} source={current} onClose={() => setFulfillmentOpen(false)} onComplete={() => { setFulfillmentOpen(false); onClose(); }} />}
       <CloseRemainingDialog document={closeRemainingOpen ? current : null} onClose={() => setCloseRemainingOpen(false)} />
       <DocumentDraftEditor document={editorOpen ? current : null} onClose={() => setEditorOpen(false)} />
     </Dialog>
