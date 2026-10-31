@@ -280,6 +280,7 @@ export function productFormToRequest(
       depth: toOptionalNumber(values.depth),
     },
     categoryIds: values.categoryIds.map(Number),
+    imageAssetIds: [],
     attributes: values.attributes.flatMap<ProductAttributeValueRequest>(
       ({ definitionId, value }) => {
         if (!value) return [];

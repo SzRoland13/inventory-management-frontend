@@ -139,6 +139,13 @@ export type ProductRequest = {
   };
   categoryIds: number[];
   attributes: ProductAttributeValueRequest[];
+  imageAssetIds: number[];
+};
+
+export type ProductImageResponse = {
+  mediaAssetId: number;
+  sortOrder: number;
+  filename: string;
 };
 
 export type ProductAttributeValue = {
@@ -197,6 +204,7 @@ export type ProductResponse = {
   };
   categoryIds: number[];
   attributes: ProductAttributeValue[];
+  images?: ProductImageResponse[];
   stockByWarehouse: ProductStock[];
   createdAt: string;
   updatedAt: string;

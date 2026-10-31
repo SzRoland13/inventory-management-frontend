@@ -16,6 +16,8 @@ import type {
   ProductCategory,
   ProductResponse,
 } from '@/features/products/types/product';
+import { getPrimaryProductImage } from '@/features/products/helpers/productImages';
+import { ProductImagePreview } from '@/features/products/components/ProductImagePreview';
 import { Badge } from '@/features/shared/components/ui/badge';
 import {
   Card,
@@ -104,6 +106,7 @@ export function ProductDetailsOverview({
 }: Props) {
   const t = useTranslations();
   const locale = useLocale();
+  const primaryImage = getPrimaryProductImage(product.images);
   const categoriesById = new Map(
     categories.map((category) => [category.id, category.name]),
   );
@@ -135,7 +138,7 @@ export function ProductDetailsOverview({
   return (
     <div className='space-y-4'>
       <Card className='gap-0 border-zinc-700 bg-gradient-to-br from-zinc-800 to-zinc-900 text-zinc-100 shadow-lg'>
-        <CardContent className='flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:justify-between sm:p-6'>
+        <CardContent className='flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6'>
           <div className='min-w-0 space-y-3'>
             <div className='flex flex-wrap items-center gap-2'>
               <Badge
@@ -153,6 +156,15 @@ export function ProductDetailsOverview({
               </p>
             </div>
           </div>
+          <ProductImagePreview
+            mediaAssetId={primaryImage?.mediaAssetId ?? null}
+            alt={
+              primaryImage
+                ? `${product.name} — ${t('pages.products.images.primary')}`
+                : t('pages.products.images.placeholder')
+            }
+            className='h-28 w-28 rounded-lg sm:ml-auto sm:h-36 sm:w-36'
+          />
         </CardContent>
       </Card>
 

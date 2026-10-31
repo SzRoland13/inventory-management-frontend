@@ -9,6 +9,8 @@ import type {
   ProductResponse,
 } from '@/features/products/types/product';
 import { ProductStockCell } from '@/features/products/components/ProductStockCell';
+import { ProductImagePreview } from '@/features/products/components/ProductImagePreview';
+import { getPrimaryProductImage } from '@/features/products/helpers/productImages';
 import {
   type CellContext,
   type ColumnDef,
@@ -106,6 +108,13 @@ export function useProductsColumns(
               checked={row.getIsSelected()}
               onCheckedChange={(checked) => row.toggleSelected(!!checked)}
               aria-label={t('common.select-row')}
+            />
+            <ProductImagePreview
+              mediaAssetId={getPrimaryProductImage(row.original.images)?.mediaAssetId ?? null}
+              alt={t('pages.products.images.thumbnail-alt', {
+                product: row.original.name,
+              })}
+              className='h-9 w-9'
             />
             <span>{row.original.sku}</span>
           </div>

@@ -14,6 +14,7 @@ import {
 type ProductFormDialogFooterProps = {
   editing: boolean;
   busy: boolean;
+  canSave?: boolean;
   onCancel: () => void;
   onSave: () => void;
   onPublish: () => void;
@@ -22,6 +23,7 @@ type ProductFormDialogFooterProps = {
 export function ProductFormDialogFooter({
   editing,
   busy,
+  canSave = true,
   onCancel,
   onSave,
   onPublish,
@@ -51,7 +53,7 @@ export function ProductFormDialogFooter({
           <Button
             type='button'
             className={appDialogPrimaryButtonClass}
-            disabled={busy}
+            disabled={busy || !canSave}
             onClick={onSave}
           >
             {busy ? t('common.saving') : t('common.save')}
@@ -70,7 +72,7 @@ export function ProductFormDialogFooter({
             <Button
               type='button'
               className='bg-emerald-600 text-white hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-400 disabled:opacity-100'
-              disabled={busy}
+              disabled={busy || !canSave}
               onClick={onPublish}
             >
               {busy ? t('common.saving') : t('pages.products.actions.publish')}
