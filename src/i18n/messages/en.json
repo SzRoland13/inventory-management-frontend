@@ -530,7 +530,160 @@
       }
     },
     "documents": {
-      "title": "Document Managemet"
+      "title": "Documents",
+      "eyebrow": "Purchasing and sales",
+      "heading": "Keep every order moving",
+      "description": "Create and track purchase and sales documents, follow fulfillment, and keep files together with the work they belong to.",
+      "create": {
+        "new": "New document",
+        "title": "Start a document draft",
+        "description": "Choose an order type, partner, and items. Your new draft will be ready to edit and fulfill.",
+        "loadingOptions": "Loading the document types available to your account…",
+        "optionsError": "Document options are temporarily unavailable",
+        "optionsErrorDescription": "We couldn't confirm which document types you can create. Your data is safe; retry to reconnect.",
+        "types": {
+          "PURCHASE_ORDER": "Record what your business plans to buy.",
+          "GOODS_RECEIPT": "Record goods received directly into a warehouse.",
+          "SALES_ORDER": "Record what your business plans to sell.",
+          "DELIVERY_NOTE": "Record a direct delivery from warehouse stock."
+        },
+        "partner": "Partner",
+        "selectPartner": "Select a partner",
+        "noTypes": "You do not have permission to create a document type.",
+        "warehouse": "Warehouse",
+        "selectWarehouse": "Select a warehouse",
+        "date": "Document date",
+        "items": "Items",
+        "itemsHint": "Search active products and add the lines for this order.",
+        "searchProducts": "Search products by name or code",
+        "searching": "Searching products…",
+        "noProducts": "No matching products",
+        "noItems": "Add at least one product to the draft.",
+        "quantity": "Quantity",
+        "removeItem": "Remove item",
+        "notes": "Notes",
+        "notesPlaceholder": "Add context for this draft",
+        "saving": "Saving draft…",
+        "saveDraft": "Save draft",
+        "created": "Draft created"
+      },
+      "summary": { "drafts": "My drafts", "toReceive": "Ready to receive", "toShip": "Ready to ship" },
+      "queue": {
+        "heading": "Work queue",
+        "description": "Choose a view to find drafts, fulfillment work, or document history.",
+        "title": "Document queue",
+        "views": {
+          "MY_DRAFTS": "My drafts",
+          "READY_TO_RECEIVE": "Ready to receive",
+          "READY_TO_SHIP": "Ready to ship",
+          "PARTIALLY_FULFILLED": "Partially fulfilled",
+          "TRANSFERS": "Transfers",
+          "IN_TRANSIT": "In transit",
+          "RETURNS": "Returns",
+          "STOCK_COUNTS": "Stock counts",
+          "CORRECTIONS": "Corrections",
+          "SUPPLIER_BILLS": "Supplier bills",
+          "CUSTOMER_INVOICES": "Customer invoices",
+          "FINANCIAL_CREDITS": "Financial credits",
+          "NEEDS_APPROVAL": "Needs approval",
+          "ALL": "All documents"
+        }
+      },
+      "search": "Search by document number or partner",
+      "loading": "Loading documents",
+      "loadError": { "title": "Documents could not be loaded", "description": "The document service is unavailable. Try again in a moment." },
+      "empty": { "title": "No documents in this view", "description": "When documents match this queue, they will appear here. Try another view or create a draft." },
+      "draft": "Draft",
+      "noPartner": "Partner not set",
+      "owner": "Owner: {name}",
+      "lineCount": "{count, plural, one {# line} other {# lines}}",
+      "status": {
+        "DRAFT": "Draft", "READY": "Ready", "PARTIALLY_FULFILLED": "Partially fulfilled",
+        "FULFILLED": "Fulfilled", "CLOSED": "Closed", "CANCELLED": "Cancelled",
+        "IN_TRANSIT": "In transit", "QUARANTINED": "Quarantined", "NEEDS_RECONCILIATION": "Needs reconciliation",
+        "AWAITING_APPROVAL": "Awaiting approval", "APPROVED": "Approved", "REJECTED": "Rejected",
+        "PARTIALLY_BILLED": "Partially billed", "CREDITED": "Credited", "REVERSED": "Reversed", "RETURNED": "Returned"
+      },
+      "types": {
+        "PURCHASE_ORDER": "Purchase order", "GOODS_RECEIPT": "Goods receipt",
+        "SALES_ORDER": "Sales order", "DELIVERY_NOTE": "Delivery note", "INVOICE": "Legacy invoice",
+        "WAREHOUSE_TRANSFER": "Warehouse transfer",
+        "STOCK_COUNT": "Stock count", "CORRECTION": "Correction", "SUPPLIER_BILL": "Supplier bill",
+        "CUSTOMER_INVOICE": "Customer invoice", "FINANCIAL_CREDIT": "Financial credit", "RETURN": "Physical return"
+      },
+      "actions": {
+        "CONFIRM": "Confirm order", "RECEIVE": "Receive goods", "DELIVER": "Create delivery", "POST": "Review and post",
+        "EDIT": "Edit draft", "CLOSE_REMAINING": "Close remaining", "view": "View details", "confirmed": "Order confirmed",
+        "DISPATCH": "Dispatch transfer", "RECEIVE_TRANSFER": "Receive transfer", "RELEASE_QUARANTINE": "Release to stock",
+        "CREATE_RETURN": "Create return", "CREATE_REPLACEMENT_DELIVERY": "Create replacement delivery",
+        "START_COUNT": "Start stock count", "RECONCILE": "Review reconciliation", "CORRECT": "Correct posted document",
+        "CREATE_SUPPLIER_BILL": "Create supplier bill", "CREATE_CUSTOMER_INVOICE": "Create customer invoice",
+        "CREATE_CREDIT": "Create financial credit", "APPROVE": "Approve", "REJECT": "Reject"
+      },
+      "fulfillment": {
+        "title": { "GOODS_RECEIPT": "Receive goods", "DELIVERY_NOTE": "Create delivery" },
+        "description": "Choose quantities to record from {number}. Review stock availability before posting.",
+        "progress": "Ordered {ordered} · completed {done} · remaining {remaining} {unit}",
+        "quantity": "This operation",
+        "checking": "Checking stock…",
+        "preview": "Check stock impact",
+        "previewValid": "Ready to post. Stock checks passed.",
+        "previewInvalid": "Review the issues below before posting.",
+        "shortfall": "{warehouse}: {available} available, short by {shortfall}",
+        "post": "Post fulfillment",
+        "posted": "Fulfillment posted"
+      },
+      "closeRemaining": {
+        "title": "Close remaining quantity",
+        "description": "This records the unfulfilled amount as closed while preserving completed activity.",
+        "ordered": "Ordered",
+        "fulfilled": "Fulfilled",
+        "remaining": "To close",
+        "reason": "Reason for closing",
+        "saving": "Closing…",
+        "confirm": "Close remaining",
+        "completed": "Remaining quantity closed"
+      },
+      "editor": {
+        "title": "Edit {number}",
+        "description": "Your changes save automatically while you work.",
+        "saved": "All changes saved",
+        "saving": "Saving changes…",
+        "error": "Could not save changes",
+        "conflict": "Another user changed this document",
+        "conflictTitle": "This draft has a newer version",
+        "conflictDescription": "Your edits are still here. Reload the latest version or explicitly save your version over it.",
+        "reload": "Reload latest",
+        "keepMine": "Save my version"
+      },
+      "details": {
+        "items": "Items", "product": "Product", "ordered": "Ordered", "done": "Done",
+        "remaining": "Remaining", "billed": "Billed", "noItems": "No line items have been added.", "activity": "Activity",
+        "net": "Net", "tax": "Tax", "gross": "Total", "allocatedFrom": "From {number} · {quantity} units",
+        "noActivity": "No activity recorded yet.", "loadError": "This related document could not be loaded.",
+        "back": "Back to the previous document", "related": "Related documents", "source": "Source order",
+        "relatedDocument": "Related document", "noRelated": "No related documents yet.",
+        "relations": {
+          "SOURCE": "Source document", "FULFILLMENT": "Fulfillment", "TRANSFER": "Transfer leg",
+          "RETURN": "Physical return", "REPLACEMENT": "Replacement delivery", "CORRECTION": "Correction record",
+          "BILLING": "Billing document", "CREDIT": "Financial credit"
+        }
+      },
+      "files": {
+        "title": "Files and PDFs", "add": "Add file", "empty": "No files attached yet.",
+        "uploaded": "File uploaded", "retryQueued": "PDF retry queued", "retry": "Retry PDF generation",
+        "download": "Download file", "open": "Open file",
+        "sources": { "UPLOAD": "Uploaded file", "GENERATED_PDF": "Generated PDF" },
+        "status": { "QUEUED": "Queued", "PROCESSING": "Processing", "COMPLETED": "Ready", "FAILED": "Failed" }
+      },
+      "pagination": { "page": "Page {page} of {pages}", "previous": "Previous", "next": "Next" },
+      "validation": {
+        "required": "This field is required.",
+        "notesTooLong": "Notes must be 2,000 characters or fewer.",
+        "reasonTooLong": "The reason must be 500 characters or fewer.",
+        "quantity": "Enter a quantity greater than zero.",
+        "addLine": "Add at least one product."
+      }
     },
     "reports": {
       "title": "Report Management"

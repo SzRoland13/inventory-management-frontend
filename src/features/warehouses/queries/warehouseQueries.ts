@@ -4,10 +4,11 @@ import { queryKeys } from '@/features/shared/api/queryKeys';
 import { WarehouseService } from '@/features/warehouses/services/WarehouseService';
 import type { WarehouseRequest } from '@/features/warehouses/types/warehouse';
 
-export function useWarehousesQuery() {
+export function useWarehousesQuery(enabled = true) {
   return useQuery({
     queryKey: queryKeys.warehouses.all,
     queryFn: () => requireSuccessfulResponse(WarehouseService.list()),
+    enabled,
   });
 }
 

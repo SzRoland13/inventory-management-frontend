@@ -530,7 +530,132 @@
       }
     },
     "documents": {
-      "title": "Dokumentumkezelés"
+      "title": "Dokumentumok",
+      "eyebrow": "Beszerzés és értékesítés",
+      "heading": "Minden rendelés haladjon tovább",
+      "description": "Hozz létre és kövess beszerzési és értékesítési dokumentumokat, kezeld a teljesítést, és tartsd a fájlokat a kapcsolódó dokumentumok mellett.",
+      "create": {
+        "new": "Új dokumentum", "title": "Dokumentumtervezet indítása",
+        "description": "Válassz rendeléstípust, partnert és tételeket. Az új tervezet ezután szerkeszthető és teljesíthető.",
+        "loadingOptions": "A fiókod számára elérhető dokumentumtípusok betöltése…",
+        "optionsError": "A dokumentumbeállítások átmenetileg nem érhetők el",
+        "optionsErrorDescription": "Nem sikerült ellenőrizni, milyen dokumentumtípusokat hozhatsz létre. Az adataid biztonságban vannak; próbáld újra.",
+        "types": {
+          "PURCHASE_ORDER": "Rögzítsd a tervezett beszerzést.",
+          "GOODS_RECEIPT": "Közvetlenül rögzítsd a raktárba érkező árut.",
+          "SALES_ORDER": "Rögzítsd a tervezett értékesítést.",
+          "DELIVERY_NOTE": "Rögzíts közvetlen kiszállítást a raktárkészletből."
+        },
+        "partner": "Partner", "selectPartner": "Válassz partnert", "noTypes": "Nincs jogosultságod dokumentumtípus létrehozásához.", "warehouse": "Raktár", "selectWarehouse": "Válassz raktárat", "date": "Dokumentum dátuma",
+        "items": "Tételek", "itemsHint": "Keress aktív termékeket, és add hozzá a rendelés sorait.",
+        "searchProducts": "Keresés terméknév vagy kód alapján", "searching": "Termékek keresése…",
+        "noProducts": "Nincs találat", "noItems": "Adj legalább egy terméket a tervezethez.",
+        "quantity": "Mennyiség", "removeItem": "Tétel eltávolítása", "notes": "Megjegyzések", "notesPlaceholder": "Adj megjegyzést a tervezethez",
+        "saving": "Tervezet mentése…", "saveDraft": "Tervezet mentése", "created": "Tervezet létrehozva"
+      },
+      "summary": { "drafts": "Saját tervezetek", "toReceive": "Bevételezésre vár", "toShip": "Kiszállításra vár" },
+      "queue": {
+        "heading": "Feladatlista", "description": "Válassz nézetet a tervezetekhez, teljesítési feladatokhoz vagy dokumentumelőzményekhez.",
+        "title": "Dokumentumok listája",
+        "views": {
+          "MY_DRAFTS": "Saját tervezetek", "READY_TO_RECEIVE": "Bevételezésre vár", "READY_TO_SHIP": "Kiszállításra vár",
+          "PARTIALLY_FULFILLED": "Részben teljesült", "TRANSFERS": "Áthelyezések", "IN_TRANSIT": "Úton lévő áru",
+          "RETURNS": "Visszáruk", "STOCK_COUNTS": "Készletleltárak", "CORRECTIONS": "Helyesbítések",
+          "SUPPLIER_BILLS": "Beszállítói számlák", "CUSTOMER_INVOICES": "Vevői számlák",
+          "FINANCIAL_CREDITS": "Pénzügyi jóváírások", "NEEDS_APPROVAL": "Jóváhagyásra vár", "ALL": "Minden dokumentum"
+        }
+      },
+      "search": "Keresés dokumentumszám vagy partner alapján", "loading": "Dokumentumok betöltése",
+      "loadError": { "title": "A dokumentumok betöltése nem sikerült", "description": "A dokumentumszolgáltatás jelenleg nem érhető el. Próbáld meg később." },
+      "empty": { "title": "Nincs dokumentum ebben a nézetben", "description": "Az ehhez a listához tartozó dokumentumok itt jelennek meg. Válassz másik nézetet, vagy hozz létre tervezetet." },
+      "draft": "Tervezet", "noPartner": "Nincs partner megadva", "owner": "Felelős: {name}",
+      "lineCount": "{count, plural, one {# tétel} other {# tétel}}",
+      "status": {
+        "DRAFT": "Tervezet", "READY": "Kész", "PARTIALLY_FULFILLED": "Részben teljesült",
+        "FULFILLED": "Teljesült", "CLOSED": "Lezárva", "CANCELLED": "Visszavonva",
+        "IN_TRANSIT": "Úton", "QUARANTINED": "Zárolva", "NEEDS_RECONCILIATION": "Egyeztetés szükséges",
+        "AWAITING_APPROVAL": "Jóváhagyásra vár", "APPROVED": "Jóváhagyva", "REJECTED": "Elutasítva",
+        "PARTIALLY_BILLED": "Részben számlázva", "CREDITED": "Jóváírva", "REVERSED": "Visszafordítva", "RETURNED": "Visszáru"
+      },
+      "types": {
+        "PURCHASE_ORDER": "Beszerzési rendelés", "GOODS_RECEIPT": "Áruátvétel",
+        "SALES_ORDER": "Értékesítési rendelés", "DELIVERY_NOTE": "Szállítólevél", "INVOICE": "Régi, általános számla",
+        "WAREHOUSE_TRANSFER": "Raktárközi áthelyezés",
+        "STOCK_COUNT": "Készletleltár", "CORRECTION": "Helyesbítés", "SUPPLIER_BILL": "Beszállítói számla",
+        "CUSTOMER_INVOICE": "Vevői számla", "FINANCIAL_CREDIT": "Pénzügyi jóváírás", "RETURN": "Fizikai visszáru"
+      },
+      "actions": {
+        "CONFIRM": "Rendelés jóváhagyása", "RECEIVE": "Áru átvétele", "DELIVER": "Szállítás létrehozása", "POST": "Ellenőrzés és rögzítés",
+        "EDIT": "Tervezet szerkesztése", "CLOSE_REMAINING": "Hátralék lezárása", "view": "Részletek", "confirmed": "Rendelés jóváhagyva",
+        "DISPATCH": "Áthelyezés indítása", "RECEIVE_TRANSFER": "Áthelyezés átvétele", "RELEASE_QUARANTINE": "Kiadás készletre",
+        "CREATE_RETURN": "Visszáru létrehozása", "CREATE_REPLACEMENT_DELIVERY": "Pótszállítás létrehozása",
+        "START_COUNT": "Leltár indítása", "RECONCILE": "Egyeztetés áttekintése", "CORRECT": "Könyvelési hiba javítása",
+        "CREATE_SUPPLIER_BILL": "Beszállítói számla létrehozása", "CREATE_CUSTOMER_INVOICE": "Vevői számla létrehozása",
+        "CREATE_CREDIT": "Pénzügyi jóváírás létrehozása", "APPROVE": "Jóváhagyás", "REJECT": "Elutasítás"
+      },
+      "fulfillment": {
+        "title": { "GOODS_RECEIPT": "Áru átvétele", "DELIVERY_NOTE": "Szállítás létrehozása" },
+        "description": "Válaszd ki a(z) {number} dokumentumból rögzítendő mennyiségeket. Jóváhagyás előtt ellenőrizd a készletet.",
+        "progress": "Rendelt {ordered} · teljesült {done} · hátralék {remaining} {unit}",
+        "quantity": "Most teljesül",
+        "checking": "Készlet ellenőrzése…",
+        "preview": "Készlethatás ellenőrzése",
+        "previewValid": "Jóváhagyható. A készletellenőrzés sikeres.",
+        "previewInvalid": "Jóváhagyás előtt javítsd az alábbi hibákat.",
+        "shortfall": "{warehouse}: {available} elérhető, hiány {shortfall}",
+        "post": "Teljesítés rögzítése",
+        "posted": "Teljesítés rögzítve"
+      },
+      "closeRemaining": {
+        "title": "Hátralék lezárása",
+        "description": "A nem teljesült mennyiséget lezártként rögzíti, a korábbi teljesítések megőrzésével.",
+        "ordered": "Rendelt",
+        "fulfilled": "Teljesült",
+        "remaining": "Lezárandó",
+        "reason": "Lezárás indoka",
+        "saving": "Lezárás…",
+        "confirm": "Hátralék lezárása",
+        "completed": "Hátralék lezárva"
+      },
+      "editor": {
+        "title": "{number} szerkesztése",
+        "description": "A módosítások munka közben automatikusan mentődnek.",
+        "saved": "Minden módosítás mentve",
+        "saving": "Módosítások mentése…",
+        "error": "A módosítások mentése nem sikerült",
+        "conflict": "Egy másik felhasználó módosította a dokumentumot",
+        "conflictTitle": "A tervezetnek újabb verziója van",
+        "conflictDescription": "A módosításaid megmaradtak. Töltsd be a legújabb verziót, vagy kifejezetten írd felül a saját verzióddal.",
+        "reload": "Legújabb betöltése",
+        "keepMine": "Saját verzió mentése"
+      },
+      "details": {
+        "items": "Tételek", "product": "Termék", "ordered": "Rendelt", "done": "Teljesült", "remaining": "Hátralék", "billed": "Számlázva",
+        "net": "Nettó", "tax": "ÁFA", "gross": "Összesen", "allocatedFrom": "Forrás: {number} · {quantity} egység",
+        "noItems": "Még nincsenek tételek.", "activity": "Események", "noActivity": "Még nincs rögzített esemény.",
+        "loadError": "A kapcsolódó dokumentum betöltése nem sikerült.", "back": "Vissza az előző dokumentumhoz",
+        "related": "Kapcsolódó dokumentumok", "source": "Forrásrendelés", "relatedDocument": "Kapcsolódó dokumentum",
+        "noRelated": "Még nincsenek kapcsolódó dokumentumok.",
+        "relations": {
+          "SOURCE": "Forrásdokumentum", "FULFILLMENT": "Teljesítés", "TRANSFER": "Áthelyezési lépés",
+          "RETURN": "Fizikai visszáru", "REPLACEMENT": "Pótszállítás", "CORRECTION": "Helyesbítő dokumentum",
+          "BILLING": "Számlázási dokumentum", "CREDIT": "Pénzügyi jóváírás"
+        }
+      },
+      "files": {
+        "title": "Fájlok és PDF-ek", "add": "Fájl hozzáadása", "empty": "Még nincs fájl csatolva.",
+        "uploaded": "Fájl feltöltve", "retryQueued": "PDF újrapróbálása sorba állítva", "retry": "PDF készítésének újrapróbálása",
+        "download": "Fájl letöltése", "open": "Fájl megnyitása", "sources": { "UPLOAD": "Feltöltött fájl", "GENERATED_PDF": "Létrehozott PDF" },
+        "status": { "QUEUED": "Sorban áll", "PROCESSING": "Feldolgozás alatt", "COMPLETED": "Elkészült", "FAILED": "Sikertelen" }
+      },
+      "pagination": { "page": "{page}. oldal / {pages}", "previous": "Előző", "next": "Következő" },
+      "validation": {
+        "required": "A mező kitöltése kötelező.",
+        "notesTooLong": "A megjegyzés legfeljebb 2000 karakter lehet.",
+        "reasonTooLong": "Az indok legfeljebb 500 karakter lehet.",
+        "quantity": "Adj meg nullánál nagyobb mennyiséget.",
+        "addLine": "Adj legalább egy terméket."
+      }
     },
     "reports": {
       "title": "Riportkezelés"

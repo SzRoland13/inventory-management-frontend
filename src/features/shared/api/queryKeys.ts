@@ -27,6 +27,13 @@ export const queryKeys = {
     balances: (params: unknown) => ['stocks', 'balances', params] as const,
     movements: (params: unknown) => ['stocks', 'movements', params] as const,
   },
+  documents: {
+    all: ['documents'] as const,
+    capabilities: ['documents', 'capabilities'] as const,
+    lists: () => ['documents', 'list'] as const,
+    list: (params: unknown) => ['documents', 'list', params] as const,
+    detail: (id: number) => ['documents', 'detail', id] as const,
+  },
   partners: {
     all: ['partners'] as const,
     detail: (id: number) => ['partners', id] as const,
