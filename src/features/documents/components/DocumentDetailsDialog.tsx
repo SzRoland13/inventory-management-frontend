@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useConfirmOrderMutation, useDocumentQuery, useGeneratePdfMutation, useRetryPdfMutation } from '@/features/documents/queries/documentQueries';
 import { DocumentService } from '@/features/documents/services/DocumentService';
+import { createIdempotencyKey } from '@/features/shared/api/idempotencyKey';
 import { DocumentAction, DocumentFileSource, DocumentFileStatus } from '@/features/documents/enums/documentEnums';
 import type { BusinessDocument } from '@/features/documents/types/documents';
 import { requireSuccessfulResponse, toastApiError } from '@/features/shared/api/apiResponse';
@@ -86,7 +87,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   async function retry() {
     if (!current) return;
     try {
-      await retryPdf.mutateAsync({ id: current.id, idempotencyKey: window.crypto.randomUUID() });
+      await retryPdf.mutateAsync({ id: current.id, idempotencyKey: createIdempotencyKey() });
       toast.success(t('pages.documents.files.retryQueued'));
     } catch (error) {
       toastApiError(t, error);
@@ -99,7 +100,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
       await generatePdf.mutateAsync({
         id: current.id,
         language: pdfLanguage,
-        idempotencyKey: window.crypto.randomUUID(),
+        idempotencyKey: createIdempotencyKey(),
       });
       toast.success(t('pages.documents.files.generationQueued'));
     } catch (error) {

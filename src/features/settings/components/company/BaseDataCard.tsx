@@ -10,8 +10,7 @@ import { Button } from '@/features/shared/components/ui/button';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useCompanyStore } from '@/features/settings/stores/companyStore';
-import { useEffect } from 'react';
-import { useFormChanges } from '@/features/shared/hooks/useFormChanges';
+import { useEffect, useState } from 'react';
 import CardWrapper from '@/features/shared/components/CardWrapper';
 import { useUpdateCompanyBaseDataMutation } from '@/features/settings/queries/companyQueries';
 import { toastApiError } from '@/features/shared/api/apiResponse';
@@ -26,16 +25,12 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { isSubmitting, errors },
   } = useForm<CompanyBaseDataUpdateRequest>({
     resolver: zodResolver(companyBaseDataSchema),
   });
 
-  const values = watch();
-
-  const { hasChanges, setInitialValues, resetToInitial } =
-    useFormChanges(values);
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     if (initialCompanyData && !hasChanges) {
@@ -48,10 +43,9 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
         website: initialCompanyData.website ?? '',
       };
 
-      setInitialValues(values);
       reset(values);
     }
-  }, [initialCompanyData, hasChanges, reset, setInitialValues]);
+  }, [initialCompanyData, hasChanges, reset]);
 
   const t = useTranslations();
   const setCompanyData = useCompanyStore((state) => state.setCompanyData);
@@ -75,8 +69,8 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
         name: res.payload.name,
       });
 
-      setInitialValues(values);
       reset(values);
+      setHasChanges(false);
 
       toast(t(`messagekey.${res.messageKey}`));
     } catch (error) {
@@ -85,10 +79,16 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
   };
 
   const handleReset = () => {
-    const initial = resetToInitial();
-    if (!initial) return;
-
-    reset(initial);
+    if (!initialCompanyData) return;
+    reset({
+      name: initialCompanyData.name ?? '',
+      description: initialCompanyData.description ?? '',
+      email: initialCompanyData.email ?? '',
+      phone: initialCompanyData.phone ?? '',
+      address: initialCompanyData.address ?? '',
+      website: initialCompanyData.website ?? '',
+    });
+    setHasChanges(false);
   };
 
   return (
@@ -107,7 +107,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
         </Button>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
+      <form onSubmit={handleSubmit(onSubmit)} onChange={() => setHasChanges(true)} className='flex flex-col gap-4'>
         <div className='flex flex-col gap-2'>
           <Label className='text-zinc-400'>
             {t('pages.settings.tabs.company.data.fields.name')}
