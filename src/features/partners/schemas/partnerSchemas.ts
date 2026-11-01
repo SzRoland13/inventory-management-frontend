@@ -48,7 +48,9 @@ export const contactFormSchema = z.object({
   city: z.string().trim().min(1, required).max(100, tooLong),
   country: isoCountryCodeSchema,
   phone: optionalPhoneSchema(50),
-  email: z.union([z.literal(''), z.string().email('pages.partners.validation.email')]).pipe(z.string().max(255, tooLong)),
+  email: z
+    .union([z.literal(''), z.string().email('pages.partners.validation.email')])
+    .pipe(z.string().max(255, tooLong)),
 });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;

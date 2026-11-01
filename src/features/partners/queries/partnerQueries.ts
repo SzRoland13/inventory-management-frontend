@@ -17,7 +17,8 @@ export function usePartnersQuery(enabled = true) {
 
 function useInvalidatePartners() {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: queryKeys.partners.all });
+  return () =>
+    queryClient.invalidateQueries({ queryKey: queryKeys.partners.all });
 }
 
 export function useCreatePartnerMutation() {
@@ -73,8 +74,16 @@ export function useSaveContactMutation() {
 export function useRemoveContactMutation() {
   const invalidate = useInvalidatePartners();
   return useMutation({
-    mutationFn: ({ partnerId, contactId }: { partnerId: number; contactId: number }) =>
-      requireSuccessfulResponse(PartnerService.removeContact(partnerId, contactId)),
+    mutationFn: ({
+      partnerId,
+      contactId,
+    }: {
+      partnerId: number;
+      contactId: number;
+    }) =>
+      requireSuccessfulResponse(
+        PartnerService.removeContact(partnerId, contactId),
+      ),
     onSuccess: invalidate,
   });
 }

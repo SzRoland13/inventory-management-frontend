@@ -33,10 +33,7 @@ export const PartnerService = {
     request: ContactRequest,
   ): Promise<ApiResponse<ContactResponse>> =>
     handleRequest(
-      BaseService.put(
-        `/partners/${partnerId}/contacts/${contactId}`,
-        request,
-      ),
+      BaseService.put(`/partners/${partnerId}/contacts/${contactId}`, request),
     ),
   removeContact: (
     partnerId: number,
