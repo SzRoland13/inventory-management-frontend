@@ -45,9 +45,7 @@ export function StockTablePanel<T>({
     return (
       <DataTableEmptyState
         title={t('pages.stocks.load-error')}
-        action={
-          <Button onClick={onRetry}>{t('common.retry')}</Button>
-        }
+        action={<Button onClick={onRetry}>{t('common.retry')}</Button>}
       />
     );
   }

@@ -175,9 +175,7 @@ export function StockMovementsTable({
         <StockDateRangeFilter
           startDate={startDate}
           endDate={endDate}
-          onStartDateChange={(value) =>
-            updateFilter(() => setStartDate(value))
-          }
+          onStartDateChange={(value) => updateFilter(() => setStartDate(value))}
           onEndDateChange={(value) => updateFilter(() => setEndDate(value))}
         />
       </div>
@@ -195,7 +193,9 @@ export function StockMovementsTable({
         onPageChange={(pageIndex) =>
           setPagination((current) => ({ ...current, pageIndex }))
         }
-        onPageSizeChange={(pageSize) => setPagination({ pageIndex: 0, pageSize })}
+        onPageSizeChange={(pageSize) =>
+          setPagination({ pageIndex: 0, pageSize })
+        }
       />
     </section>
   );
