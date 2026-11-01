@@ -465,12 +465,43 @@
         "phone": "Phone",
         "email": "Email"
       },
-      "types": { "CUSTOMER": "Customer", "SUPPLIER": "Supplier", "BOTH": "Customer and supplier" },
-      "contactTypes": { "BILLING": "Billing", "SHIPPING": "Shipping", "BOTH": "Billing and shipping", "OTHER": "Other" },
+      "types": {
+        "CUSTOMER": "Customer",
+        "SUPPLIER": "Supplier",
+        "BOTH": "Customer and supplier"
+      },
+      "contactTypes": {
+        "BILLING": "Billing",
+        "SHIPPING": "Shipping",
+        "BOTH": "Billing and shipping",
+        "OTHER": "Other"
+      },
       "status": { "ACTIVE": "Active", "ARCHIVED": "Archived" },
-      "filters": { "status": "Filter by status", "all": "All partners", "active": "Active partners", "archived": "Archived partners" },
-      "actions": { "add": "Add partner", "edit": "Edit", "view": "View", "archive": "Archive", "restore": "Restore" },
-      "contacts": { "title": "Contacts for {name}", "description": "View and manage this partner's contacts.", "manage": "Manage contacts", "view": "Contacts", "add": "Add contact", "edit": "Edit contact", "remove": "Remove contact", "removed": "Removed", "empty": "No contacts for this partner.", "archived-read-only": "Archived partners are read-only." },
+      "filters": {
+        "status": "Filter by status",
+        "all": "All partners",
+        "active": "Active partners",
+        "archived": "Archived partners"
+      },
+      "actions": {
+        "add": "Add partner",
+        "edit": "Edit",
+        "view": "View",
+        "archive": "Archive",
+        "restore": "Restore"
+      },
+      "contacts": {
+        "title": "Contacts for {name}",
+        "description": "View and manage this partner's contacts.",
+        "manage": "Manage contacts",
+        "view": "Contacts",
+        "add": "Add contact",
+        "edit": "Edit contact",
+        "remove": "Remove contact",
+        "removed": "Removed",
+        "empty": "No contacts for this partner.",
+        "archived-read-only": "Archived partners are read-only."
+      },
       "confirm": {
         "archive-title": "Archive partner?",
         "archive-description": "Archive {name}? It will remain available for historical records.",
@@ -479,8 +510,21 @@
         "remove-contact-title": "Remove contact?",
         "remove-contact-description": "Remove this contact? It will remain visible in the contact history."
       },
-      "messages": { "created": "Partner created.", "updated": "Partner updated.", "archived": "Partner archived.", "restored": "Partner restored.", "contact-created": "Contact created.", "contact-updated": "Contact updated.", "contact-removed": "Contact removed." },
-      "validation": { "required": "This field is required.", "too-long": "This value is too long.", "country": "Select a country from the list.", "email": "Enter a valid email address." }
+      "messages": {
+        "created": "Partner created.",
+        "updated": "Partner updated.",
+        "archived": "Partner archived.",
+        "restored": "Partner restored.",
+        "contact-created": "Contact created.",
+        "contact-updated": "Contact updated.",
+        "contact-removed": "Contact removed."
+      },
+      "validation": {
+        "required": "This field is required.",
+        "too-long": "This value is too long.",
+        "country": "Select a country from the list.",
+        "email": "Enter a valid email address."
+      }
     },
     "stocks": {
       "title": "Stock Management",
@@ -577,7 +621,11 @@
         "saveDraft": "Save draft",
         "created": "Draft created"
       },
-      "summary": { "drafts": "My drafts", "toReceive": "Ready to receive", "toShip": "Ready to ship" },
+      "summary": {
+        "drafts": "My drafts",
+        "toReceive": "Ready to receive",
+        "toShip": "Ready to ship"
+      },
       "queue": {
         "heading": "Work queue",
         "description": "Choose a view to find drafts, fulfillment work, or document history.",
@@ -601,34 +649,135 @@
       },
       "search": "Search by document number or partner",
       "loading": "Loading documents",
-      "loadError": { "title": "Documents could not be loaded", "description": "The document service is unavailable. Try again in a moment." },
-      "empty": { "title": "No documents in this view", "description": "When documents match this queue, they will appear here. Try another view or create a draft." },
+      "loadError": {
+        "title": "Documents could not be loaded",
+        "description": "The document service is unavailable. Try again in a moment."
+      },
+      "empty": {
+        "title": "No documents in this view",
+        "description": "When documents match this queue, they will appear here. Try another view or create a draft."
+      },
       "draft": "Draft",
       "noPartner": "Partner not set",
       "owner": "Owner: {name}",
       "lineCount": "{count, plural, one {# line} other {# lines}}",
       "status": {
-        "DRAFT": "Draft", "SENT": "Sent", "CONFIRMED": "Confirmed",
-        "PARTIALLY_COMPLETED": "Partially completed", "COMPLETED": "Completed", "CANCELLED": "Cancelled"
+        "DRAFT": "Draft",
+        "SENT": "Sent",
+        "CONFIRMED": "Confirmed",
+        "PARTIALLY_COMPLETED": "Partially completed",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
       },
       "types": {
-        "PURCHASE_ORDER": "Purchase order", "GOODS_RECEIPT": "Goods receipt",
-        "SALES_ORDER": "Sales order", "DELIVERY_NOTE": "Delivery note", "INVOICE": "Legacy invoice",
+        "PURCHASE_ORDER": "Purchase order",
+        "GOODS_RECEIPT": "Goods receipt",
+        "SALES_ORDER": "Sales order",
+        "DELIVERY_NOTE": "Delivery note",
+        "INVOICE": "Legacy invoice",
         "WAREHOUSE_TRANSFER": "Warehouse transfer",
-        "STOCK_COUNT": "Stock count", "CORRECTION": "Correction", "SUPPLIER_BILL": "Supplier bill",
-        "CUSTOMER_INVOICE": "Customer invoice", "FINANCIAL_CREDIT": "Financial credit", "RETURN": "Physical return"
+        "STOCK_COUNT": "Stock count",
+        "CORRECTION": "Correction",
+        "SUPPLIER_BILL": "Supplier bill",
+        "CUSTOMER_INVOICE": "Customer invoice",
+        "FINANCIAL_CREDIT": "Financial credit",
+        "RETURN": "Physical return"
       },
       "actions": {
-        "CONFIRM": "Confirm order", "RECEIVE": "Receive goods", "DELIVER": "Create delivery", "POST": "Review and post",
-        "EDIT": "Edit draft", "GENERATE_PDF": "Generate PDF", "CLOSE_REMAINING": "Close remaining", "view": "View details", "confirmed": "Order confirmed",
-        "DISPATCH": "Dispatch transfer", "RECEIVE_TRANSFER": "Receive transfer", "RELEASE_QUARANTINE": "Release to stock",
-        "CREATE_RETURN": "Create return", "CREATE_REPLACEMENT_DELIVERY": "Create replacement delivery",
-        "START_COUNT": "Start stock count", "RECONCILE": "Review reconciliation", "CORRECT": "Correct posted document",
-        "CREATE_SUPPLIER_BILL": "Create supplier bill", "CREATE_CUSTOMER_INVOICE": "Create customer invoice",
-        "CREATE_CREDIT": "Create financial credit", "APPROVE": "Approve", "REJECT": "Reject"
+        "CONFIRM": "Confirm order",
+        "RECEIVE": "Receive goods",
+        "DELIVER": "Create delivery",
+        "POST": "Review and post",
+        "EDIT": "Edit draft",
+        "GENERATE_PDF": "Generate PDF",
+        "CLOSE_REMAINING": "Close remaining",
+        "view": "View details",
+        "confirmed": "Order confirmed",
+        "DISPATCH": "Dispatch transfer",
+        "RECEIVE_TRANSFER": "Receive transfer",
+        "RELEASE_QUARANTINE": "Release to stock",
+        "CREATE_RETURN": "Create return",
+        "CREATE_REPLACEMENT_DELIVERY": "Create replacement delivery",
+        "RECONCILE": "Review reconciliation",
+        "CORRECT": "Correct posted document",
+        "CREATE_SUPPLIER_BILL": "Create supplier bill",
+        "CREATE_CUSTOMER_INVOICE": "Create customer invoice",
+        "CREATE_CREDIT": "Create financial credit",
+        "APPROVE": "Approve",
+        "REJECT": "Reject"
+      },
+      "operations": {
+        "startCount": "Start stock count",
+        "startCountDescription": "Choose a warehouse and record when the physical count takes place.",
+        "countStarted": "Stock count started",
+        "createTransfer": "Create transfer",
+        "createTransferDescription": "Choose source and destination warehouses and add the items to transfer.",
+        "transferCreated": "Transfer draft created",
+        "product": "Product",
+        "selectProduct": "Select a product",
+        "addLine": "Add item",
+        "removeLine": "Remove",
+        "recordingError": "Correct a recording error",
+        "physicalReturn": "Record a physical return",
+        "recordingErrorDescription": "Correct a data entry mistake while preserving the posted source.",
+        "physicalReturnDescription": "Record goods that physically came back using a return document.",
+        "originalWillStay": "The posted document and its history remain unchanged. Related returns and later movements are checked before posting.",
+        "warehouseId": "Warehouse",
+        "countedAt": "Physical count time",
+        "lines": "Affected items",
+        "quantity": "Quantity",
+        "varianceReason": "Reason for variance (optional)",
+        "reason": "Required reason",
+        "targetWarehouse": "Target warehouse",
+        "sourceWarehouse": "Source warehouse",
+        "destinationWarehouse": "Destination warehouse",
+        "transitWarehouse": "Transit warehouse",
+        "selectWarehouse": "Select a warehouse",
+        "noTransit": "No transit warehouse",
+        "resolution": "Resolution",
+        "LOSS": "Lost",
+        "DAMAGE": "Damaged",
+        "REVERSAL": "Reverse dispatch",
+        "REMAINDER_CLOSURE": "Close outstanding quantity",
+        "transferDescription": "Review quantities and stock effects for {number}.",
+        "transferQuantities": "Source {source} · in transit {transit} · destination {destination}",
+        "transferEffect": "source {source} · transit {transit} · destination {destination} · change {change}",
+        "transferSaved": "Transfer operation recorded",
+        "returnDescription": "Review the source quantities and stock destination for {number}.",
+        "returnProgress": "Original {original} · returned {returned} · still returnable {returnable} {unit}",
+        "returnEffect": "returnable {returnable} · resulting {resulting} · stock change {quantity}",
+        "returnDoesNotReopen": "A physical return does not reopen the original order.",
+        "quarantineNotice": "Quarantined and damaged items stay unavailable until an authorized user releases them to stock.",
+        "disposition": {
+          "RESTOCK": "Restock",
+          "QUARANTINE": "Quarantine",
+          "DAMAGED": "Damaged",
+          "SUPPLIER_RETURN": "Return to supplier"
+        },
+        "countDescription": "Enter physical quantities, then review the rebased adjustment before posting.",
+        "expectedAtCount": "Expected at count",
+        "counted": "Physical quantity",
+        "countEffect": "expected {expected} · counted {counted} · variance {variance} · rebased target {target} · adjustment {adjustment}",
+        "previewReconciliation": "Preview reconciliation",
+        "postAdjustments": "Confirm and post adjustments",
+        "countPosted": "Count adjustments posted",
+        "correctionDescription": "Choose how to handle the posted document {number}.",
+        "correctionProgress": "Original {original} · fulfilled {fulfilled} · closed {closed} · returned {returned} · remaining {remaining}",
+        "correctedQuantity": "Corrected fulfilled quantity",
+        "correctionEffect": "original {original} · corrected {corrected} · fulfilled {fulfilled} · closed {closed} · remaining {remaining} · stock delta {delta}",
+        "correctionSaved": "Correction recorded",
+        "relatedReturn": "Related return {number} · {quantity}",
+        "nonBillable": "Replacement delivery · excluded from billing by default",
+        "loading": "Working…",
+        "saving": "Saving…",
+        "confirm": "Confirm operation",
+        "saved": "Operation recorded"
       },
       "fulfillment": {
-        "title": { "GOODS_RECEIPT": "Receive goods", "DELIVERY_NOTE": "Create delivery" },
+        "title": {
+          "GOODS_RECEIPT": "Receive goods",
+          "DELIVERY_NOTE": "Create delivery"
+        },
         "description": "Choose quantities to record from {number}. Review stock availability before posting.",
         "progress": "Ordered {ordered} · completed {done} · remaining {remaining} {unit}",
         "quantity": "This operation",
@@ -666,27 +815,71 @@
         "keepMine": "Save my version"
       },
       "details": {
-        "items": "Items", "product": "Product", "ordered": "Ordered", "done": "Done",
-        "remaining": "Remaining", "billed": "Billed", "noItems": "No line items have been added.", "activity": "Activity",
-        "net": "Net", "tax": "Tax", "gross": "Total", "allocatedFrom": "From {number} · {quantity} units",
-        "currencyAndRates": "Currency and exchange rates", "documentCurrency": "Document currency", "currencyNotRecorded": "Not recorded", "appliedExchangeRates": "Applied rates",
-        "exchangeRateFrom": "1 {source} equals", "noExchangeRates": "No currency conversion was needed.", "unitPrice": "Unit price",
-        "noActivity": "No activity recorded yet.", "loadError": "This related document could not be loaded.",
-        "back": "Back to the previous document", "related": "Related documents", "source": "Source order",
-        "relatedDocument": "Related document", "noRelated": "No related documents yet.",
+        "items": "Items",
+        "product": "Product",
+        "ordered": "Ordered",
+        "done": "Done",
+        "remaining": "Remaining",
+        "billed": "Billed",
+        "noItems": "No line items have been added.",
+        "activity": "Activity",
+        "net": "Net",
+        "tax": "Tax",
+        "gross": "Total",
+        "allocatedFrom": "From {number} · {quantity} units",
+        "currencyAndRates": "Currency and exchange rates",
+        "documentCurrency": "Document currency",
+        "currencyNotRecorded": "Not recorded",
+        "appliedExchangeRates": "Applied rates",
+        "exchangeRateFrom": "1 {source} equals",
+        "noExchangeRates": "No currency conversion was needed.",
+        "unitPrice": "Unit price",
+        "noActivity": "No activity recorded yet.",
+        "loadError": "This related document could not be loaded.",
+        "back": "Back to the previous document",
+        "related": "Related documents",
+        "source": "Source order",
+        "relatedDocument": "Related document",
+        "noRelated": "No related documents yet.",
         "relations": {
-          "CREATED_FROM": "Created from", "FULFILLS": "Fulfills", "CANCELS": "Cancels"
+          "CREATED_FROM": "Created from",
+          "FULFILLS": "Fulfills",
+          "CANCELS": "Cancels",
+          "CORRECTS": "Corrects",
+          "RETURNS": "Returns",
+          "REPLACES": "Replaces",
+          "TRANSFER_STEP": "Transfer step"
         }
       },
       "files": {
-        "title": "Files and PDFs", "add": "Add file", "empty": "No files attached yet.",
-        "uploaded": "File uploaded", "generationQueued": "PDF generation queued", "generating": "Generating PDF…", "pdfLanguage": "PDF language", "languages": { "en": "English", "hu": "Hungarian" },
-        "retryQueued": "PDF retry queued", "retry": "Retry PDF generation",
-        "download": "Download file", "open": "Open file",
-        "sources": { "UPLOAD": "Uploaded file", "GENERATED_PDF": "Generated PDF" },
-        "status": { "QUEUED": "Queued", "PROCESSING": "Processing", "COMPLETED": "Ready", "FAILED": "Failed" }
+        "title": "Files and PDFs",
+        "add": "Add file",
+        "empty": "No files attached yet.",
+        "uploaded": "File uploaded",
+        "generationQueued": "PDF generation queued",
+        "generating": "Generating PDF…",
+        "pdfLanguage": "PDF language",
+        "languages": { "en": "English", "hu": "Hungarian" },
+        "retryQueued": "PDF retry queued",
+        "retry": "Retry PDF generation",
+        "download": "Download file",
+        "open": "Open file",
+        "sources": {
+          "UPLOAD": "Uploaded file",
+          "GENERATED_PDF": "Generated PDF"
+        },
+        "status": {
+          "QUEUED": "Queued",
+          "PROCESSING": "Processing",
+          "COMPLETED": "Ready",
+          "FAILED": "Failed"
+        }
       },
-      "pagination": { "page": "Page {page} of {pages}", "previous": "Previous", "next": "Next" },
+      "pagination": {
+        "page": "Page {page} of {pages}",
+        "previous": "Previous",
+        "next": "Next"
+      },
       "validation": {
         "required": "This field is required.",
         "notesTooLong": "Notes must be 2,000 characters or fewer.",
