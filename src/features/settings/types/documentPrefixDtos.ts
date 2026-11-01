@@ -1,4 +1,4 @@
-import { DocumentType } from '@/features/documents/types/documents';
+import { DocumentType } from '@/features/documents/enums/documentEnums';
 
 export type DocumentPrefixDto = {
   id: number;

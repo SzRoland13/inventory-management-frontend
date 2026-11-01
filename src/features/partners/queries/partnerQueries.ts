@@ -7,10 +7,11 @@ import type {
   PartnerRequest,
 } from '@/features/partners/types/partner';
 
-export function usePartnersQuery() {
+export function usePartnersQuery(enabled = true) {
   return useQuery({
     queryKey: queryKeys.partners.all,
     queryFn: () => requireSuccessfulResponse(PartnerService.list()),
+    enabled,
   });
 }
 
