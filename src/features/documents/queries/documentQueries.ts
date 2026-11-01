@@ -75,7 +75,7 @@ export function useUpdateDocumentDraftMutation() {
 export function usePostFulfillmentMutation() {
   const invalidate = useInvalidateDocuments();
   return useMutation({
-    mutationFn: ({ id, idempotencyKey }: { id: number; sourceId?: number; idempotencyKey: string }) => requireSuccessfulResponse(DocumentService.postFulfillment(id, idempotencyKey)),
+    mutationFn: ({ id, version, idempotencyKey }: { id: number; version: string; sourceId?: number; idempotencyKey: string }) => requireSuccessfulResponse(DocumentService.postFulfillment(id, version, idempotencyKey)),
     onSuccess: (_, variables) => Promise.all([invalidate(variables.id), ...(variables.sourceId ? [invalidate(variables.sourceId)] : [])]),
   });
 }
@@ -83,8 +83,8 @@ export function usePostFulfillmentMutation() {
 export function useConfirmOrderMutation() {
   const invalidate = useInvalidateDocuments();
   return useMutation({
-    mutationFn: (id: number) => requireSuccessfulResponse(DocumentService.confirmOrder(id)),
-    onSuccess: (_, id) => invalidate(id),
+    mutationFn: ({ id, version }: { id: number; version: string }) => requireSuccessfulResponse(DocumentService.confirmOrder(id, version)),
+    onSuccess: (_, variables) => invalidate(variables.id),
   });
 }
 
@@ -107,8 +107,8 @@ export function usePreviewFulfillmentMutation() {
 export function useCloseRemainingMutation() {
   const invalidate = useInvalidateDocuments();
   return useMutation({
-    mutationFn: ({ id, request }: { id: number; request: CloseRemainingRequest }) =>
-      requireSuccessfulResponse(DocumentService.closeRemaining(id, request)),
+    mutationFn: ({ id, version, request }: { id: number; version: string; request: CloseRemainingRequest }) =>
+      requireSuccessfulResponse(DocumentService.closeRemaining(id, version, request)),
     onSuccess: (_, variables) => invalidate(variables.id),
   });
 }
@@ -116,7 +116,16 @@ export function useCloseRemainingMutation() {
 export function useRetryPdfMutation() {
   const invalidate = useInvalidateDocuments();
   return useMutation({
-    mutationFn: (id: number) => requireSuccessfulResponse(DocumentService.retryPdf(id)),
-    onSuccess: (_, id) => invalidate(id),
+    mutationFn: ({ id, idempotencyKey }: { id: number; idempotencyKey: string }) => requireSuccessfulResponse(DocumentService.retryPdf(id, idempotencyKey)),
+    onSuccess: (_, variables) => invalidate(variables.id),
+  });
+}
+
+export function useGeneratePdfMutation() {
+  const invalidate = useInvalidateDocuments();
+  return useMutation({
+    mutationFn: ({ id, language, idempotencyKey }: { id: number; language: string; idempotencyKey: string }) =>
+      requireSuccessfulResponse(DocumentService.generatePdf(id, language, idempotencyKey)),
+    onSuccess: (_, variables) => invalidate(variables.id),
   });
 }

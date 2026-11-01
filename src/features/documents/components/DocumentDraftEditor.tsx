@@ -2,13 +2,21 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { FilePenLine } from 'lucide-react';
+import { toast } from 'sonner';
 import { useDocumentQuery, useUpdateDocumentDraftMutation } from '@/features/documents/queries/documentQueries';
+import { useDocumentLineUnitResolver } from '@/features/documents/hooks/useDocumentLineUnitResolver';
+import { useCurrenciesQuery, useExtendedCompanyQuery } from '@/features/settings/queries/companyQueries';
+import { useSessionQuery } from '@/features/auth/queries/authQueries';
+import { UserRole } from '@/features/users/types/user';
 import type { BusinessDocument, DocumentDraftRequest } from '@/features/documents/types/documents';
 import { toastApiError } from '@/features/shared/api/apiResponse';
 import { Button } from '@/features/shared/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/features/shared/components/ui/dialog';
+import { Dialog } from '@/features/shared/components/ui/dialog';
 import { Input } from '@/features/shared/components/ui/input';
-import { Label } from '@/features/shared/components/ui/label';
+import { AppDialogBody, AppDialogFooter, AppDialogHeader, appDialogCancelButtonClass } from '@/features/shared/components/AppDialogLayout';
+import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
+import { DocumentDraftCurrencyFields, DocumentDraftDateField, DocumentDraftNotesField } from '@/features/documents/components/DocumentDraftFields';
 
 type Props = { document: BusinessDocument | null; onClose: () => void };
 type SaveState = 'saved' | 'saving' | 'error' | 'conflict';
@@ -17,7 +25,13 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
   const t = useTranslations();
   const detail = useDocumentQuery(document?.id ?? null, false);
   const update = useUpdateDocumentDraftMutation();
+  const resolveUnitId = useDocumentLineUnitResolver();
+  const company = useExtendedCompanyQuery();
+  const currenciesQuery = useCurrenciesQuery();
+  const session = useSessionQuery();
+  const isAdmin = session.data?.payload.role === UserRole.ADMIN;
   const current = detail.data?.payload ?? document;
+  const currencies = currenciesQuery.data?.payload.currencies ?? [];
   const versionRef = useRef(current?.version ?? '');
   const dirtyRef = useRef(false);
   const editSequence = useRef(0);
@@ -29,9 +43,14 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
   const [date, setDate] = useState(current?.date ?? '');
   const [notes, setNotes] = useState(current?.notes ?? '');
   const [quantities, setQuantities] = useState<Record<number, number>>(() => Object.fromEntries((current?.lines ?? []).map((line) => [line.id, line.orderedQuantity])));
+  const [currencyId, setCurrencyId] = useState(String(current?.currencyId ?? ''));
+  const [exchangeRates, setExchangeRates] = useState<Record<number, string>>(() => Object.fromEntries((current?.exchangeRates ?? []).map((rate) => [rate.sourceCurrencyId, String(rate.rate)])));
   const [saveState, setSaveState] = useState<SaveState>('saved');
-  const draftState = useRef({ current, date, notes, quantities });
-  draftState.current = { current, date, notes, quantities };
+  const draftState = useRef({ current, date, notes, quantities, currencyId, exchangeRates });
+  draftState.current = { current, date, notes, quantities, currencyId, exchangeRates };
+  const selectedCurrencyId = Number(currencyId || current?.currencyId || company.data?.payload.preferredCurrency?.id || 0);
+  const sourceCurrencyIds = [...new Set(current?.lines.map((line) => line.sourceCurrencyId ?? current.currencyId).filter((id): id is number => id != null) ?? [])];
+  const requiredSourceCurrencyIds = sourceCurrencyIds.filter((id) => id !== selectedCurrencyId);
 
   useEffect(() => {
     if (!dirtyRef.current && current) {
@@ -39,8 +58,10 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
       setDate(current.date);
       setNotes(current.notes ?? '');
       setQuantities(Object.fromEntries(current.lines.map((line) => [line.id, line.orderedQuantity])));
+      setCurrencyId(String(current.currencyId ?? company.data?.payload.preferredCurrency?.id ?? ''));
+      setExchangeRates(Object.fromEntries((current.exchangeRates ?? []).map((rate) => [rate.sourceCurrencyId, String(rate.rate)])));
     }
-  }, [current]);
+  }, [current, company.data?.payload.preferredCurrency?.id]);
 
   useEffect(() => {
     if (!current || !dirtyRef.current || saveState === 'conflict') return;
@@ -54,7 +75,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     };
     // saveDraft reads the latest form state after the debounce.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date, notes, quantities]);
+  }, [date, notes, quantities, currencyId, exchangeRates]);
 
   async function saveDraft(version = versionRef.current): Promise<boolean> {
     if (saveInFlight.current) {
@@ -70,17 +91,59 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     const documentSnapshot = snapshot.current;
     if (!documentSnapshot) return false;
     const sequence = editSequence.current;
+    let resolvedLines: Array<{ line: (typeof documentSnapshot.lines)[number]; unitId: number | null }>;
+    try {
+      resolvedLines = await Promise.all(documentSnapshot.lines.map(async (line) => ({
+        line,
+        unitId: await resolveUnitId(line),
+      })));
+    } catch (error) {
+      setSaveState('error');
+      saveStateRef.current = 'error';
+      toastApiError(t, error);
+      return false;
+    }
+    if (resolvedLines.some(({ unitId }) => unitId === null)) {
+      setSaveState('error');
+      saveStateRef.current = 'error';
+      toast.error(t('pages.documents.editor.unitUnavailable'));
+      return false;
+    }
+    const targetCurrencyId = Number(snapshot.currencyId || documentSnapshot.currencyId || company.data?.payload.preferredCurrency?.id || 0);
+    if (!targetCurrencyId) {
+      setSaveState('error');
+      saveStateRef.current = 'error';
+      toast.error(t('pages.documents.validation.currencyUnavailable'));
+      return false;
+    }
+    const requiredRates = [...new Set(documentSnapshot.lines
+      .map((line) => line.sourceCurrencyId ?? documentSnapshot.currencyId ?? targetCurrencyId)
+      .filter((sourceCurrencyId) => sourceCurrencyId !== targetCurrencyId))];
+    const rates = requiredRates.map((sourceCurrencyId) => ({
+      sourceCurrencyId,
+      rate: Number(snapshot.exchangeRates[sourceCurrencyId]),
+    }));
+    if (rates.some(({ rate }) => !Number.isFinite(rate) || rate <= 0)) {
+      setSaveState('error');
+      saveStateRef.current = 'error';
+      return false;
+    }
     const request: DocumentDraftRequest = {
       type: documentSnapshot.type as DocumentDraftRequest['type'],
-      partnerId: documentSnapshot.partnerId,
-      warehouseId: documentSnapshot.warehouseId,
+      currencyId: targetCurrencyId,
+      exchangeRates: rates,
+      partnerId: documentSnapshot.partnerId ?? undefined,
+      warehouseId: documentSnapshot.warehouseId ?? undefined,
       date: snapshot.date,
       notes: snapshot.notes,
-      lines: documentSnapshot.lines.map((line) => ({
+      lines: resolvedLines.map(({ line, unitId }) => ({
         productId: line.productId,
-        unitId: line.unitId,
+        unitId: unitId!,
         quantity: snapshot.quantities[line.id] ?? line.orderedQuantity,
-        ...(line.unitPrice === undefined ? {} : { unitPrice: line.unitPrice }),
+        ...(line.sourceUnitPrice === undefined && line.unitPrice === undefined
+          ? {}
+          : { sourceUnitPrice: line.sourceUnitPrice ?? line.unitPrice }),
+        sourceCurrencyId: line.sourceCurrencyId ?? documentSnapshot.currencyId ?? targetCurrencyId,
       })),
     };
     saveInFlight.current = true;
@@ -134,6 +197,8 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     setDate(latest.data.payload.date);
     setNotes(latest.data.payload.notes ?? '');
     setQuantities(Object.fromEntries(latest.data.payload.lines.map((line) => [line.id, line.orderedQuantity])));
+    setCurrencyId(String(latest.data.payload.currencyId ?? company.data?.payload.preferredCurrency?.id ?? ''));
+    setExchangeRates(Object.fromEntries((latest.data.payload.exchangeRates ?? []).map((rate) => [rate.sourceCurrencyId, String(rate.rate)])));
     setSaveState('saved');
     saveStateRef.current = 'saved';
   }
@@ -167,11 +232,9 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
 
   return (
     <Dialog open onOpenChange={(open) => !open && void closeEditor()}>
-      <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto border-zinc-700 bg-zinc-900 text-zinc-100'>
-        <DialogHeader>
-          <DialogTitle>{t('pages.documents.editor.title', { number: current.number || t('pages.documents.draft') })}</DialogTitle>
-          <DialogDescription className='text-zinc-400'>{t('pages.documents.editor.description')}</DialogDescription>
-        </DialogHeader>
+      <ThemedDialogContent className='!max-w-2xl'>
+        <AppDialogHeader title={t('pages.documents.editor.title', { number: current.number || t('pages.documents.draft') })} description={t('pages.documents.editor.description')} icon={FilePenLine} />
+        <AppDialogBody>
         <div className='mb-4 flex items-center gap-2 text-sm' aria-live='polite'>
           <span className={`h-2 w-2 rounded-full ${saveState === 'saved' ? 'bg-emerald-400' : saveState === 'error' || saveState === 'conflict' ? 'bg-rose-400' : 'animate-pulse bg-amber-300'}`} />
           <span className={saveState === 'saved' ? 'text-emerald-200' : 'text-zinc-300'}>{statusText}</span>
@@ -185,16 +248,26 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
           </div>
         </div>}
         <div className='space-y-5'>
-          <div className='grid gap-4 sm:grid-cols-2'>
-            <div className='space-y-2'><Label htmlFor='edit-document-date'>{t('pages.documents.create.date')}</Label><Input id='edit-document-date' type='date' value={date} onChange={(event) => change(setDate, event.target.value)} className='border-zinc-600 bg-zinc-800' /></div>
-            <div className='space-y-2'><Label htmlFor='edit-document-notes'>{t('pages.documents.create.notes')}</Label><Input id='edit-document-notes' value={notes} onChange={(event) => change(setNotes, event.target.value)} maxLength={2000} className='border-zinc-600 bg-zinc-800' /></div>
-          </div>
+          <DocumentDraftDateField value={date} onChange={(value) => change(setDate, value)} />
+          <DocumentDraftCurrencyFields
+            isAdmin={isAdmin}
+            currencies={currencies}
+            preferredCurrencyId={company.data?.payload.preferredCurrency?.id}
+            currencyId={selectedCurrencyId}
+            staticCurrencyCode={current.currencyCode}
+            exchangeRates={exchangeRates}
+            sourceCurrencyIds={requiredSourceCurrencyIds}
+            onCurrencyChange={(value) => change(setCurrencyId, value)}
+            onExchangeRateChange={(sourceCurrencyId, value) => change(setExchangeRates, { ...exchangeRates, [sourceCurrencyId]: value })}
+          />
           <section className='space-y-2'><h3 className='text-sm font-semibold'>{t('pages.documents.create.items')}</h3>
             {current.lines.map((line) => <div key={line.id} className='grid grid-cols-[minmax(0,1fr)_110px] items-center gap-3 rounded-lg border border-zinc-700 bg-zinc-800/40 p-3'><div className='min-w-0'><p className='truncate text-sm font-medium'>{line.productName}</p><p className='text-xs text-zinc-500'>{line.productCode} · {line.unitName}</p></div><Input type='number' min='0.001' step='any' aria-label={t('pages.documents.create.quantity')} value={quantities[line.id] ?? line.orderedQuantity} onChange={(event) => change(setQuantities, { ...quantities, [line.id]: Number(event.target.value) })} className='border-zinc-600 bg-zinc-950 text-right tabular-nums' /></div>)}
           </section>
+          <DocumentDraftNotesField value={notes} onChange={(value) => change(setNotes, value)} />
         </div>
-        <DialogFooter className='mt-5'><Button variant='outline' onClick={() => void closeEditor()} className='border-zinc-600 bg-zinc-800'>{t('common.done')}</Button></DialogFooter>
-      </DialogContent>
+        </AppDialogBody>
+        <AppDialogFooter><Button variant='outline' onClick={() => void closeEditor()} className={appDialogCancelButtonClass}>{t('common.done')}</Button></AppDialogFooter>
+      </ThemedDialogContent>
     </Dialog>
   );
 }

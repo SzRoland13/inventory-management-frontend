@@ -12,7 +12,7 @@ import {
   Warehouse,
 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { documentActionLabel, documentStatusLabel, documentTypeLabel, formatDocumentDate } from '@/features/documents/helpers/documentPresentation';
+import { documentActionLabel, documentStatusLabel, documentTypeLabel, formatDocumentAmount, formatDocumentDate } from '@/features/documents/helpers/documentPresentation';
 import { DocumentQueueView } from '@/features/documents/enums/documentEnums';
 import type { BusinessDocument } from '@/features/documents/types/documents';
 import { Badge } from '@/features/shared/components/ui/badge';
@@ -197,14 +197,11 @@ function DocumentQueueRow({
               document.routeName ||
               t('pages.documents.noPartner')}
           </span>
-          <span>{t('pages.documents.owner', { name: document.ownerName })}</span>
+          <span>{t('pages.documents.owner', { name: document.ownerName ?? '' })}</span>
           <span>{formatDocumentDate(document.date, locale)}</span>
           {document.totals && (
             <span className='font-medium tabular-nums text-zinc-300'>
-              {new Intl.NumberFormat(locale, {
-                style: 'currency',
-                currency: document.totals.currencyCode,
-              }).format(document.totals.gross)}
+              {formatDocumentAmount(document.totals.gross, document.totals.currencyCode ?? document.currencyCode, locale)}
             </span>
           )}
         </div>
@@ -244,21 +241,11 @@ function StatusBadge({ status }: { status: BusinessDocument['status'] }) {
   const t = useTranslations();
   const colors: Partial<Record<BusinessDocument['status'], string>> = {
     DRAFT: 'border-zinc-600 bg-zinc-800 text-zinc-300',
-    READY: 'border-sky-500/30 bg-sky-500/10 text-sky-200',
-    PARTIALLY_FULFILLED: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
-    FULFILLED: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
-    CLOSED: 'border-zinc-600 bg-zinc-800 text-zinc-400',
+    SENT: 'border-sky-500/30 bg-sky-500/10 text-sky-200',
+    CONFIRMED: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-200',
+    PARTIALLY_COMPLETED: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
+    COMPLETED: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
     CANCELLED: 'border-rose-500/30 bg-rose-500/10 text-rose-200',
-    IN_TRANSIT: 'border-sky-500/30 bg-sky-500/10 text-sky-200',
-    QUARANTINED: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
-    NEEDS_RECONCILIATION: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
-    AWAITING_APPROVAL: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
-    APPROVED: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
-    REJECTED: 'border-rose-500/30 bg-rose-500/10 text-rose-200',
-    PARTIALLY_BILLED: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-200',
-    CREDITED: 'border-zinc-600 bg-zinc-800 text-zinc-300',
-    REVERSED: 'border-zinc-600 bg-zinc-800 text-zinc-400',
-    RETURNED: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
   };
 
   return (

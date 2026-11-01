@@ -13,7 +13,7 @@ export type ReleaseOneDocumentType = OrderDocumentType | DocumentType.GOODS_RECE
 
 export type RelatedDocument = {
   id: number;
-  number: string;
+  number: string | null;
   type: DocumentType;
   relationKind?: DocumentRelationKind;
 };
@@ -24,11 +24,14 @@ export type DocumentLine = {
   productName: string;
   productCode: string;
   unitName: string;
-  unitId: number;
+  unitId?: number | null;
   orderedQuantity: number;
   fulfilledQuantity: number;
   operationQuantity?: number;
   remainingQuantity: number;
+  closedQuantity?: number;
+  closureReason?: string | null;
+  sourceLineId?: number | null;
   billedQuantity?: number;
   returnableQuantity?: number;
   returnedQuantity?: number;
@@ -37,6 +40,8 @@ export type DocumentLine = {
   countedQuantity?: number;
   variance?: number;
   unitPrice?: number;
+  sourceUnitPrice?: number;
+  sourceCurrencyId?: number | null;
   sourceAllocations?: Array<{
     sourceDocumentId: number;
     sourceLineId: number;
@@ -45,8 +50,13 @@ export type DocumentLine = {
   }>;
 };
 
+export type DocumentExchangeRate = {
+  sourceCurrencyId: number;
+  rate: number;
+};
+
 export type DocumentTotals = {
-  currencyCode: string;
+  currencyCode: string | null;
   net: number;
   tax: number;
   gross: number;
@@ -59,15 +69,16 @@ export type DocumentFile = {
   contentType: string;
   source: DocumentFileSource;
   status?: DocumentFileStatus;
-  errorMessage?: string;
-  downloadUrl?: string;
+  language?: string | null;
+  errorMessage?: string | null;
+  downloadUrl?: string | null;
   createdAt: string;
 };
 
 export type DocumentActivity = {
   id: number;
   description: string;
-  actorName: string;
+  actorName: string | null;
   occurredAt: string;
 };
 
@@ -75,20 +86,20 @@ export type BusinessDocument = {
   id: number;
   type: DocumentType;
   number: string | null;
-  partnerName?: string;
-  routeName?: string;
+  partnerName?: string | null;
+  routeName?: string | null;
   date: string;
-  ownerName: string;
-  partnerId?: number;
-  warehouseId?: number;
-  notes?: string;
-  currencyCode?: string;
-  paymentTermsId?: number;
-  totals?: DocumentTotals;
+  ownerName: string | null;
+  partnerId?: number | null;
+  warehouseId?: number | null;
+  notes?: string | null;
+  currencyCode?: string | null;
+  currencyId?: number | null;
+  exchangeRates?: DocumentExchangeRate[];
+  totals?: DocumentTotals | null;
   status: DocumentStatus;
   lines: DocumentLine[];
   allowedActions: DocumentAction[];
-  sourceDocument?: RelatedDocument;
   relatedDocuments: RelatedDocument[];
   activity: DocumentActivity[];
   files: DocumentFile[];
@@ -117,6 +128,8 @@ export type DocumentCapabilitiesResponse = {
 
 export type DocumentDraftRequest = {
   type: ReleaseOneDocumentType;
+  currencyId: number;
+  exchangeRates: DocumentExchangeRate[];
   partnerId?: number;
   warehouseId?: number;
   date: string;
@@ -126,6 +139,8 @@ export type DocumentDraftRequest = {
     unitId: number;
     quantity: number;
     unitPrice?: number;
+    sourceUnitPrice?: number;
+    sourceCurrencyId?: number;
   }>;
 };
 

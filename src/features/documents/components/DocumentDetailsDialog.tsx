@@ -1,21 +1,26 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Activity, ArrowLeft, ArrowUpRight, Check, Download, ExternalLink, FileText, PackageCheck, RefreshCw, Upload, X } from 'lucide-react';
+import { Activity, ArrowLeft, ArrowUpRight, Check, CircleDollarSign, Download, ExternalLink, FileText, Package, PackageCheck, RefreshCw, Upload } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { useConfirmOrderMutation, useDocumentQuery, useRetryPdfMutation } from '@/features/documents/queries/documentQueries';
+import { useConfirmOrderMutation, useDocumentQuery, useGeneratePdfMutation, useRetryPdfMutation } from '@/features/documents/queries/documentQueries';
 import { DocumentService } from '@/features/documents/services/DocumentService';
 import { DocumentAction, DocumentFileSource, DocumentFileStatus } from '@/features/documents/enums/documentEnums';
 import type { BusinessDocument } from '@/features/documents/types/documents';
 import { requireSuccessfulResponse, toastApiError } from '@/features/shared/api/apiResponse';
 import { Badge } from '@/features/shared/components/ui/badge';
 import { Button } from '@/features/shared/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/features/shared/components/ui/dialog';
+import { Dialog } from '@/features/shared/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/features/shared/components/ui/select';
+import { ScrollArea } from '@/features/shared/components/ui/scroll-area';
+import { AppDialogBody, AppDialogFooter, AppDialogHeader, AppDialogSection, appDialogCancelButtonClass, appDialogPrimaryButtonClass } from '@/features/shared/components/AppDialogLayout';
+import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { FulfillmentDialog } from '@/features/documents/components/FulfillmentDialog';
 import { CloseRemainingDialog } from '@/features/documents/components/CloseRemainingDialog';
 import { DocumentDraftEditor } from '@/features/documents/components/DocumentDraftEditor';
-import { documentRelationLabel, documentStatusLabel, documentTypeLabel } from '@/features/documents/helpers/documentPresentation';
+import { documentRelationLabel, documentStatusLabel, documentTypeLabel, formatDocumentAmount, formatDocumentTimestamp } from '@/features/documents/helpers/documentPresentation';
+import { useCurrenciesQuery } from '@/features/settings/queries/companyQueries';
 
 type Props = { document: BusinessDocument | null; onClose: () => void };
 
@@ -26,12 +31,16 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   const activeId = documentPath.at(-1) ?? document?.id ?? null;
   const fileInput = useRef<HTMLInputElement>(null);
   const detailQuery = useDocumentQuery(activeId);
+  const currenciesQuery = useCurrenciesQuery();
   const retryPdf = useRetryPdfMutation();
+  const generatePdf = useGeneratePdfMutation();
   const confirmOrder = useConfirmOrderMutation();
   const [fulfillmentOpen, setFulfillmentOpen] = useState(false);
   const [closeRemainingOpen, setCloseRemainingOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
+  const [pdfLanguage, setPdfLanguage] = useState<'en' | 'hu'>(locale === 'hu' ? 'hu' : 'en');
   const current = detailQuery.data?.payload ?? (activeId === document?.id ? document : null);
+  const currenciesById = new Map((currenciesQuery.data?.payload.currencies ?? []).map((currency) => [currency.id, currency]));
   function closeDetails() {
     if (editorOpen) return;
     onClose();
@@ -39,11 +48,17 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   if (!document) return null;
 
   if (!current) {
-    return <Dialog open onOpenChange={(open) => !open && closeDetails()}><DialogContent className='max-w-lg border-zinc-700 bg-zinc-900 text-zinc-100'>
-      <DialogTitle>{detailQuery.isError ? t('pages.documents.details.loadError') : t('pages.documents.loading')}</DialogTitle>
-      {detailQuery.isError ? <Button variant='outline' onClick={() => void detailQuery.refetch()} className='mt-3 border-zinc-600 bg-zinc-800'>{t('common.retry')}</Button> : <div role='status' aria-busy='true' className='mt-4 h-20 animate-pulse rounded-xl bg-zinc-800' />}
-    </DialogContent></Dialog>;
+    return <Dialog open onOpenChange={(open) => !open && closeDetails()}><ThemedDialogContent className='!max-w-2xl'>
+      <AppDialogHeader title={detailQuery.isError ? t('pages.documents.details.loadError') : t('pages.documents.loading')} description={t('pages.documents.details.loadError')} icon={FileText} hideDescription />
+      <AppDialogBody>
+        {detailQuery.isError ? <Button variant='outline' onClick={() => void detailQuery.refetch()} className={appDialogCancelButtonClass}>{t('common.retry')}</Button> : <div role='status' aria-busy='true' className='h-20 animate-pulse rounded-xl bg-zinc-800' />}
+      </AppDialogBody>
+    </ThemedDialogContent></Dialog>;
   }
+
+  const documentCurrency = currenciesById.get(current.currencyId ?? -1);
+  const documentCurrencyCode = current.currencyCode ?? documentCurrency?.code ?? null;
+  const currencyNotRecorded = t('pages.documents.details.currencyNotRecorded');
 
   const showBillingProgress = current.lines.some(
     (line) => line.billedQuantity !== undefined,
@@ -71,8 +86,22 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   async function retry() {
     if (!current) return;
     try {
-      await retryPdf.mutateAsync(current.id);
+      await retryPdf.mutateAsync({ id: current.id, idempotencyKey: window.crypto.randomUUID() });
       toast.success(t('pages.documents.files.retryQueued'));
+    } catch (error) {
+      toastApiError(t, error);
+    }
+  }
+
+  async function generate() {
+    if (!current) return;
+    try {
+      await generatePdf.mutateAsync({
+        id: current.id,
+        language: pdfLanguage,
+        idempotencyKey: window.crypto.randomUUID(),
+      });
+      toast.success(t('pages.documents.files.generationQueued'));
     } catch (error) {
       toastApiError(t, error);
     }
@@ -81,7 +110,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   async function confirm() {
     if (!current) return;
     try {
-      await confirmOrder.mutateAsync(current.id);
+      await confirmOrder.mutateAsync({ id: current.id, version: current.version });
       toast.success(t('pages.documents.actions.confirmed'));
     } catch (error) {
       toastApiError(t, error);
@@ -90,74 +119,92 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
 
   return (
     <Dialog open onOpenChange={(open) => !open && closeDetails()}>
-      <DialogContent showCloseButton={false} className='max-h-[90vh] max-w-4xl overflow-y-auto border-zinc-700 bg-zinc-900 p-0 text-zinc-100'>
-        <div className='sticky top-0 z-10 flex items-start justify-between border-b border-zinc-700 bg-zinc-900/95 px-6 py-5 backdrop-blur'>
-          <div className='flex min-w-0 items-start gap-3'>
-            {documentPath.length > 0 && <Button variant='ghost' size='icon-sm' onClick={goBack} aria-label={t('pages.documents.details.back')} className='mt-0.5 text-zinc-300'><ArrowLeft /></Button>}
-            <div className='min-w-0'>
-            <DialogTitle className='text-xl'>{current.number || t('pages.documents.draft')}</DialogTitle>
-            <DialogDescription className='mt-1 text-zinc-400'>{documentTypeLabel(current.type, t)} · {current.partnerName || current.routeName || t('pages.documents.noPartner')}</DialogDescription>
+      <ThemedDialogContent className='!h-[min(90vh,56rem)] !max-h-[90vh] !max-w-2xl'>
+        <AppDialogHeader
+          title={current.number || t('pages.documents.draft')}
+          description={`${documentTypeLabel(current.type, t)} · ${current.partnerName || current.routeName || t('pages.documents.noPartner')}`}
+          icon={FileText}
+        />
+        <AppDialogBody className='!overflow-hidden !p-0'>
+          <ScrollArea className='h-full'>
+            <div className='space-y-6 px-6 py-6 pr-8 sm:px-8'>
+          {documentPath.length > 0 && <Button variant='ghost' size='sm' onClick={goBack} className='-ml-2 text-zinc-300'><ArrowLeft />{t('pages.documents.details.back')}</Button>}
+          <AppDialogSection title={t('pages.documents.details.currencyAndRates')} icon={CircleDollarSign} className='w-full'>
+            <div className='mb-3 flex flex-wrap items-end justify-between gap-3'>
+              <div><p className='text-xs text-zinc-500'>{t('pages.documents.details.documentCurrency')}</p><p className='mt-1 text-sm font-medium text-zinc-100'>{documentCurrencyCode ?? currencyNotRecorded}{documentCurrency?.name ? ` · ${documentCurrency.name}` : ''}</p></div>
+              <Badge variant='outline' className='border-indigo-400/30 bg-indigo-500/10 text-indigo-200'>{documentCurrencyCode ?? currencyNotRecorded}</Badge>
             </div>
-          </div>
-          <Button variant='ghost' size='icon' onClick={closeDetails} aria-label={t('common.done')}><X /></Button>
-        </div>
-
-        <div className='grid gap-6 p-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(240px,0.8fr)]'>
+            <div className='mt-4 border-t border-zinc-700 pt-3'>
+              <p className='mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500'>{t('pages.documents.details.appliedExchangeRates')}</p>
+              {(current.exchangeRates ?? []).length > 0 ? <div className='grid gap-2 sm:grid-cols-2'>
+                {current.exchangeRates!.map((exchangeRate) => {
+                  const sourceCurrency = currenciesById.get(exchangeRate.sourceCurrencyId);
+                  const rateText = new Intl.NumberFormat(locale, { maximumFractionDigits: 12 }).format(exchangeRate.rate);
+                  return <div key={exchangeRate.sourceCurrencyId} className='flex items-center justify-between gap-3 rounded-lg border border-zinc-700/80 bg-zinc-900/60 px-3 py-2 text-sm'>
+                    <span className='text-zinc-300'>{t('pages.documents.details.exchangeRateFrom', { source: sourceCurrency?.code ?? `#${exchangeRate.sourceCurrencyId}` })}</span>
+                    <span className='shrink-0 font-medium tabular-nums text-zinc-100'>{rateText} {documentCurrencyCode ?? currencyNotRecorded}</span>
+                  </div>;
+                })}
+              </div> : <p className='text-sm text-zinc-500'>{t('pages.documents.details.noExchangeRates')}</p>}
+            </div>
+          </AppDialogSection>
           <div className='space-y-6'>
-            {current.allowedActions.length > 0 && <div className='flex flex-wrap gap-2'>
-              {current.allowedActions.includes(DocumentAction.EDIT) && <Button variant='outline' onClick={() => setEditorOpen(true)} className='border-zinc-600 bg-zinc-800'>{t('pages.documents.actions.EDIT')}</Button>}
-              {current.allowedActions.includes(DocumentAction.CONFIRM) && <Button onClick={() => void confirm()} disabled={confirmOrder.isPending} className='bg-indigo-500 text-white hover:bg-indigo-400'><Check />{t('pages.documents.actions.CONFIRM')}</Button>}
-              {(current.allowedActions.includes(DocumentAction.RECEIVE) || current.allowedActions.includes(DocumentAction.DELIVER)) && <Button onClick={() => setFulfillmentOpen(true)} className='bg-indigo-500 text-white hover:bg-indigo-400'><PackageCheck />{t(`pages.documents.actions.${current.allowedActions.includes(DocumentAction.RECEIVE) ? 'RECEIVE' : 'DELIVER'}`)}</Button>}
+          <div className='space-y-6'>
+            {(current.allowedActions.includes(DocumentAction.POST) || current.allowedActions.includes(DocumentAction.CLOSE_REMAINING) || current.allowedActions.includes(DocumentAction.GENERATE_PDF)) && <div className='flex flex-wrap gap-2'>
               {current.allowedActions.includes(DocumentAction.POST) && <Button onClick={() => setFulfillmentOpen(true)} className='bg-indigo-500 text-white hover:bg-indigo-400'><PackageCheck />{t('pages.documents.actions.POST')}</Button>}
               {current.allowedActions.includes(DocumentAction.CLOSE_REMAINING) && <Button variant='outline' onClick={() => setCloseRemainingOpen(true)} className='border-zinc-600 bg-zinc-800'>{t('pages.documents.actions.CLOSE_REMAINING')}</Button>}
+              {current.allowedActions.includes(DocumentAction.GENERATE_PDF) && <div className='flex items-center gap-2'>
+                <Select value={pdfLanguage} onValueChange={(value) => setPdfLanguage(value as 'en' | 'hu')} disabled={generatePdf.isPending}>
+                  <SelectTrigger aria-label={t('pages.documents.files.pdfLanguage')} className='w-36 border-zinc-600 bg-zinc-800 text-zinc-100'><SelectValue /></SelectTrigger>
+                  <SelectContent className='border-zinc-700 bg-zinc-800 text-zinc-100'>
+                    <SelectItem value='en'>{t('pages.documents.files.languages.en')}</SelectItem>
+                    <SelectItem value='hu'>{t('pages.documents.files.languages.hu')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant='outline' onClick={() => void generate()} disabled={generatePdf.isPending} className='border-zinc-600 bg-zinc-800'><FileText />{t(generatePdf.isPending ? 'pages.documents.files.generating' : 'pages.documents.actions.GENERATE_PDF')}</Button>
+              </div>}
             </div>}
-            <section>
-              <div className='mb-3 flex items-center justify-between'>
-                <h3 className='font-semibold'>{t('pages.documents.details.items')}</h3>
-                <Badge variant='outline' className='border-zinc-600 text-zinc-300'>{documentStatusLabel(current.status, t)}</Badge>
-              </div>
-              <div className='overflow-hidden rounded-xl border border-zinc-700'>
-                <div className={`grid ${showBillingProgress ? 'grid-cols-[minmax(0,1fr)_repeat(4,auto)]' : 'grid-cols-[minmax(0,1fr)_repeat(3,auto)]'} gap-3 border-b border-zinc-700 bg-zinc-800/70 px-4 py-3 text-xs font-medium uppercase tracking-wide text-zinc-400`}>
-                  <span>{t('pages.documents.details.product')}</span>
-                  <span>{t('pages.documents.details.ordered')}</span>
-                  <span>{t('pages.documents.details.done')}</span>
-                  <span>{t('pages.documents.details.remaining')}</span>
-                  {showBillingProgress && <span>{t('pages.documents.details.billed')}</span>}
-                </div>
+            <AppDialogSection title={t('pages.documents.details.items')} icon={Package}>
+              <div className='mb-3 flex justify-end'><Badge variant='outline' className='border-zinc-600 text-zinc-300'>{documentStatusLabel(current.status, t)}</Badge></div>
+              <div className='space-y-2'>
                 {current.lines.map((line) => (
-                  <div key={line.id} className={`grid ${showBillingProgress ? 'grid-cols-[minmax(0,1fr)_repeat(4,auto)]' : 'grid-cols-[minmax(0,1fr)_repeat(3,auto)]'} gap-3 border-b border-zinc-800 px-4 py-3 text-sm last:border-0`}>
-                    <div className='min-w-0'>
-                      <p className='truncate font-medium'>{line.productName}</p>
-                      <p className='text-xs text-zinc-500'>{line.productCode}</p>
-                      {line.sourceAllocations?.map((allocation) => <button key={`${allocation.sourceDocumentId}-${allocation.sourceLineId}`} type='button' onClick={() => openRelated(allocation.sourceDocumentId)} className='mt-1 block text-xs text-indigo-300 hover:text-indigo-200'>{t('pages.documents.details.allocatedFrom', { number: allocation.sourceDocumentNumber, quantity: allocation.quantity })}</button>)}
+                  <article key={line.id} className='w-full rounded-xl border border-zinc-700 bg-zinc-800/40 p-4'>
+                    <div className='flex min-w-0 items-start justify-between gap-3'>
+                      <div className='min-w-0'>
+                        <p className='truncate text-sm font-medium'>{line.productName}</p>
+                        <p className='text-xs text-zinc-500'>{line.productCode}</p>
+                        {line.sourceAllocations?.map((allocation) => <button key={`${allocation.sourceDocumentId}-${allocation.sourceLineId}`} type='button' onClick={() => openRelated(allocation.sourceDocumentId)} className='mt-1 block text-xs text-indigo-300 hover:text-indigo-200'>{t('pages.documents.details.allocatedFrom', { number: allocation.sourceDocumentNumber, quantity: allocation.quantity })}</button>)}
+                      </div>
+                      {line.unitPrice !== undefined && <div className='shrink-0 text-right'><p className='text-[10px] uppercase tracking-wide text-zinc-500'>{t('pages.documents.details.unitPrice')}</p><p className='mt-0.5 text-xs tabular-nums text-zinc-300'>{formatDocumentAmount(line.unitPrice, current.totals?.currencyCode ?? documentCurrencyCode, locale)}</p></div>}
                     </div>
-                    <span className='tabular-nums text-zinc-300'>{line.orderedQuantity} {line.unitName}</span>
-                    <span className='tabular-nums text-zinc-400'>{line.fulfilledQuantity} {line.unitName}</span>
-                    <span className='tabular-nums text-zinc-300'>{line.remainingQuantity} {line.unitName}</span>
-                    {showBillingProgress && <span className='tabular-nums text-indigo-200'>{line.billedQuantity ?? 0} {line.unitName}</span>}
-                  </div>
+                    <div className={`mt-3 grid ${showBillingProgress ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-3'} gap-3`}>
+                      <LineMetric label={t('pages.documents.details.ordered')} value={line.orderedQuantity} unit={line.unitName} />
+                      <LineMetric label={t('pages.documents.details.done')} value={line.fulfilledQuantity} unit={line.unitName} />
+                      <LineMetric label={t('pages.documents.details.remaining')} value={line.remainingQuantity} unit={line.unitName} />
+                      {showBillingProgress && <LineMetric label={t('pages.documents.details.billed')} value={line.billedQuantity ?? 0} unit={line.unitName} accent />}
+                    </div>
+                  </article>
                 ))}
-                {!current.lines.length && <p className='p-5 text-sm text-zinc-400'>{t('pages.documents.details.noItems')}</p>}
+                {!current.lines.length && <p className='rounded-xl border border-zinc-700 bg-zinc-800/40 p-5 text-sm text-zinc-400'>{t('pages.documents.details.noItems')}</p>}
               </div>
               {current.totals && <dl className='mt-3 grid grid-cols-3 gap-3 rounded-xl border border-zinc-700 bg-zinc-800/40 p-4 text-sm'>
-                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.net')}</dt><dd className='mt-1 font-medium tabular-nums'>{formatMoney(current.totals.net, current.totals.currencyCode, locale)}</dd></div>
-                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.tax')}</dt><dd className='mt-1 font-medium tabular-nums'>{formatMoney(current.totals.tax, current.totals.currencyCode, locale)}</dd></div>
-                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.gross')}</dt><dd className='mt-1 font-semibold tabular-nums text-zinc-100'>{formatMoney(current.totals.gross, current.totals.currencyCode, locale)}</dd></div>
+                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.net')}</dt><dd className='mt-1 font-medium tabular-nums'>{formatDocumentAmount(current.totals.net, current.totals.currencyCode ?? current.currencyCode, locale)}</dd></div>
+                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.tax')}</dt><dd className='mt-1 font-medium tabular-nums'>{formatDocumentAmount(current.totals.tax, current.totals.currencyCode ?? current.currencyCode, locale)}</dd></div>
+                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.gross')}</dt><dd className='mt-1 font-semibold tabular-nums text-zinc-100'>{formatDocumentAmount(current.totals.gross, current.totals.currencyCode ?? current.currencyCode, locale)}</dd></div>
               </dl>}
-            </section>
+            </AppDialogSection>
 
-            <section>
-              <h3 className='mb-3 flex items-center gap-2 font-semibold'><Activity className='h-4 w-4 text-indigo-300' />{t('pages.documents.details.activity')}</h3>
+            <AppDialogSection title={t('pages.documents.details.activity')} icon={Activity}>
               <div className='space-y-3'>
-                {current.activity.map((event) => <div key={event.id} className='flex gap-3 text-sm'><span className='mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-400' /><div><p className='text-zinc-200'>{event.description}</p><p className='mt-0.5 text-xs text-zinc-500'>{event.actorName} · {event.occurredAt}</p></div></div>)}
+                {current.activity.map((event) => <div key={event.id} className='flex gap-3 text-sm'><span className='mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-400' /><div><p className='text-zinc-200'>{event.description}</p><p className='mt-0.5 text-xs text-zinc-500'>{event.actorName ? `${event.actorName} · ` : ''}{formatDocumentTimestamp(event.occurredAt, locale)}</p></div></div>)}
                 {!current.activity.length && <p className='text-sm text-zinc-500'>{t('pages.documents.details.noActivity')}</p>}
               </div>
-            </section>
+            </AppDialogSection>
           </div>
 
-          <aside className='space-y-5'>
-            <section className='rounded-xl border border-zinc-700 bg-zinc-800/40 p-4'>
-              <div className='mb-3 flex items-center justify-between gap-2'><h3 className='font-semibold'>{t('pages.documents.files.title')}</h3>{current.allowedActions.includes(DocumentAction.UPLOAD_FILE) && <Button size='sm' variant='outline' className='border-zinc-600 bg-zinc-800' onClick={() => fileInput.current?.click()}><Upload />{t('pages.documents.files.add')}</Button>}</div>
+          <aside className='grid gap-5 md:grid-cols-2'>
+            <AppDialogSection title={t('pages.documents.files.title')} icon={FileText}>
+              <div className='mb-3 flex items-center justify-end gap-2'>{current.allowedActions.includes(DocumentAction.UPLOAD_FILE) && <Button size='sm' variant='outline' className='border-zinc-600 bg-zinc-800' onClick={() => fileInput.current?.click()}><Upload />{t('pages.documents.files.add')}</Button>}</div>
               <input ref={fileInput} type='file' className='hidden' onChange={(event) => { void uploadFile(event.target.files?.[0]); event.currentTarget.value = ''; }} />
               <div className='space-y-2'>
                 {current.files.map((file) => (
@@ -170,18 +217,23 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                 ))}
                 {!current.files.length && <p className='py-3 text-sm text-zinc-500'>{t('pages.documents.files.empty')}</p>}
               </div>
-            </section>
-            <section className='rounded-xl border border-zinc-700 bg-zinc-800/40 p-4'>
-              <h3 className='mb-3 font-semibold'>{t('pages.documents.details.related')}</h3>
+            </AppDialogSection>
+            <AppDialogSection title={t('pages.documents.details.related')} icon={ArrowUpRight}>
               <div className='space-y-2'>
-                {current.sourceDocument && <RelatedDocument type={current.sourceDocument.type} number={current.sourceDocument.number} label={t('pages.documents.details.source')} onClick={() => openRelated(current.sourceDocument!.id)} />}
                 {current.relatedDocuments.map((related) => <RelatedDocument key={related.id} type={related.type} number={related.number} label={related.relationKind ? documentRelationLabel(related.relationKind, t) : t('pages.documents.details.relatedDocument')} onClick={() => openRelated(related.id)} />)}
-                {!current.sourceDocument && !current.relatedDocuments.length && <p className='text-sm text-zinc-500'>{t('pages.documents.details.noRelated')}</p>}
+                {!current.relatedDocuments.length && <p className='text-sm text-zinc-500'>{t('pages.documents.details.noRelated')}</p>}
               </div>
-            </section>
+            </AppDialogSection>
           </aside>
-        </div>
-      </DialogContent>
+            </div>
+            </div>
+          </ScrollArea>
+        </AppDialogBody>
+        {(current.allowedActions.includes(DocumentAction.EDIT) || current.allowedActions.includes(DocumentAction.CONFIRM)) && <AppDialogFooter>
+          {current.allowedActions.includes(DocumentAction.EDIT) && <Button variant='outline' onClick={() => setEditorOpen(true)} className={appDialogCancelButtonClass}>{t('pages.documents.actions.EDIT')}</Button>}
+          {current.allowedActions.includes(DocumentAction.CONFIRM) && <Button onClick={() => void confirm()} disabled={confirmOrder.isPending} className={appDialogPrimaryButtonClass}><Check />{t('pages.documents.actions.CONFIRM')}</Button>}
+        </AppDialogFooter>}
+      </ThemedDialogContent>
       {fulfillmentOpen && <FulfillmentDialog key={`${current.id}-${fulfillmentOpen}`} source={current} onClose={() => setFulfillmentOpen(false)} onComplete={() => { setFulfillmentOpen(false); onClose(); }} />}
       <CloseRemainingDialog document={closeRemainingOpen ? current : null} onClose={() => setCloseRemainingOpen(false)} />
       <DocumentDraftEditor document={editorOpen ? current : null} onClose={() => setEditorOpen(false)} />
@@ -189,12 +241,15 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   );
 }
 
-function RelatedDocument({ type, number, label, onClick }: { type: BusinessDocument['type']; number: string; label: string; onClick: () => void }) {
-  const t = useTranslations();
-  return <button type='button' onClick={onClick} className='group w-full rounded-lg border border-zinc-700 bg-zinc-900/60 p-3 text-left transition hover:border-indigo-400/50 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400'><span className='flex items-center justify-between gap-2'><span className='text-xs text-zinc-500'>{label}</span><ArrowUpRight className='h-3.5 w-3.5 text-zinc-500 group-hover:text-indigo-300' /></span><span className='mt-1 block text-sm font-medium'>{number} <span className='font-normal text-zinc-400'>· {documentTypeLabel(type, t)}</span></span></button>;
+function LineMetric({ label, value, unit, accent = false }: { label: string; value: number; unit: string; accent?: boolean }) {
+  return <div className='min-w-0 rounded-lg bg-zinc-900/60 px-2.5 py-2'>
+    <p className='truncate text-[10px] font-medium uppercase tracking-wide text-zinc-500'>{label}</p>
+    <p className={`mt-1 truncate text-sm tabular-nums ${accent ? 'text-indigo-200' : 'text-zinc-200'}`}>{value} <span className='text-xs text-zinc-500'>{unit}</span></p>
+  </div>;
 }
 
-function formatMoney(amount: number, currencyCode: string, locale: string) {
-  return new Intl.NumberFormat(locale, { style: 'currency', currency: currencyCode }).format(amount);
+function RelatedDocument({ type, number, label, onClick }: { type: BusinessDocument['type']; number: string | null; label: string; onClick: () => void }) {
+  const t = useTranslations();
+  return <button type='button' onClick={onClick} className='group w-full rounded-lg border border-zinc-700 bg-zinc-900/60 p-3 text-left transition hover:border-indigo-400/50 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400'><span className='flex items-center justify-between gap-2'><span className='text-xs text-zinc-500'>{label}</span><ArrowUpRight className='h-3.5 w-3.5 text-zinc-500 group-hover:text-indigo-300' /></span><span className='mt-1 block text-sm font-medium'>{number || t('pages.documents.draft')} <span className='font-normal text-zinc-400'>· {documentTypeLabel(type, t)}</span></span></button>;
 }
 

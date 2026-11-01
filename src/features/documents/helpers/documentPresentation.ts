@@ -29,3 +29,26 @@ export function formatDocumentDate(value: string, locale: string) {
   if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
 }
+
+export function formatDocumentTimestamp(value: string, locale: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(date);
+}
+
+export function formatDocumentAmount(
+  amount: number,
+  currencyCode: string | null | undefined,
+  locale: string,
+) {
+  const formatter = currencyCode
+    ? new Intl.NumberFormat(locale, { style: 'currency', currency: currencyCode })
+    : new Intl.NumberFormat(locale, { style: 'decimal', maximumFractionDigits: 2 });
+  return formatter.format(amount);
+}

@@ -13,11 +13,12 @@ export function useMinimalCompanyQuery(enabled = true) {
   });
 }
 
-export function useExtendedCompanyQuery() {
+export function useExtendedCompanyQuery(enabled = true) {
   return useQuery({
     queryKey: queryKeys.company.extended,
     queryFn: () =>
       requireSuccessfulResponse(CompanyService.getExtendedCompanyData()),
+    enabled,
   });
 }
 
@@ -78,10 +79,11 @@ export function useUpdatePreferredCurrencyMutation() {
   });
 }
 
-export function useCurrenciesQuery() {
+export function useCurrenciesQuery(enabled = true) {
   return useQuery({
     queryKey: queryKeys.currencies.all,
     queryFn: () => requireSuccessfulResponse(CurrencyService.getAll()),
     staleTime: 5 * 60_000,
+    enabled,
   });
 }

@@ -1,10 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { requireSuccessfulResponse } from '@/features/shared/api/apiResponse';
 import { queryKeys } from '@/features/shared/api/queryKeys';
 import { UnitsService } from '@/features/units/services/UnitsService';
 import { CategoriesService } from '@/features/categories/services/CategoriesService';
 import { AttributesService } from '@/features/attributes/services/AttributesService';
 import { ProductService } from '@/features/products/services/ProductService';
+import { ProductSortField, ProductStatus } from '@/features/products/types/product';
 import type {
   ProductCategory,
   ProductListRequest,
@@ -17,6 +18,31 @@ export function useProductsQuery(params: ProductListRequest, enabled = true) {
     queryFn: () => requireSuccessfulResponse(ProductService.list(params)),
     placeholderData: (previous) => previous,
     enabled,
+  });
+}
+
+export function useInfiniteProductsQuery(search: string, enabled = true) {
+  const params = {
+    size: 20,
+    ...(search ? { search } : {}),
+    status: ProductStatus.ACTIVE,
+    sortBy: ProductSortField.NAME,
+    sortDirection: 'ASC' as const,
+  };
+
+  return useInfiniteQuery({
+    queryKey: [...queryKeys.products.list(params), 'infinite'],
+    queryFn: async ({ pageParam }) => {
+      const response = await requireSuccessfulResponse(
+        ProductService.list({ ...params, page: pageParam }),
+      );
+      return response.payload;
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.page.last ? undefined : lastPage.page.number + 1,
+    enabled,
+    staleTime: 30_000,
   });
 }
 

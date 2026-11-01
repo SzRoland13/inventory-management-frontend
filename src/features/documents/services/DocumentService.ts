@@ -44,8 +44,10 @@ export const DocumentService = {
       request,
     ),
 
-  confirmOrder: (id: number) =>
-    BaseService.post<ApiResponse<BusinessDocument>>(`${DOCUMENTS_URL}/${id}/confirm`),
+  confirmOrder: (id: number, version: string) =>
+    BaseService.post<ApiResponse<BusinessDocument>>(`${DOCUMENTS_URL}/${id}/confirm`, undefined, {
+      headers: { 'If-Match': version },
+    }),
 
   previewFulfillment: (request: FulfillmentPreviewRequest) =>
     BaseService.post<ApiResponse<FulfillmentPreviewResponse>>(
@@ -53,17 +55,25 @@ export const DocumentService = {
       request,
     ),
 
-  postFulfillment: (id: number, idempotencyKey: string) =>
+  postFulfillment: (id: number, version: string, idempotencyKey: string) =>
     BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/${id}/post`,
       undefined,
-      { headers: { 'Idempotency-Key': idempotencyKey } },
+      { headers: { 'Idempotency-Key': idempotencyKey, 'If-Match': version } },
     ),
 
-  closeRemaining: (id: number, request: CloseRemainingRequest) =>
+  closeRemaining: (id: number, version: string, request: CloseRemainingRequest) =>
     BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/${id}/close-remaining`,
       request,
+      { headers: { 'If-Match': version } },
+    ),
+
+  generatePdf: (id: number, language: string, idempotencyKey: string) =>
+    BaseService.post<ApiResponse<BusinessDocument>>(
+      `${DOCUMENTS_URL}/${id}/pdf`,
+      undefined,
+      { params: { language }, headers: { 'Idempotency-Key': idempotencyKey } },
     ),
 
   uploadFile: (id: number, file: File) => {
@@ -75,8 +85,10 @@ export const DocumentService = {
     ).then((response) => response.data);
   },
 
-  retryPdf: (id: number) =>
+  retryPdf: (id: number, idempotencyKey: string) =>
     BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/${id}/pdf/retry`,
+      undefined,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
     ),
 };

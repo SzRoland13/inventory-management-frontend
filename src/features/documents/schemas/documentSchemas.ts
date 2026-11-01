@@ -8,6 +8,11 @@ export const documentDraftSchema = z.object({
     DocumentType.SALES_ORDER,
     DocumentType.DELIVERY_NOTE,
   ]),
+  currencyId: z.number().positive('pages.documents.validation.required'),
+  exchangeRates: z.array(z.object({
+    sourceCurrencyId: z.number().positive(),
+    rate: z.number().positive('pages.documents.validation.exchangeRate'),
+  })),
   date: z.string().min(1, 'pages.documents.validation.required'),
   partnerId: z.number().positive('pages.documents.validation.required'),
   warehouseId: z.number().positive().optional(),
@@ -17,6 +22,8 @@ export const documentDraftSchema = z.object({
     unitId: z.number().positive(),
     quantity: z.number().positive('pages.documents.validation.quantity'),
     unitPrice: z.number().nonnegative().optional(),
+    sourceUnitPrice: z.number().nonnegative().optional(),
+    sourceCurrencyId: z.number().positive().optional(),
   })).min(1, 'pages.documents.validation.addLine'),
 }).superRefine((draft, context) => {
   if ((draft.type === DocumentType.GOODS_RECEIPT || draft.type === DocumentType.DELIVERY_NOTE) && !draft.warehouseId) {
