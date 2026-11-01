@@ -17,7 +17,14 @@ interface CountrySelectProps {
   ariaLabel?: string;
 }
 
-export function CountrySelect({ id, value, onValueChange, disabled, invalid, ariaLabel }: CountrySelectProps) {
+export function CountrySelect({
+  id,
+  value,
+  onValueChange,
+  disabled,
+  invalid,
+  ariaLabel,
+}: CountrySelectProps) {
   const locale = useLocale();
   const t = useTranslations();
   const [open, setOpen] = useState(false);
@@ -26,17 +33,21 @@ export function CountrySelect({ id, value, onValueChange, disabled, invalid, ari
 
   const countries = useMemo(() => {
     const displayNames = new Intl.DisplayNames([locale], { type: 'region' });
-    return ISO_3166_ALPHA_2_CODES
-      .map((code) => ({ code, name: displayNames.of(code) ?? code }))
-      .sort((left, right) => left.name.localeCompare(right.name, locale));
+    return ISO_3166_ALPHA_2_CODES.map((code) => ({
+      code,
+      name: displayNames.of(code) ?? code,
+    })).sort((left, right) => left.name.localeCompare(right.name, locale));
   }, [locale]);
 
-  const selectedCountry = countries.find((country) => country.code === value.toUpperCase());
+  const selectedCountry = countries.find(
+    (country) => country.code === value.toUpperCase(),
+  );
   const normalizedSearch = search.trim().toLocaleLowerCase(locale);
   const filteredCountries = normalizedSearch
-    ? countries.filter(({ code, name }) =>
-        name.toLocaleLowerCase(locale).includes(normalizedSearch) ||
-        code.toLocaleLowerCase(locale).includes(normalizedSearch),
+    ? countries.filter(
+        ({ code, name }) =>
+          name.toLocaleLowerCase(locale).includes(normalizedSearch) ||
+          code.toLocaleLowerCase(locale).includes(normalizedSearch),
       )
     : countries;
 
@@ -89,25 +100,37 @@ export function CountrySelect({ id, value, onValueChange, disabled, invalid, ari
               className='border-zinc-700 bg-zinc-800 pl-8 text-zinc-100 placeholder:text-zinc-400'
             />
           </div>
-          <div role='listbox' aria-label={t('common.country.label')} className='max-h-64 overflow-y-auto p-1'>
-            {filteredCountries.length ? filteredCountries.map(({ code, name }) => (
-              <button
-                key={code}
-                type='button'
-                role='option'
-                aria-selected={code === value.toUpperCase()}
-                onClick={() => {
-                  onValueChange(code);
-                  setOpen(false);
-                }}
-                className='flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-zinc-800 focus:bg-zinc-800'
-              >
-                <Check className={`h-4 w-4 shrink-0 ${code === value.toUpperCase() ? 'opacity-100' : 'opacity-0'}`} />
-                <span className='min-w-0 flex-1 truncate'>{name}</span>
-                <span className='font-mono text-xs text-zinc-400'>{code}</span>
-              </button>
-            )) : (
-              <p className='px-3 py-6 text-center text-sm text-zinc-400'>{t('common.country.no-results')}</p>
+          <div
+            role='listbox'
+            aria-label={t('common.country.label')}
+            className='max-h-64 overflow-y-auto p-1'
+          >
+            {filteredCountries.length ? (
+              filteredCountries.map(({ code, name }) => (
+                <button
+                  key={code}
+                  type='button'
+                  role='option'
+                  aria-selected={code === value.toUpperCase()}
+                  onClick={() => {
+                    onValueChange(code);
+                    setOpen(false);
+                  }}
+                  className='flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-zinc-800 focus:bg-zinc-800'
+                >
+                  <Check
+                    className={`h-4 w-4 shrink-0 ${code === value.toUpperCase() ? 'opacity-100' : 'opacity-0'}`}
+                  />
+                  <span className='min-w-0 flex-1 truncate'>{name}</span>
+                  <span className='font-mono text-xs text-zinc-400'>
+                    {code}
+                  </span>
+                </button>
+              ))
+            ) : (
+              <p className='px-3 py-6 text-center text-sm text-zinc-400'>
+                {t('common.country.no-results')}
+              </p>
             )}
           </div>
         </PopoverPrimitive.Content>
