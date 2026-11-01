@@ -13,6 +13,7 @@ import { useWarehousesQuery } from '@/features/warehouses/queries/warehouseQueri
 import { useExtendedCompanyQuery } from '@/features/settings/queries/companyQueries';
 import { WarehouseStatus, WarehouseType } from '@/features/warehouses/types/warehouse';
 import { requireSuccessfulResponse, toastApiError } from '@/features/shared/api/apiResponse';
+import { createIdempotencyKey } from '@/features/shared/api/idempotencyKey';
 import { Button } from '@/features/shared/components/ui/button';
 import { Dialog } from '@/features/shared/components/ui/dialog';
 import { Input } from '@/features/shared/components/ui/input';
@@ -128,7 +129,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
         createdDraftId.current = draftId;
         documentVersion.current = created.payload.version;
       }
-      idempotencyKey.current ??= window.crypto.randomUUID();
+      idempotencyKey.current ??= createIdempotencyKey();
       await post.mutateAsync({ id: draftId, sourceId: source.id, version: documentVersion.current, idempotencyKey: idempotencyKey.current });
       toast.success(t('pages.documents.fulfillment.posted'));
       onComplete();
