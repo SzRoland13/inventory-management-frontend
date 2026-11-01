@@ -1,11 +1,19 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { requireSuccessfulResponse } from '@/features/shared/api/apiResponse';
 import { queryKeys } from '@/features/shared/api/queryKeys';
 import { UnitsService } from '@/features/units/services/UnitsService';
 import { CategoriesService } from '@/features/categories/services/CategoriesService';
 import { AttributesService } from '@/features/attributes/services/AttributesService';
 import { ProductService } from '@/features/products/services/ProductService';
-import { ProductSortField, ProductStatus } from '@/features/products/types/product';
+import {
+  ProductSortField,
+  ProductStatus,
+} from '@/features/products/types/product';
 import type {
   ProductCategory,
   ProductListRequest,

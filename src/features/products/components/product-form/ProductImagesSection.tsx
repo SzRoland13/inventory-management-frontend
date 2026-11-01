@@ -2,13 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { DragEvent, PointerEvent } from 'react';
-import {
-  GripVertical,
-  ImagePlus,
-  RotateCcw,
-  Star,
-  Trash2,
-} from 'lucide-react';
+import { GripVertical, ImagePlus, RotateCcw, Star, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/features/shared/components/ui/button';
 import { useMediaUploadMutation } from '@/features/shared/media/mediaQueries';
@@ -25,7 +19,10 @@ const UPLOAD_CONCURRENCY = 3;
 const IMAGE_OUTLINE_BUTTON_CLASS =
   'border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100';
 
-export type ProductImageEditorItem = Omit<ProductImageResponse, 'mediaAssetId'> & {
+export type ProductImageEditorItem = Omit<
+  ProductImageResponse,
+  'mediaAssetId'
+> & {
   mediaAssetId: number | null;
   key: string;
   preview?: MediaPreviewResponse;
@@ -44,11 +41,11 @@ export function productImagesFromResponse(
   images: ProductImageResponse[] | undefined,
 ): ProductImageEditorItem[] {
   return sortProductImages(images).map((image) => ({
-      ...image,
-      key: `asset-${image.mediaAssetId}`,
-      uploadState: 'ready',
-      progress: 100,
-    }));
+    ...image,
+    key: `asset-${image.mediaAssetId}`,
+    uploadState: 'ready',
+    progress: 100,
+  }));
 }
 
 export function ProductImagesSection({
@@ -87,9 +84,9 @@ export function ProductImagesSection({
   };
 
   const updateImages = (next: ProductImageEditorItem[]) =>
-      commitImages(
-        next.map((image, index) => ({ ...image, sortOrder: index + 1 })),
-      );
+    commitImages(
+      next.map((image, index) => ({ ...image, sortOrder: index + 1 })),
+    );
 
   const handleFiles = async (files: FileList | null) => {
     setValidationError(null);
@@ -112,7 +109,9 @@ export function ProductImagesSection({
     const availableSlots = Math.max(0, MAX_IMAGES - nextImages.length);
 
     if (accepted.length > availableSlots) {
-      setValidationError(t('pages.products.images.max-count', { count: MAX_IMAGES }));
+      setValidationError(
+        t('pages.products.images.max-count', { count: MAX_IMAGES }),
+      );
     }
 
     const filesToUpload = accepted.slice(0, availableSlots);
@@ -132,11 +131,14 @@ export function ProductImagesSection({
     nextImages = [...nextImages, ...itemsToUpload];
     commitImages(nextImages);
 
-    for (let index = 0; index < itemsToUpload.length; index += UPLOAD_CONCURRENCY) {
+    for (
+      let index = 0;
+      index < itemsToUpload.length;
+      index += UPLOAD_CONCURRENCY
+    ) {
       const batch = itemsToUpload.slice(index, index + UPLOAD_CONCURRENCY);
       await Promise.all(batch.map((item) => uploadFileWithItems(item)));
     }
-
   };
 
   const uploadFileWithItems = async (item: ProductImageEditorItem) => {
@@ -215,10 +217,7 @@ export function ProductImagesSection({
     setDropTargetKey(null);
   };
 
-  const handleDrop = (
-    targetKey: string,
-    event: DragEvent<HTMLLIElement>,
-  ) => {
+  const handleDrop = (targetKey: string, event: DragEvent<HTMLLIElement>) => {
     event.preventDefault();
     const targetBounds = event.currentTarget.getBoundingClientRect();
     reorderImage(
@@ -265,7 +264,10 @@ export function ProductImagesSection({
       <div className='space-y-3'>
         <div className='flex flex-wrap items-center justify-between gap-2'>
           <p className='text-xs text-zinc-400'>
-            {t('pages.products.images.help', { count: images.length, max: MAX_IMAGES })}
+            {t('pages.products.images.help', {
+              count: images.length,
+              max: MAX_IMAGES,
+            })}
           </p>
           <Button
             type='button'
@@ -306,35 +308,44 @@ export function ProductImagesSection({
               {reorderAnnouncement}
             </p>
             <ol className='grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3'>
-            {images.map((image, index) => (
-              <li
-                key={image.key}
-                data-product-image-card={image.key}
-                onDragOver={(event) => {
-                  if (!disabled && draggedImageKey && draggedImageKey !== image.key) {
-                    event.preventDefault();
-                    event.dataTransfer.dropEffect = 'move';
-                    setDropTargetKey(image.key);
-                  }
-                }}
-                onDrop={(event) => handleDrop(image.key, event)}
-                className={`flex min-w-0 gap-3 rounded-lg border bg-zinc-900/70 p-2 transition-colors ${dropTargetKey === image.key ? 'border-sky-400' : 'border-zinc-700'} ${draggedImageKey === image.key ? 'opacity-50' : ''}`}
-              >
-                <ProductImagePreview
-                  mediaAssetId={image.mediaAssetId}
-                  preview={image.preview}
-                  alt={image.filename}
-                  className='h-20 w-20'
-                />
-                <div className='min-w-0 flex-1'>
-                  <div className='flex items-start justify-between gap-2'>
+              {images.map((image, index) => (
+                <li
+                  key={image.key}
+                  data-product-image-card={image.key}
+                  onDragOver={(event) => {
+                    if (
+                      !disabled &&
+                      draggedImageKey &&
+                      draggedImageKey !== image.key
+                    ) {
+                      event.preventDefault();
+                      event.dataTransfer.dropEffect = 'move';
+                      setDropTargetKey(image.key);
+                    }
+                  }}
+                  onDrop={(event) => handleDrop(image.key, event)}
+                  className={`flex min-w-0 gap-3 rounded-lg border bg-zinc-900/70 p-2 transition-colors ${dropTargetKey === image.key ? 'border-sky-400' : 'border-zinc-700'} ${draggedImageKey === image.key ? 'opacity-50' : ''}`}
+                >
+                  <ProductImagePreview
+                    mediaAssetId={image.mediaAssetId}
+                    preview={image.preview}
+                    alt={image.filename}
+                    className='h-20 w-20'
+                  />
+                  <div className='min-w-0 flex-1'>
+                    <div className='flex items-start justify-between gap-2'>
                       <div className='flex min-w-0 items-start gap-1'>
                         <button
                           type='button'
                           draggable={!disabled && image.uploadState === 'ready'}
-                          aria-label={t('pages.products.images.drag-to-reorder', { filename: image.filename })}
+                          aria-label={t(
+                            'pages.products.images.drag-to-reorder',
+                            { filename: image.filename },
+                          )}
                           aria-keyshortcuts='ArrowUp ArrowDown'
-                          title={t('pages.products.images.drag-to-reorder', { filename: image.filename })}
+                          title={t('pages.products.images.drag-to-reorder', {
+                            filename: image.filename,
+                          })}
                           disabled={disabled || image.uploadState !== 'ready'}
                           className='grid size-7 shrink-0 cursor-grab place-items-center rounded-md text-zinc-400 hover:bg-zinc-700 hover:text-zinc-100 active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-50'
                           style={{ touchAction: 'none' }}
@@ -342,7 +353,8 @@ export function ProductImagesSection({
                             event.dataTransfer.effectAllowed = 'move';
                             event.dataTransfer.setData('text/plain', image.key);
                             const card = event.currentTarget.closest('li');
-                            if (card) event.dataTransfer.setDragImage(card, 24, 24);
+                            if (card)
+                              event.dataTransfer.setDragImage(card, 24, 24);
                             setDraggedImageKey(image.key);
                           }}
                           onDragEnd={() => {
@@ -358,7 +370,9 @@ export function ProductImagesSection({
                               return;
                             }
                             event.preventDefault();
-                            event.currentTarget.setPointerCapture(event.pointerId);
+                            event.currentTarget.setPointerCapture(
+                              event.pointerId,
+                            );
                             touchDragKey.current = image.key;
                             setDraggedImageKey(image.key);
                           }}
@@ -371,16 +385,25 @@ export function ProductImagesSection({
                             setDropTargetKey(null);
                           }}
                           onKeyDown={(event) => {
-                            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                            if (
+                              event.key === 'ArrowUp' ||
+                              event.key === 'ArrowDown'
+                            ) {
                               event.preventDefault();
-                              moveImage(index, event.key === 'ArrowUp' ? -1 : 1);
+                              moveImage(
+                                index,
+                                event.key === 'ArrowUp' ? -1 : 1,
+                              );
                             }
                           }}
                         >
                           <GripVertical className='size-4' aria-hidden='true' />
                         </button>
                         <div className='min-w-0'>
-                          <p className='truncate text-sm text-zinc-100' title={image.filename}>
+                          <p
+                            className='truncate text-sm text-zinc-100'
+                            title={image.filename}
+                          >
                             {image.filename}
                           </p>
                           {index === 0 && (
@@ -395,53 +418,69 @@ export function ProductImagesSection({
                         type='button'
                         variant='ghost'
                         size='icon-sm'
-                        aria-label={t('pages.products.images.remove', { filename: image.filename })}
+                        aria-label={t('pages.products.images.remove', {
+                          filename: image.filename,
+                        })}
                         disabled={disabled}
-                        onClick={() => updateImages(images.filter((entry) => entry.key !== image.key))}
+                        onClick={() =>
+                          updateImages(
+                            images.filter((entry) => entry.key !== image.key),
+                          )
+                        }
                       >
                         <Trash2 aria-hidden='true' />
                       </Button>
-                  </div>
+                    </div>
 
-                  {image.uploadState === 'uploading' ? (
-                    <div className='mt-2 space-y-1' role='status' aria-live='polite'>
-                      <div className='flex justify-between text-xs text-zinc-400'>
-                        <span>{t('pages.products.images.uploading')}</span>
-                        <span>{image.progress}%</span>
-                      </div>
-                      <progress
-                        className='h-1.5 w-full accent-sky-500'
-                        value={image.progress}
-                        max={100}
-                        aria-label={t('pages.products.images.progress', { filename: image.filename })}
-                      />
-                    </div>
-                  ) : image.uploadState === 'error' ? (
-                    <div className='mt-2 flex items-center justify-between gap-2'>
-                      <span className='text-xs text-red-300' role='alert'>
-                        {t('pages.products.images.upload-error')}
-                      </span>
-                      <Button
-                        type='button'
-                        variant='outline'
-                        size='xs'
-                        className='border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
-                        aria-label={t('pages.products.images.retry', { filename: image.filename })}
-                        disabled={disabled}
-                        onClick={() => void uploadFileWithItems(image)}
+                    {image.uploadState === 'uploading' ? (
+                      <div
+                        className='mt-2 space-y-1'
+                        role='status'
+                        aria-live='polite'
                       >
-                        <RotateCcw aria-hidden='true' />
-                        {t('common.retry')}
-                      </Button>
-                    </div>
-                  ) : (
-                    <p className='sr-only'>
-                      {t('pages.products.images.drag-to-reorder', { filename: image.filename })}
-                    </p>
-                  )}
-                </div>
-              </li>
-            ))}
+                        <div className='flex justify-between text-xs text-zinc-400'>
+                          <span>{t('pages.products.images.uploading')}</span>
+                          <span>{image.progress}%</span>
+                        </div>
+                        <progress
+                          className='h-1.5 w-full accent-sky-500'
+                          value={image.progress}
+                          max={100}
+                          aria-label={t('pages.products.images.progress', {
+                            filename: image.filename,
+                          })}
+                        />
+                      </div>
+                    ) : image.uploadState === 'error' ? (
+                      <div className='mt-2 flex items-center justify-between gap-2'>
+                        <span className='text-xs text-red-300' role='alert'>
+                          {t('pages.products.images.upload-error')}
+                        </span>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='xs'
+                          className='border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+                          aria-label={t('pages.products.images.retry', {
+                            filename: image.filename,
+                          })}
+                          disabled={disabled}
+                          onClick={() => void uploadFileWithItems(image)}
+                        >
+                          <RotateCcw aria-hidden='true' />
+                          {t('common.retry')}
+                        </Button>
+                      </div>
+                    ) : (
+                      <p className='sr-only'>
+                        {t('pages.products.images.drag-to-reorder', {
+                          filename: image.filename,
+                        })}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              ))}
             </ol>
           </>
         )}

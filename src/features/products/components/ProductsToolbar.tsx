@@ -14,7 +14,15 @@ import type {
   ProductCategory,
   ProductUnit,
 } from '@/features/products/types/product';
-import { Archive, Columns3, Eye, Filter, Pencil, Plus, Search } from 'lucide-react';
+import {
+  Archive,
+  Columns3,
+  Eye,
+  Filter,
+  Pencil,
+  Plus,
+  Search,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface ProductsToolbarProps {

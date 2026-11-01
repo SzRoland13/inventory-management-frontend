@@ -51,7 +51,9 @@ export function ProductStockCell({ product }: { product: ProductResponse }) {
         </Link>
       </TooltipTrigger>
       <TooltipContent className='max-w-80 space-y-2 p-3' side='top'>
-        <p className='font-semibold'>{t('pages.products.stock.by-warehouse')}</p>
+        <p className='font-semibold'>
+          {t('pages.products.stock.by-warehouse')}
+        </p>
         {product.stockByWarehouse.length ? (
           <ul className='space-y-1'>
             {product.stockByWarehouse.map((stock) => (

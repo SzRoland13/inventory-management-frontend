@@ -42,10 +42,10 @@ export function valuesFromProduct(
         : String(product.pricing.currencyId),
     netPrice: product ? String(product.pricing.netPrice) : '',
     grossPrice: product
-      ? calculateGrossPriceInput(
+      ? (calculateGrossPriceInput(
           String(product.pricing.netPrice),
           String(product.pricing.vatRate),
-        ) ?? ''
+        ) ?? '')
       : '',
     costPrice:
       product?.pricing.costPrice == null

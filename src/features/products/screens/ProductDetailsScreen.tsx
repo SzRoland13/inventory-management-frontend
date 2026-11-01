@@ -127,11 +127,7 @@ export function ProductDetailsScreen({ productId }: { productId: number }) {
               className='flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-zinc-300'
             >
               <span>{t('pages.products.lookup-error')}</span>
-              <Button
-                size='sm'
-                variant='outline'
-                onClick={retryEditorLookups}
-              >
+              <Button size='sm' variant='outline' onClick={retryEditorLookups}>
                 {t('common.retry')}
               </Button>
             </div>

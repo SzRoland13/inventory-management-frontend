@@ -11,7 +11,12 @@ import { Activity } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/features/shared/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/features/shared/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/features/shared/components/ui/card';
 import { DataTable } from '@/features/shared/table/DataTable';
 import { DataTableEmptyState } from '@/features/shared/table/DataTableEmptyState';
 import { DataTableLoadingState } from '@/features/shared/table/DataTableLoadingState';

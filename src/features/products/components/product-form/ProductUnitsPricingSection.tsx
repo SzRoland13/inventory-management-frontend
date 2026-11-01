@@ -1,9 +1,6 @@
 import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
-import type {
-  UseFormGetValues,
-  UseFormSetValue,
-} from 'react-hook-form';
+import type { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { BadgeDollarSign } from 'lucide-react';
 import { Input } from '@/features/shared/components/ui/input';

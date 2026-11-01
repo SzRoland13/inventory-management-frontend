@@ -40,8 +40,7 @@ export function ProductStockSection({ product }: { product: ProductResponse }) {
   const rows = stockQuery.data?.payload.content ?? [];
   const page = stockQuery.data?.payload.page;
   const totalStock = product.stockByWarehouse.reduce(
-    (total, warehouseStock) =>
-      total + warehouseStock.stockQuantity.amount,
+    (total, warehouseStock) => total + warehouseStock.stockQuantity.amount,
     0,
   );
   const mainUnit =
@@ -122,16 +121,15 @@ export function ProductStockSection({ product }: { product: ProductResponse }) {
                       locale,
                     )}
                   </p>
-                  {stock.secondaryUnit &&
-                    stock.secondaryQuantity !== null && (
-                      <p className='mt-0.5 text-xs text-zinc-400'>
-                        {formatStockQuantity(
-                          stock.secondaryQuantity,
-                          stock.secondaryUnit.symbol,
-                          locale,
-                        )}
-                      </p>
-                    )}
+                  {stock.secondaryUnit && stock.secondaryQuantity !== null && (
+                    <p className='mt-0.5 text-xs text-zinc-400'>
+                      {formatStockQuantity(
+                        stock.secondaryQuantity,
+                        stock.secondaryUnit.symbol,
+                        locale,
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
