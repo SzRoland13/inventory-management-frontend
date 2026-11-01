@@ -17,7 +17,8 @@ export function useDocumentLineUnitResolver() {
       staleTime: 'static',
       queryFn: async () => {
         const response = await ProductService.get(line.productId);
-        if (!response.success || !response.payload) throw new Error(response.messageKey);
+        if (!response.success || !response.payload)
+          throw new Error(response.messageKey);
         return response.payload;
       },
     });

@@ -12,7 +12,13 @@ import {
   Warehouse,
 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { documentActionLabel, documentStatusLabel, documentTypeLabel, formatDocumentAmount, formatDocumentDate } from '@/features/documents/helpers/documentPresentation';
+import {
+  documentActionLabel,
+  documentStatusLabel,
+  documentTypeLabel,
+  formatDocumentAmount,
+  formatDocumentDate,
+} from '@/features/documents/helpers/documentPresentation';
 import { DocumentQueueView } from '@/features/documents/enums/documentEnums';
 import type { BusinessDocument } from '@/features/documents/types/documents';
 import { Badge } from '@/features/shared/components/ui/badge';
@@ -35,7 +41,7 @@ const queueViews: Array<{ id: DocumentQueueView; icon: typeof FileText }> = [
   { id: DocumentQueueView.ALL, icon: FileText },
 ];
 
-const releaseOneViews: DocumentQueueView[] = [
+const defaultQueueViews: DocumentQueueView[] = [
   DocumentQueueView.MY_DRAFTS,
   DocumentQueueView.READY_TO_RECEIVE,
   DocumentQueueView.READY_TO_SHIP,
@@ -68,7 +74,7 @@ export function DocumentQueue({
 }: Props) {
   const t = useTranslations();
   const visibleViews = queueViews.filter(({ id }) =>
-    (availableViews ?? releaseOneViews).includes(id),
+    (availableViews ?? defaultQueueViews).includes(id),
   );
 
   return (
@@ -197,11 +203,17 @@ function DocumentQueueRow({
               document.routeName ||
               t('pages.documents.noPartner')}
           </span>
-          <span>{t('pages.documents.owner', { name: document.ownerName ?? '' })}</span>
+          <span>
+            {t('pages.documents.owner', { name: document.ownerName ?? '' })}
+          </span>
           <span>{formatDocumentDate(document.date, locale)}</span>
           {document.totals && (
             <span className='font-medium tabular-nums text-zinc-300'>
-              {formatDocumentAmount(document.totals.gross, document.totals.currencyCode ?? document.currencyCode, locale)}
+              {formatDocumentAmount(
+                document.totals.gross,
+                document.totals.currencyCode ?? document.currencyCode,
+                locale,
+              )}
             </span>
           )}
         </div>
@@ -251,9 +263,7 @@ function StatusBadge({ status }: { status: BusinessDocument['status'] }) {
   return (
     <Badge
       variant='outline'
-      className={
-        colors[status] ?? 'border-zinc-600 bg-zinc-800 text-zinc-300'
-      }
+      className={colors[status] ?? 'border-zinc-600 bg-zinc-800 text-zinc-300'}
     >
       {documentStatusLabel(status, t)}
     </Badge>

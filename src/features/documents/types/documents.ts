@@ -6,10 +6,17 @@ import {
   DocumentRelationKind,
   DocumentStatus,
   DocumentType,
+  DocumentCorrectionOperation,
+  ReturnDirection,
+  ReturnDisposition,
+  TransferMovementOperation,
+  TransferResolutionOperation,
 } from '@/features/documents/enums/documentEnums';
 
-export type OrderDocumentType = DocumentType.PURCHASE_ORDER | DocumentType.SALES_ORDER;
-export type ReleaseOneDocumentType = OrderDocumentType | DocumentType.GOODS_RECEIPT | DocumentType.DELIVERY_NOTE;
+export type OrderDocumentType =
+  DocumentType.PURCHASE_ORDER | DocumentType.SALES_ORDER;
+export type DraftDocumentType =
+  OrderDocumentType | DocumentType.GOODS_RECEIPT | DocumentType.DELIVERY_NOTE;
 
 export type RelatedDocument = {
   id: number;
@@ -36,6 +43,8 @@ export type DocumentLine = {
   returnableQuantity?: number;
   returnedQuantity?: number;
   inTransitQuantity?: number;
+  sourceQuantity?: number;
+  destinationQuantity?: number;
   expectedQuantity?: number;
   countedQuantity?: number;
   variance?: number;
@@ -92,6 +101,13 @@ export type BusinessDocument = {
   ownerName: string | null;
   partnerId?: number | null;
   warehouseId?: number | null;
+  sourceWarehouseId?: number | null;
+  destinationWarehouseId?: number | null;
+  transitWarehouseId?: number | null;
+  countedAt?: string | null;
+  reason?: string | null;
+  calculationVersion?: string | null;
+  nonBillable?: boolean;
   notes?: string | null;
   currencyCode?: string | null;
   currencyId?: number | null;
@@ -127,7 +143,7 @@ export type DocumentCapabilitiesResponse = {
 };
 
 export type DocumentDraftRequest = {
-  type: ReleaseOneDocumentType;
+  type: DraftDocumentType;
   currencyId: number;
   exchangeRates: DocumentExchangeRate[];
   partnerId?: number;
@@ -181,4 +197,122 @@ export type FulfillmentPreviewResponse = {
 
 export type CloseRemainingRequest = {
   reason: string;
+};
+
+export type DocumentOperationLine = {
+  sourceLineId?: number;
+  productId: number;
+  quantity: number;
+  correctedQuantity?: number;
+  countedQuantity?: number;
+  varianceReason?: string;
+  reason?: string;
+  disposition?: ReturnDisposition;
+};
+export type DocumentOperationPreview = {
+  valid: boolean;
+  calculationVersion?: string;
+  lines: Array<{
+    sourceLineId: number;
+    productId: number;
+    productName: string;
+    expectedQuantity?: number;
+    countedQuantity?: number;
+    variance?: number;
+    rebasedTargetQuantity?: number;
+    adjustmentQuantity?: number;
+    correctedFulfilledQuantity?: number;
+    originalQuantity?: number;
+    correctedQuantity?: number;
+    closedQuantity?: number;
+    remainingQuantity?: number;
+    sourceQuantity?: number;
+    transitQuantity?: number;
+    destinationQuantity?: number;
+    returnableQuantity?: number;
+    returnedQuantity?: number;
+    quantityDelta?: number;
+    resultingQuantity?: number;
+    blockerMessageKey?: string;
+    errorMessageKey?: string;
+  }>;
+  relatedMovements?: Array<{
+    description: string;
+    effectiveAt: string;
+    quantity: number;
+  }>;
+  blockers?: string[];
+  relatedReturns?: Array<{
+    id: number;
+    number: string | null;
+    quantity: number;
+  }>;
+};
+
+export type TransferDraftRequest = {
+  sourceWarehouseId: number;
+  destinationWarehouseId: number;
+  transitWarehouseId?: number;
+  date: string;
+  lines: Array<{ productId: number; quantity: number }>;
+};
+export type TransferPreviewRequest = {
+  documentId: number;
+  operation: TransferMovementOperation;
+  sourceWarehouseId: number;
+  destinationWarehouseId: number;
+  transitWarehouseId?: number;
+  lines: DocumentOperationLine[];
+};
+export type TransferActionRequest = {
+  version: string;
+  idempotencyKey: string;
+  operation?: TransferResolutionOperation;
+  reason?: string;
+  lines: DocumentOperationLine[];
+};
+export type ReturnRequest = {
+  sourceDocumentId: number;
+  direction: ReturnDirection;
+  reason: string;
+  lines: DocumentOperationLine[];
+};
+export type QuarantineReleaseRequest = {
+  version: string;
+  idempotencyKey: string;
+  targetWarehouseId: number;
+  reason: string;
+  lines: DocumentOperationLine[];
+};
+export type ReplacementDeliveryRequest = {
+  returnDocumentId: number;
+  originalDeliveryId: number;
+  warehouseId: number;
+  date: string;
+  nonBillable: true;
+  lines: DocumentOperationLine[];
+};
+export type StockCountRequest = {
+  warehouseId: number;
+  countedAt: string;
+  lines: Array<{
+    productId: number;
+    countedQuantity?: number;
+    varianceReason?: string;
+  }>;
+};
+export type ReconciliationRequest = {
+  version: string;
+  calculationVersion?: string;
+  idempotencyKey?: string;
+  countedAt: string;
+  confirmed?: boolean;
+  lines: DocumentOperationLine[];
+};
+export type CorrectionRequest = {
+  version: string;
+  idempotencyKey: string;
+  operation: DocumentCorrectionOperation;
+  reason: string;
+  lines: DocumentOperationLine[];
 };
