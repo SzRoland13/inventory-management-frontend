@@ -81,7 +81,7 @@ export function DocumentQueue({
     <div className='space-y-5'>
       <nav
         aria-label={t('pages.documents.queue.title')}
-        className='flex gap-2 overflow-x-auto pb-1'
+        className='grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
       >
         {visibleViews.map(({ id, icon: Icon }) => (
           <Button
@@ -89,11 +89,15 @@ export function DocumentQueue({
             variant={activeView === id ? 'secondary' : 'ghost'}
             onClick={() => onViewChange(id)}
             data-active={activeView === id}
-            className='h-10 shrink-0 gap-2 border border-zinc-700 bg-zinc-900/70 text-zinc-300 hover:bg-zinc-800 hover:text-white data-[active=true]:border-indigo-400/40 data-[active=true]:bg-indigo-500/10 data-[active=true]:text-indigo-200'
+            className='h-auto min-h-20 w-full justify-between gap-3 whitespace-normal rounded-xl border border-zinc-700 bg-zinc-900/70 px-4 py-3 text-left text-zinc-300 hover:bg-zinc-800 hover:text-white data-[active=true]:border-indigo-400/50 data-[active=true]:bg-indigo-500/10 data-[active=true]:text-indigo-200'
           >
-            <Icon className='h-4 w-4' />
-            {t(`pages.documents.queue.views.${id}`)}
-            <span className='rounded-full bg-zinc-700/80 px-2 py-0.5 text-xs tabular-nums text-zinc-300'>
+            <span className='flex min-w-0 items-center gap-3'>
+              <Icon className='h-5 w-5 shrink-0' />
+              <span className='min-w-0 text-sm leading-snug'>
+                {t(`pages.documents.queue.views.${id}`)}
+              </span>
+            </span>
+            <span className='shrink-0 rounded-full bg-zinc-700/80 px-2.5 py-1 text-xs tabular-nums text-zinc-300'>
               {counts?.[id] ?? '–'}
             </span>
           </Button>
