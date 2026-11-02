@@ -137,7 +137,8 @@ export function StockMovementsTable({
                 query: { documentId: String(row.original.documentId) },
               }}
             >
-              {row.original.documentNumber ?? `#${row.original.documentId}`}
+              {row.original.documentNumber ??
+                t('pages.documents.numberUnavailable')}
             </Link>
           ),
       },

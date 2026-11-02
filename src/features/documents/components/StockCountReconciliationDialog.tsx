@@ -114,7 +114,7 @@ export function StockCountReconciliationDialog({
         <AppDialogHeader
           title={t('pages.documents.actions.RECONCILE')}
           description={t('pages.documents.operations.countDescription', {
-            number: document.number ?? document.id,
+            number: document.number ?? t('pages.documents.draft'),
           })}
           icon={ClipboardList}
         />

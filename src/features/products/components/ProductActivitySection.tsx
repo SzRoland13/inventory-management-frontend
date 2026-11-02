@@ -131,7 +131,8 @@ export function ProductActivitySection({ productId }: { productId: number }) {
                 query: { documentId: String(row.original.documentId) },
               }}
             >
-              {row.original.documentNumber ?? `#${row.original.documentId}`}
+              {row.original.documentNumber ??
+                t('pages.documents.numberUnavailable')}
             </Link>
           ),
       },

@@ -86,7 +86,7 @@ export function TransferOperationForm({
         <AppDialogHeader
           title={t(`pages.documents.actions.${action}`)}
           description={t('pages.documents.operations.transferDescription', {
-            number: document.number ?? document.id,
+            number: document.number ?? t('pages.documents.draft'),
           })}
           icon={Truck}
         />

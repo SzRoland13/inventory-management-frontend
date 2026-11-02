@@ -180,7 +180,7 @@ export function DocumentCorrectionDialog({
         <AppDialogHeader
           title={t('pages.documents.actions.CORRECT')}
           description={t('pages.documents.operations.correctionDescription', {
-            number: document.number ?? document.id,
+            number: document.number ?? t('pages.documents.draft'),
           })}
           icon={FileClock}
         />
@@ -414,7 +414,7 @@ export function DocumentCorrectionDialog({
                   {preview.relatedReturns?.map((item) => (
                     <p key={item.id} className='mt-2 text-zinc-300'>
                       {t('pages.documents.operations.relatedReturn', {
-                        number: item.number ?? item.id,
+                        number: item.number ?? t('pages.documents.draft'),
                         quantity: item.quantity,
                       })}
                     </p>

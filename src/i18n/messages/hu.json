@@ -659,6 +659,7 @@
         "description": "Az ehhez a listához tartozó dokumentumok itt jelennek meg. Válassz másik nézetet, vagy hozz létre tervezetet."
       },
       "draft": "Tervezet",
+      "numberUnavailable": "A dokumentumszám nem érhető el",
       "noPartner": "Nincs partner megadva",
       "owner": "Felelős: {name}",
       "lineCount": "{count, plural, one {# tétel} other {# tétel}}",

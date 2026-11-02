@@ -659,6 +659,7 @@
         "description": "When documents match this queue, they will appear here. Try another view or create a draft."
       },
       "draft": "Draft",
+      "numberUnavailable": "Document number unavailable",
       "noPartner": "Partner not set",
       "owner": "Owner: {name}",
       "lineCount": "{count, plural, one {# line} other {# lines}}",
