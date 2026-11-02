@@ -278,13 +278,13 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
             {source.lines.map((line) => (
               <div
                 key={line.id}
-                className='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-lg border border-zinc-700 bg-zinc-800/50 p-3'
+                className='grid grid-cols-1 items-center gap-4 rounded-xl border border-zinc-700/80 bg-zinc-800/40 p-4 transition-colors hover:border-zinc-600 sm:grid-cols-[minmax(0,1fr)_12rem] sm:gap-6 sm:p-5'
               >
-                <div className='min-w-0'>
-                  <p className='truncate text-sm font-medium'>
+                <div className='min-w-0 space-y-2'>
+                  <p className='break-words text-base font-semibold tracking-tight text-zinc-100'>
                     {line.productName}
                   </p>
-                  <p className='mt-1 text-xs text-zinc-400'>
+                  <p className='text-sm leading-relaxed text-zinc-400'>
                     {t('pages.documents.fulfillment.progress', {
                       ordered: line.orderedQuantity,
                       done: line.fulfilledQuantity,
@@ -293,8 +293,8 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
                     })}
                   </p>
                 </div>
-                <label className='w-28'>
-                  <span className='mb-1 block text-xs text-zinc-400'>
+                <label className='block min-w-0'>
+                  <span className='mb-2 block text-xs font-medium uppercase tracking-wide text-zinc-400'>
                     {t('pages.documents.fulfillment.quantity')}
                   </span>
                   <Input
@@ -312,7 +312,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
                       setPreview(null);
                       setPreviewSignature('');
                     }}
-                    className='border-zinc-600 bg-zinc-950 text-right tabular-nums'
+                    className='h-11 border-zinc-600 bg-zinc-950/80 text-right text-base font-semibold tabular-nums shadow-inner shadow-black/20 [appearance:textfield] focus-visible:border-indigo-400 focus-visible:ring-indigo-400/20 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
                   />
                 </label>
               </div>
@@ -364,7 +364,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
         <AppDialogFooter className='gap-2 sm:gap-2'>
           <Button
             variant='outline'
-            className={appDialogCancelButtonClass}
+            className={`${appDialogCancelButtonClass} h-11 px-5`}
             disabled={
               busy || postingAttempted || warehouseRequired || !lines.length
             }
@@ -384,7 +384,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
               warehouseRequired
             }
             onClick={() => void submit()}
-            className={appDialogPrimaryButtonClass}
+            className={`${appDialogPrimaryButtonClass} h-11 px-5`}
           >
             {t('pages.documents.fulfillment.post')}
           </Button>
