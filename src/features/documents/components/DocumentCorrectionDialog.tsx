@@ -372,7 +372,8 @@ export function DocumentCorrectionDialog({
                         document.lines.find(
                           (source) => source.id === line.sourceLineId,
                         )?.productName ??
-                        line.productName}:{' '}
+                        line.productName}
+                      :{' '}
                       {t('pages.documents.operations.correctionEffect', {
                         original: line.originalQuantity ?? 0,
                         corrected: line.correctedQuantity ?? 0,
@@ -384,13 +385,16 @@ export function DocumentCorrectionDialog({
                       {line.targetWarehouseId != null && (
                         <span>
                           {' · '}
-                          {t('pages.documents.operations.targetWarehouseResult', {
-                            warehouse:
-                              allWarehouses.find(
-                                (warehouse) =>
-                                  warehouse.id === line.targetWarehouseId,
-                              )?.name ?? `#${line.targetWarehouseId}`,
-                          })}
+                          {t(
+                            'pages.documents.operations.targetWarehouseResult',
+                            {
+                              warehouse:
+                                allWarehouses.find(
+                                  (warehouse) =>
+                                    warehouse.id === line.targetWarehouseId,
+                                )?.name ?? `#${line.targetWarehouseId}`,
+                            },
+                          )}
                         </span>
                       )}
                       {line.errorMessageKey
@@ -569,7 +573,10 @@ function CorrectedProductPicker({
               </button>
             ))}
             {productsQuery.isPending && (
-              <p role='status' className='px-3 py-4 text-center text-sm text-zinc-400'>
+              <p
+                role='status'
+                className='px-3 py-4 text-center text-sm text-zinc-400'
+              >
                 {t('pages.documents.create.loadingProducts')}
               </p>
             )}

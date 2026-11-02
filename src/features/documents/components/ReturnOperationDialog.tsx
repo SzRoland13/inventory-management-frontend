@@ -135,8 +135,7 @@ export function ReturnOperationDialog({
       ? document.id
       : document.relatedDocuments.find(
           (item) => item.type === DocumentType.DELIVERY_NOTE,
-        )
-          ?.id;
+        )?.id;
   const lines = useMemo(
     () =>
       document.lines
@@ -147,13 +146,19 @@ export function ReturnOperationDialog({
           reason: reason.trim(),
           ...(action === DocumentAction.CREATE_RETURN
             ? {
-                disposition:
-                  dispositions[line.id] ?? defaultDisposition,
+                disposition: dispositions[line.id] ?? defaultDisposition,
               }
             : {}),
         }))
         .filter((line) => line.quantity > 0),
-    [document.lines, quantities, reason, action, dispositions, defaultDisposition],
+    [
+      document.lines,
+      quantities,
+      reason,
+      action,
+      dispositions,
+      defaultDisposition,
+    ],
   );
   const busy =
     createReturn.isPending ||
@@ -311,7 +316,9 @@ export function ReturnOperationDialog({
                     .filter(
                       (warehouse) =>
                         warehouse.id === Number(warehouseId) &&
-                        !warehouses.some((active) => active.id === warehouse.id),
+                        !warehouses.some(
+                          (active) => active.id === warehouse.id,
+                        ),
                     )
                     .map((warehouse) => (
                       <SelectItem

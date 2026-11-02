@@ -327,4 +327,7 @@ export type CorrectionRequest = {
   reason: string;
   lines: DocumentOperationLine[];
 };
-export type CorrectionPreviewRequest = Omit<CorrectionRequest, 'idempotencyKey'>;
+export type CorrectionPreviewRequest = Omit<
+  CorrectionRequest,
+  'idempotencyKey'
+>;
