@@ -90,7 +90,6 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
   );
   const documentVersion = useRef(source.version);
   const idempotencyKey = useRef<string | null>(null);
-  const directVersion = useRef(source.version);
   const createDraft = useCreateFulfillmentDraftMutation();
   const updateDraft = useUpdateDocumentDraftMutation();
   const post = usePostFulfillmentMutation();
@@ -112,6 +111,50 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
   );
   const warehouseRequired = needsWarehouseSelection && !warehouseId;
 
+  async function saveDirectDraftEdits() {
+    const targetCurrencyId =
+      source.currencyId ?? company.data?.payload.preferredCurrency?.id;
+    if (!targetCurrencyId) {
+      toast.error(t('pages.documents.validation.currencyUnavailable'));
+      return false;
+    }
+    const resolvedLines = await Promise.all(
+      source.lines.map(async (line) => ({
+        line,
+        unitId: await resolveUnitId(line),
+      })),
+    );
+    if (resolvedLines.some(({ unitId }) => unitId === null)) {
+      toast.error(t('pages.documents.editor.unitUnavailable'));
+      return false;
+    }
+    const draft: DocumentDraftRequest = {
+      type: source.type as DocumentDraftRequest['type'],
+      currencyId: targetCurrencyId,
+      exchangeRates: source.exchangeRates ?? [],
+      partnerId: source.partnerId ?? undefined,
+      warehouseId: Number(warehouseId || source.warehouseId),
+      date: source.date,
+      notes: source.notes ?? undefined,
+      lines: resolvedLines
+        .map(({ line, unitId }) => ({
+          productId: line.productId,
+          unitId: unitId!,
+          quantity: Number(quantities[line.id] ?? 0),
+          ...(line.sourceUnitPrice === undefined && line.unitPrice === undefined
+            ? {}
+            : { sourceUnitPrice: line.sourceUnitPrice ?? line.unitPrice }),
+        }))
+        .filter((line) => line.quantity > 0),
+    };
+    const updated = await updateDraft.mutateAsync({
+      id: source.id,
+      request: { version: documentVersion.current, draft },
+    });
+    documentVersion.current = updated.payload.version;
+    return true;
+  }
+
   async function checkStock() {
     if (!lines.length || warehouseRequired || previewing || postingAttempted)
       return;
@@ -120,50 +163,6 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
     setPreviewSignature('');
     setPreviewing(true);
     try {
-      if (isDirectDraft) {
-        const targetCurrencyId =
-          source.currencyId ?? company.data?.payload.preferredCurrency?.id;
-        if (!targetCurrencyId) {
-          toast.error(t('pages.documents.validation.currencyUnavailable'));
-          return;
-        }
-        const resolvedLines = await Promise.all(
-          source.lines.map(async (line) => ({
-            line,
-            unitId: await resolveUnitId(line),
-          })),
-        );
-        if (resolvedLines.some(({ unitId }) => unitId === null)) {
-          toast.error(t('pages.documents.editor.unitUnavailable'));
-          return;
-        }
-        const draft: DocumentDraftRequest = {
-          type: source.type as DocumentDraftRequest['type'],
-          currencyId: targetCurrencyId,
-          exchangeRates: source.exchangeRates ?? [],
-          partnerId: source.partnerId ?? undefined,
-          warehouseId: Number(warehouseId || source.warehouseId),
-          date: source.date,
-          notes: source.notes ?? undefined,
-          lines: resolvedLines
-            .map(({ line, unitId }) => ({
-              productId: line.productId,
-              unitId: unitId!,
-              quantity: Number(quantities[line.id] ?? 0),
-              ...(line.sourceUnitPrice === undefined &&
-              line.unitPrice === undefined
-                ? {}
-                : { sourceUnitPrice: line.sourceUnitPrice ?? line.unitPrice }),
-            }))
-            .filter((line) => line.quantity > 0),
-        };
-        const updated = await updateDraft.mutateAsync({
-          id: source.id,
-          request: { version: directVersion.current, draft },
-        });
-        directVersion.current = updated.payload.version;
-        documentVersion.current = updated.payload.version;
-      }
       const result = await requireSuccessfulResponse(
         DocumentService.previewFulfillment({
           ...(isDirectDraft
@@ -193,6 +192,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
       return;
     setPostingAttempted(true);
     try {
+      if (isDirectDraft && !(await saveDirectDraftEdits())) return;
       let draftId = createdDraftId.current;
       if (draftId === null) {
         const created = await createDraft.mutateAsync({
