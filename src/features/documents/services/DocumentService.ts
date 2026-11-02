@@ -22,6 +22,9 @@ import type {
   StockCountRequest,
   ReconciliationRequest,
   CorrectionRequest,
+  CorrectionPreviewRequest,
+  ReturnMutationRequest,
+  ReplacementDeliveryMutationRequest,
 } from '@/features/documents/types/documents';
 
 const DOCUMENTS_URL = '/documents';
@@ -142,11 +145,14 @@ export const DocumentService = {
       `${DOCUMENTS_URL}/returns/preview`,
       request,
     ),
-  createReturn: (request: ReturnRequest) =>
-    BaseService.post<ApiResponse<BusinessDocument>>(
+  createReturn: (request: ReturnMutationRequest) => {
+    const { idempotencyKey, ...body } = request;
+    return BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/returns`,
-      request,
-    ),
+      body,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    );
+  },
   previewQuarantineRelease: (id: number, request: QuarantineReleaseRequest) =>
     BaseService.post<ApiResponse<DocumentOperationPreview>>(
       `${DOCUMENTS_URL}/${id}/quarantine-release/preview`,
@@ -168,11 +174,14 @@ export const DocumentService = {
       `${DOCUMENTS_URL}/returns/replacement-deliveries/preview`,
       request,
     ),
-  createReplacementDelivery: (request: ReplacementDeliveryRequest) =>
-    BaseService.post<ApiResponse<BusinessDocument>>(
+  createReplacementDelivery: (request: ReplacementDeliveryMutationRequest) => {
+    const { idempotencyKey, ...body } = request;
+    return BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/returns/replacement-deliveries`,
-      request,
-    ),
+      body,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    );
+  },
   createStockCount: (request: StockCountRequest) =>
     BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/stock-counts`,
@@ -199,7 +208,7 @@ export const DocumentService = {
         },
       },
     ),
-  previewCorrection: (id: number, request: CorrectionRequest) =>
+  previewCorrection: (id: number, request: CorrectionPreviewRequest) =>
     BaseService.post<ApiResponse<DocumentOperationPreview>>(
       `${DOCUMENTS_URL}/${id}/corrections/preview`,
       request,

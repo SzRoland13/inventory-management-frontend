@@ -404,7 +404,8 @@
       "types": {
         "STANDARD": "Standard",
         "VIRTUAL": "Virtual",
-        "TRANSIT": "Transit"
+        "TRANSIT": "Transit",
+        "QUARANTINE": "Quarantine"
       },
       "status": {
         "ACTIVE": "Active",
@@ -744,6 +745,12 @@
         "transferEffect": "source {source} · transit {transit} · destination {destination} · change {change}",
         "transferSaved": "Transfer operation recorded",
         "returnDescription": "Review the source quantities and stock destination for {number}.",
+        "returnDirection": "Return direction: {direction}",
+        "direction": {
+          "CUSTOMER_RETURN": "Customer return",
+          "SUPPLIER_RETURN": "Supplier return"
+        },
+        "targetWarehouseResult": "stock destination {warehouse}",
         "returnProgress": "Original {original} · returned {returned} · still returnable {returnable} {unit}",
         "returnEffect": "returnable {returnable} · resulting {resulting} · stock change {quantity}",
         "returnDoesNotReopen": "A physical return does not reopen the original order.",
@@ -764,6 +771,8 @@
         "correctionDescription": "Choose how to handle the posted document {number}.",
         "correctionProgress": "Original {original} · fulfilled {fulfilled} · closed {closed} · returned {returned} · remaining {remaining}",
         "correctedQuantity": "Corrected fulfilled quantity",
+        "correctedProduct": "Corrected product",
+        "correctedWarehouse": "Corrected warehouse",
         "correctionEffect": "original {original} · corrected {corrected} · fulfilled {fulfilled} · closed {closed} · remaining {remaining} · stock delta {delta}",
         "correctionSaved": "Correction recorded",
         "relatedReturn": "Related return {number} · {quantity}",

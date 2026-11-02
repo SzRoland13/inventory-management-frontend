@@ -149,6 +149,7 @@ export function WarehouseFormDialog({
                     <Select
                       value={typeField.value}
                       onValueChange={typeField.onChange}
+                      disabled={warehouse?.type === WarehouseType.QUARANTINE}
                     >
                       <SelectTrigger
                         className='w-full border-zinc-700 bg-zinc-900 text-zinc-100'
@@ -163,11 +164,17 @@ export function WarehouseFormDialog({
                         avoidCollisions={false}
                         className='border-zinc-700 bg-zinc-800 text-zinc-100'
                       >
-                        {Object.values(WarehouseType).map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {t(`pages.warehouses.types.${type}`)}
-                          </SelectItem>
-                        ))}
+                        {Object.values(WarehouseType)
+                          .filter(
+                            (type) =>
+                              type !== WarehouseType.QUARANTINE ||
+                              warehouse?.type === WarehouseType.QUARANTINE,
+                          )
+                          .map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {t(`pages.warehouses.types.${type}`)}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   )}

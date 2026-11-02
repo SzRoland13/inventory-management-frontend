@@ -11,10 +11,13 @@ import type {
   FulfillmentDraftRequest,
   FulfillmentPreviewRequest,
   CorrectionRequest,
+  CorrectionPreviewRequest,
   DocumentOperationPreview,
   QuarantineReleaseRequest,
   ReconciliationRequest,
+  ReplacementDeliveryMutationRequest,
   ReplacementDeliveryRequest,
+  ReturnMutationRequest,
   ReturnRequest,
   StockCountRequest,
   TransferActionRequest,
@@ -228,7 +231,7 @@ export function useTransitResolutionPreviewMutation() {
 export function useReturnMutation() {
   const invalidate = useInvalidateDocuments();
   return useMutation({
-    mutationFn: (request: ReturnRequest) =>
+    mutationFn: (request: ReturnMutationRequest) =>
       requireSuccessfulResponse(DocumentService.createReturn(request)),
     onSuccess: (_, request) => invalidate(request.sourceDocumentId),
   });
@@ -274,7 +277,7 @@ export function useQuarantineReleasePreviewMutation() {
 export function useReplacementDeliveryMutation() {
   const invalidate = useInvalidateDocuments();
   return useMutation({
-    mutationFn: (request: ReplacementDeliveryRequest) =>
+    mutationFn: (request: ReplacementDeliveryMutationRequest) =>
       requireSuccessfulResponse(
         DocumentService.createReplacementDelivery(request),
       ),
@@ -327,7 +330,13 @@ export function usePostStockCountMutation() {
 }
 export function useCorrectionPreviewMutation() {
   return useMutation({
-    mutationFn: ({ id, request }: { id: number; request: CorrectionRequest }) =>
+    mutationFn: ({
+      id,
+      request,
+    }: {
+      id: number;
+      request: CorrectionPreviewRequest;
+    }) =>
       requireSuccessfulResponse<DocumentOperationPreview>(
         DocumentService.previewCorrection(id, request),
       ),

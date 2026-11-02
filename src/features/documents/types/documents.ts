@@ -106,6 +106,8 @@ export type BusinessDocument = {
   transitWarehouseId?: number | null;
   countedAt?: string | null;
   reason?: string | null;
+  disposition?: ReturnDisposition | null;
+  direction?: ReturnDirection | null;
   calculationVersion?: string | null;
   nonBillable?: boolean;
   notes?: string | null;
@@ -204,6 +206,8 @@ export type DocumentOperationLine = {
   productId: number;
   quantity: number;
   correctedQuantity?: number;
+  correctedProductId?: number;
+  correctedWarehouseId?: number;
   countedQuantity?: number;
   varianceReason?: string;
   reason?: string;
@@ -215,7 +219,8 @@ export type DocumentOperationPreview = {
   lines: Array<{
     sourceLineId: number;
     productId: number;
-    productName: string;
+    productName?: string | null;
+    targetWarehouseId?: number | null;
     expectedQuantity?: number;
     countedQuantity?: number;
     variance?: number;
@@ -233,7 +238,6 @@ export type DocumentOperationPreview = {
     returnedQuantity?: number;
     quantityDelta?: number;
     resultingQuantity?: number;
-    blockerMessageKey?: string;
     errorMessageKey?: string;
   }>;
   relatedMovements?: Array<{
@@ -275,7 +279,11 @@ export type ReturnRequest = {
   sourceDocumentId: number;
   direction: ReturnDirection;
   reason: string;
+  warehouseId?: number;
   lines: DocumentOperationLine[];
+};
+export type ReturnMutationRequest = ReturnRequest & {
+  idempotencyKey: string;
 };
 export type QuarantineReleaseRequest = {
   version: string;
@@ -291,6 +299,9 @@ export type ReplacementDeliveryRequest = {
   date: string;
   nonBillable: true;
   lines: DocumentOperationLine[];
+};
+export type ReplacementDeliveryMutationRequest = ReplacementDeliveryRequest & {
+  idempotencyKey: string;
 };
 export type StockCountRequest = {
   warehouseId: number;
@@ -316,3 +327,4 @@ export type CorrectionRequest = {
   reason: string;
   lines: DocumentOperationLine[];
 };
+export type CorrectionPreviewRequest = Omit<CorrectionRequest, 'idempotencyKey'>;

@@ -2,6 +2,7 @@ export enum WarehouseType {
   STANDARD = 'STANDARD',
   VIRTUAL = 'VIRTUAL',
   TRANSIT = 'TRANSIT',
+  QUARANTINE = 'QUARANTINE',
 }
 
 export enum WarehouseStatus {

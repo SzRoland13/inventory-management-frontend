@@ -404,7 +404,8 @@
       "types": {
         "STANDARD": "Normál",
         "VIRTUAL": "Virtuális",
-        "TRANSIT": "Tranzit"
+        "TRANSIT": "Tranzit",
+        "QUARANTINE": "Zárolási"
       },
       "status": {
         "ACTIVE": "Aktív",
@@ -744,6 +745,12 @@
         "transferEffect": "forrás {source} · úton {transit} · cél {destination} · változás {change}",
         "transferSaved": "Áthelyezési művelet rögzítve",
         "returnDescription": "Ellenőrizd a(z) {number} forrásmennyiségeit és készletcélját.",
+        "returnDirection": "Visszáru iránya: {direction}",
+        "direction": {
+          "CUSTOMER_RETURN": "Vevői visszáru",
+          "SUPPLIER_RETURN": "Beszállítói visszáru"
+        },
+        "targetWarehouseResult": "készlet célraktára: {warehouse}",
         "returnProgress": "Eredeti {original} · visszaküldve {returned} · még visszaküldhető {returnable} {unit}",
         "returnEffect": "visszaküldhető {returnable} · eredmény {resulting} · készletváltozás {quantity}",
         "returnDoesNotReopen": "A fizikai visszáru nem nyitja újra az eredeti rendelést.",
@@ -764,6 +771,8 @@
         "correctionDescription": "Válaszd ki, hogyan kezeled a(z) {number} rögzített dokumentumot.",
         "correctionProgress": "Eredeti {original} · teljesült {fulfilled} · lezárt {closed} · visszáru {returned} · hátralék {remaining}",
         "correctedQuantity": "Javított teljesült mennyiség",
+        "correctedProduct": "Javított termék",
+        "correctedWarehouse": "Javított raktár",
         "correctionEffect": "eredeti {original} · javított {corrected} · teljesült {fulfilled} · lezárt {closed} · hátralék {remaining} · készletváltozás {delta}",
         "correctionSaved": "Helyesbítés rögzítve",
         "relatedReturn": "Kapcsolódó visszáru {number} · {quantity}",

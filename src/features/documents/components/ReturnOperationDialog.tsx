@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -14,7 +14,9 @@ import type {
   BusinessDocument,
   DocumentOperationPreview,
   QuarantineReleaseRequest,
+  ReplacementDeliveryMutationRequest,
   ReplacementDeliveryRequest,
+  ReturnMutationRequest,
   ReturnRequest,
 } from '@/features/documents/types/documents';
 import {
@@ -71,7 +73,8 @@ export function ReturnOperationDialog({
 }: Props) {
   const t = useTranslations();
   const warehousesQuery = useWarehousesQuery();
-  const warehouses = (warehousesQuery.data?.payload ?? []).filter(
+  const allWarehouses = warehousesQuery.data?.payload ?? [];
+  const warehouses = allWarehouses.filter(
     (item) =>
       item.status === WarehouseStatus.ACTIVE &&
       item.type === WarehouseType.STANDARD,
@@ -82,9 +85,32 @@ export function ReturnOperationDialog({
   const previewRelease = useQuarantineReleasePreviewMutation();
   const createReplacement = useReplacementDeliveryMutation();
   const previewReplacement = useReplacementDeliveryPreviewMutation();
+  const submissionKeysRef = useRef(new Map<string, string>());
+  const returnDirection =
+    document.type === DocumentType.GOODS_RECEIPT
+      ? ReturnDirection.SUPPLIER_RETURN
+      : ReturnDirection.CUSTOMER_RETURN;
+  const customerReturn =
+    action === DocumentAction.CREATE_RETURN &&
+    returnDirection === ReturnDirection.CUSTOMER_RETURN;
+  const defaultDisposition =
+    returnDirection === ReturnDirection.SUPPLIER_RETURN
+      ? ReturnDisposition.SUPPLIER_RETURN
+      : ReturnDisposition.RESTOCK;
+  const availableDispositions =
+    returnDirection === ReturnDirection.SUPPLIER_RETURN
+      ? [ReturnDisposition.SUPPLIER_RETURN]
+      : [
+          ReturnDisposition.RESTOCK,
+          ReturnDisposition.QUARANTINE,
+          ReturnDisposition.DAMAGED,
+        ];
   const [reason, setReason] = useState('');
+  const [replacementDate] = useState(() =>
+    new Date().toISOString().slice(0, 10),
+  );
   const [warehouseId, setWarehouseId] = useState(
-    String(document.warehouseId ?? ''),
+    String(document.warehouseId ?? document.sourceWarehouseId ?? ''),
   );
   const [dispositions, setDispositions] = useState<
     Record<number, ReturnDisposition>
@@ -122,12 +148,12 @@ export function ReturnOperationDialog({
           ...(action === DocumentAction.CREATE_RETURN
             ? {
                 disposition:
-                  dispositions[line.id] ?? ReturnDisposition.RESTOCK,
+                  dispositions[line.id] ?? defaultDisposition,
               }
             : {}),
         }))
         .filter((line) => line.quantity > 0),
-    [document.lines, quantities, reason, action, dispositions],
+    [document.lines, quantities, reason, action, dispositions, defaultDisposition],
   );
   const busy =
     createReturn.isPending ||
@@ -137,19 +163,28 @@ export function ReturnOperationDialog({
     createReplacement.isPending ||
     previewReplacement.isPending;
 
+  function getSubmissionKey(signature: string) {
+    const existing = submissionKeysRef.current.get(signature);
+    if (existing) return existing;
+    const key = createIdempotencyKey();
+    submissionKeysRef.current.set(signature, key);
+    return key;
+  }
+
   async function previewOperation() {
-    if (!lines.length || !reason.trim()) return;
+    if (!lines.length || !reason.trim() || (customerReturn && !warehouseId))
+      return;
     setPreview(null);
     try {
       let response;
       if (action === DocumentAction.CREATE_RETURN) {
         const request: ReturnRequest = {
           sourceDocumentId: document.id,
-          direction:
-            document.type === DocumentType.GOODS_RECEIPT
-              ? ReturnDirection.SUPPLIER_RETURN
-              : ReturnDirection.CUSTOMER_RETURN,
+          direction: returnDirection,
           reason: reason.trim(),
+          ...(customerReturn && warehouseId
+            ? { warehouseId: Number(warehouseId) }
+            : {}),
           lines,
         };
         response = await previewReturn.mutateAsync(request);
@@ -172,7 +207,7 @@ export function ReturnOperationDialog({
           returnDocumentId: document.id,
           originalDeliveryId,
           warehouseId: Number(warehouseId),
-          date: new Date().toISOString().slice(0, 10),
+          date: replacementDate,
           nonBillable: true,
           lines,
         };
@@ -188,15 +223,20 @@ export function ReturnOperationDialog({
     if (!preview?.valid || !lines.length || !reason.trim()) return;
     try {
       if (action === DocumentAction.CREATE_RETURN) {
-        await createReturn.mutateAsync({
+        const request: ReturnRequest = {
           sourceDocumentId: document.id,
-          direction:
-            document.type === DocumentType.GOODS_RECEIPT
-              ? ReturnDirection.SUPPLIER_RETURN
-              : ReturnDirection.CUSTOMER_RETURN,
+          direction: returnDirection,
           reason: reason.trim(),
+          ...(customerReturn && warehouseId
+            ? { warehouseId: Number(warehouseId) }
+            : {}),
           lines,
-        });
+        };
+        const mutationRequest: ReturnMutationRequest = {
+          ...request,
+          idempotencyKey: getSubmissionKey(JSON.stringify(request)),
+        };
+        await createReturn.mutateAsync(mutationRequest);
       } else if (action === DocumentAction.RELEASE_QUARANTINE) {
         await releaseStock.mutateAsync({
           id: document.id,
@@ -210,14 +250,19 @@ export function ReturnOperationDialog({
         });
       } else {
         if (!originalDeliveryId) return;
-        await createReplacement.mutateAsync({
+        const request: ReplacementDeliveryRequest = {
           returnDocumentId: document.id,
           originalDeliveryId,
           warehouseId: Number(warehouseId),
-          date: new Date().toISOString().slice(0, 10),
+          date: replacementDate,
           nonBillable: true,
           lines,
-        });
+        };
+        const mutationRequest: ReplacementDeliveryMutationRequest = {
+          ...request,
+          idempotencyKey: getSubmissionKey(JSON.stringify(request)),
+        };
+        await createReplacement.mutateAsync(mutationRequest);
       }
       toast.success(t('pages.documents.operations.saved'));
       onComplete();
@@ -238,7 +283,7 @@ export function ReturnOperationDialog({
           icon={RotateCcw}
         />
         <AppDialogBody className='space-y-4'>
-          {needsWarehouse && (
+          {(needsWarehouse || customerReturn) && (
             <div className='space-y-2'>
               <Label>
                 {t(
@@ -262,6 +307,21 @@ export function ReturnOperationDialog({
                   />
                 </SelectTrigger>
                 <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>
+                  {allWarehouses
+                    .filter(
+                      (warehouse) =>
+                        warehouse.id === Number(warehouseId) &&
+                        !warehouses.some((active) => active.id === warehouse.id),
+                    )
+                    .map((warehouse) => (
+                      <SelectItem
+                        key={warehouse.id}
+                        value={String(warehouse.id)}
+                        disabled
+                      >
+                        {warehouse.name} · {warehouse.code}
+                      </SelectItem>
+                    ))}
                   {warehouses.map((warehouse) => (
                     <SelectItem key={warehouse.id} value={String(warehouse.id)}>
                       {warehouse.name} · {warehouse.code}
@@ -270,6 +330,15 @@ export function ReturnOperationDialog({
                 </SelectContent>
               </Select>
             </div>
+          )}
+          {action === DocumentAction.CREATE_RETURN && (
+            <p className='rounded-lg border border-zinc-700 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-300'>
+              {t('pages.documents.operations.returnDirection', {
+                direction: t(
+                  `pages.documents.operations.direction.${returnDirection}`,
+                ),
+              })}
+            </p>
           )}
           {action === DocumentAction.CREATE_REPLACEMENT_DELIVERY && (
             <p className='rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100'>
@@ -307,7 +376,7 @@ export function ReturnOperationDialog({
                   </p>
                   {action === DocumentAction.CREATE_RETURN && (
                     <Select
-                      value={dispositions[line.id] ?? ReturnDisposition.RESTOCK}
+                      value={dispositions[line.id] ?? defaultDisposition}
                       onValueChange={(value) => {
                         setDispositions((current) => ({
                           ...current,
@@ -320,9 +389,7 @@ export function ReturnOperationDialog({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>
-                        {(
-                          Object.values(ReturnDisposition)
-                        ).map((value) => (
+                        {availableDispositions.map((value) => (
                           <SelectItem key={value} value={value}>
                             {t(
                               `pages.documents.operations.disposition.${value}`,
@@ -392,6 +459,17 @@ export function ReturnOperationDialog({
                     resulting: line.resultingQuantity ?? 0,
                     quantity: line.quantityDelta ?? 0,
                   })}
+                  {line.targetWarehouseId != null && (
+                    <span>
+                      {' · '}
+                      {t('pages.documents.operations.targetWarehouseResult', {
+                        warehouse:
+                          allWarehouses.find(
+                            (item) => item.id === line.targetWarehouseId,
+                          )?.name ?? `#${line.targetWarehouseId}`,
+                      })}
+                    </span>
+                  )}
                   {line.errorMessageKey
                     ? ` · ${t(`messagekey.${line.errorMessageKey}`)}`
                     : ''}
@@ -423,6 +501,7 @@ export function ReturnOperationDialog({
               !lines.length ||
               !reason.trim() ||
               (needsWarehouse && !warehouseId) ||
+              (customerReturn && !warehouseId) ||
               (action === DocumentAction.CREATE_REPLACEMENT_DELIVERY &&
                 !originalDeliveryId)
             }
