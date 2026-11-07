@@ -100,6 +100,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   const [documentPath, setDocumentPath] = useState<number[]>([]);
   const activeId = documentPath.at(-1) ?? document?.id ?? null;
   const fileInput = useRef<HTMLInputElement>(null);
+  const retryKeys = useRef(new Map<number, string>());
   const detailQuery = useDocumentQuery(activeId);
   const currenciesQuery = useCurrenciesQuery();
   const retryPdf = useRetryPdfMutation();
@@ -167,6 +168,9 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   const documentCurrencyCode =
     current.currencyCode ?? documentCurrency?.code ?? null;
   const currencyNotRecorded = t('pages.documents.details.currencyNotRecorded');
+  const latestGeneratedPdf = current.files.find(
+    (file) => file.source === DocumentFileSource.GENERATED_PDF,
+  );
 
   const showBillingProgress = current.lines.some(
     (line) => line.billedQuantity !== undefined,
@@ -193,13 +197,17 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
     }
   }
 
-  async function retry() {
+  async function retry(fileId: number) {
     if (!current) return;
+    const idempotencyKey =
+      retryKeys.current.get(fileId) ?? createIdempotencyKey();
+    retryKeys.current.set(fileId, idempotencyKey);
     try {
       await retryPdf.mutateAsync({
         id: current.id,
-        idempotencyKey: createIdempotencyKey(),
+        idempotencyKey,
       });
+      retryKeys.current.delete(fileId);
       toast.success(t('pages.documents.files.retryQueued'));
     } catch (error) {
       toastApiError(t, error);
@@ -576,7 +584,9 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                               </p>
                             )}
                           </div>
-                          {file.status === DocumentFileStatus.FAILED &&
+                          {file.id === latestGeneratedPdf?.id &&
+                            file.source === DocumentFileSource.GENERATED_PDF &&
+                            file.status === DocumentFileStatus.FAILED &&
                             current.allowedActions.includes(
                               DocumentAction.RETRY_PDF,
                             ) && (
@@ -584,7 +594,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                                 variant='ghost'
                                 size='icon-sm'
                                 disabled={retryPdf.isPending}
-                                onClick={() => void retry()}
+                                onClick={() => void retry(file.id)}
                                 aria-label={t('pages.documents.files.retry')}
                               >
                                 <RefreshCw className='h-4 w-4' />

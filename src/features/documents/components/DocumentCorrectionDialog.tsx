@@ -81,7 +81,10 @@ export function DocumentCorrectionDialog({
   );
   const [quantities, setQuantities] = useState<Record<number, string>>(() =>
     Object.fromEntries(
-      document.lines.map((line) => [line.id, String(line.fulfilledQuantity)]),
+      document.lines.map((line) => [
+        line.id,
+        String(line.operationQuantity ?? line.fulfilledQuantity),
+      ]),
     ),
   );
   const [correctedProductIds, setCorrectedProductIds] = useState<
@@ -103,10 +106,36 @@ export function DocumentCorrectionDialog({
   );
   const [preview, setPreview] = useState<DocumentOperationPreview | null>(null);
   const [previewKey, setPreviewKey] = useState('');
+  const [closureReopenPrompted, setClosureReopenPrompted] = useState(false);
+  const [closureReopenQuantities, setClosureReopenQuantities] = useState<
+    Record<number, string>
+  >({});
+  const [closureReopenReasons, setClosureReopenReasons] = useState<
+    Record<number, string>
+  >({});
+  const selectedLines = useMemo(
+    () => document.lines.filter((line) => selectedLineIds.has(line.id)),
+    [document.lines, selectedLineIds],
+  );
+  const closureCandidates = useMemo(() => {
+    const groups = new Map<number, typeof selectedLines>();
+    for (const line of selectedLines) {
+      if (line.sourceLineId == null || (line.closedQuantity ?? 0) <= 0) continue;
+      const group = groups.get(line.sourceLineId) ?? [];
+      group.push(line);
+      groups.set(line.sourceLineId, group);
+    }
+    return Array.from(groups.entries()).map(
+      ([sourceOrderLineId, groupedLines]) => ({
+        sourceOrderLineId,
+        ownerLineId: groupedLines[0].id,
+        line: groupedLines[0],
+      }),
+    );
+  }, [selectedLines]);
   const lines = useMemo(
     () =>
-      document.lines
-        .filter((line) => selectedLineIds.has(line.id))
+      selectedLines
         .map((line) => ({
           sourceLineId: line.id,
           productId: line.productId,
@@ -118,13 +147,40 @@ export function DocumentCorrectionDialog({
           ...(correctedWarehouseIds[line.id]
             ? { correctedWarehouseId: Number(correctedWarehouseIds[line.id]) }
             : {}),
+          ...(closureReopenPrompted
+            ? (() => {
+                const reopen = closureCandidates.find(
+                  (candidate) => candidate.ownerLineId === line.id,
+                );
+                const quantity = reopen
+                  ? closureReopenQuantities[reopen.sourceOrderLineId] ?? ''
+                  : '';
+                const reopenReason = reopen
+                  ? closureReopenReasons[reopen.sourceOrderLineId] ?? ''
+                  : '';
+                return reopen && (quantity !== '' || reopenReason !== '')
+                  ? {
+                      closureReopens: [
+                        {
+                          sourceOrderLineId: reopen.sourceOrderLineId,
+                          quantity: Number(quantity),
+                          reason: reopenReason,
+                        },
+                      ],
+                    }
+                  : {};
+              })()
+            : {}),
         })),
     [
-      document.lines,
-      selectedLineIds,
+      selectedLines,
       quantities,
       correctedProductIds,
       correctedWarehouseIds,
+      closureReopenPrompted,
+      closureCandidates,
+      closureReopenQuantities,
+      closureReopenReasons,
     ],
   );
   const signature = JSON.stringify({
@@ -150,6 +206,13 @@ export function DocumentCorrectionDialog({
         request,
       });
       setPreview(response.payload);
+      if (
+        response.payload.blockers?.includes(
+          'document.error.correction_closed_quantity_conflict',
+        )
+      ) {
+        setClosureReopenPrompted(true);
+      }
       setPreviewKey(signature);
     } catch (error) {
       toastApiError(t, error);
@@ -376,6 +439,70 @@ export function DocumentCorrectionDialog({
                   </div>
                 </div>
               ))}
+              {closureReopenPrompted && closureCandidates.length > 0 && (
+                <section className='space-y-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-4'>
+                  <p className='text-sm text-amber-100'>
+                    {t('pages.documents.operations.reopenClosedQuantity')}
+                  </p>
+                  {closureCandidates.map(({ sourceOrderLineId, line }) => (
+                    <div
+                      key={sourceOrderLineId}
+                      className='grid gap-3 sm:grid-cols-2'
+                    >
+                      <p className='text-sm font-medium sm:col-span-2'>
+                        {line.productName}
+                      </p>
+                      <div className='space-y-1.5'>
+                        <Label>
+                          {t('pages.documents.operations.reopenQuantity', {
+                            available: line.closedQuantity ?? 0,
+                          })}
+                        </Label>
+                        {line.closureReason && (
+                          <p className='text-xs text-zinc-400'>
+                            {t(
+                              'pages.documents.operations.previousClosureReason',
+                              { reason: line.closureReason },
+                            )}
+                          </p>
+                        )}
+                        <Input
+                          type='number'
+                          min='0'
+                          max={line.closedQuantity ?? 0}
+                          step='any'
+                          value={
+                            closureReopenQuantities[sourceOrderLineId] ?? ''
+                          }
+                          onChange={(event) => {
+                            setClosureReopenQuantities((current) => ({
+                              ...current,
+                              [sourceOrderLineId]: event.target.value,
+                            }));
+                            setPreview(null);
+                          }}
+                        />
+                      </div>
+                      <div className='space-y-1.5'>
+                        <Label>
+                          {t('pages.documents.operations.reopenReason')}
+                        </Label>
+                        <Input
+                          maxLength={500}
+                          value={closureReopenReasons[sourceOrderLineId] ?? ''}
+                          onChange={(event) => {
+                            setClosureReopenReasons((current) => ({
+                              ...current,
+                              [sourceOrderLineId]: event.target.value,
+                            }));
+                            setPreview(null);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </section>
+              )}
               <div className='space-y-2'>
                 <Label htmlFor='correction-reason'>
                   {t('pages.documents.operations.reason')}

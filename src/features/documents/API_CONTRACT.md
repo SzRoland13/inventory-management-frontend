@@ -122,6 +122,17 @@ document version. File endpoints remain `POST /documents/{id}/files`,
 `POST /documents/{id}/pdf`, `POST /documents/{id}/pdf/retry`, and secured file
 URLs in document detail. PDF generation accepts `language=en|hu`; queued
 generation states are `QUEUED`, `PROCESSING`, `COMPLETED`, and `FAILED`.
+PDF retry requires an `Idempotency-Key` header and is available only when the
+latest generated PDF attempt failed. Reuse the same key when retrying the same
+request; active attempts and latest attempts that did not fail are rejected.
+
+Correcting a posted fulfillment may include `closureReopens` on a correction
+line. Each entry contains `sourceOrderLineId`, positive `quantity`, and a
+nonblank `reason`. The order line must be allocated to that correction line,
+and the requested quantity cannot exceed its currently closed quantity. The
+backend validates corrected fulfillment together with the remaining closed
+quantity and rejects totals above the ordered quantity. Omit the array or send
+an empty array when no closure needs to be reopened.
 
 Document responses retain `id`, `type`, nullable `number`, `date`, `ownerName`,
 `status`, string `version`, `lines`, `allowedActions`, `relatedDocuments`,

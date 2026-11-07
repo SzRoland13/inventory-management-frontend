@@ -212,6 +212,11 @@ export type DocumentOperationLine = {
   varianceReason?: string;
   reason?: string;
   disposition?: ReturnDisposition;
+  closureReopens?: Array<{
+    sourceOrderLineId: number;
+    quantity: number;
+    reason: string;
+  }>;
 };
 export type DocumentOperationPreview = {
   valid: boolean;
