@@ -115,6 +115,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
     {},
   );
   const [notes, setNotes] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('');
   const [productPickerOpen, setProductPickerOpen] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [debouncedProductSearch, setDebouncedProductSearch] = useState('');
@@ -226,6 +227,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
     setCurrencyId('');
     setExchangeRates({});
     setNotes('');
+    setPaymentTerms('');
     setProductPickerOpen(false);
     setProductSearch('');
     setDebouncedProductSearch('');
@@ -246,6 +248,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
       partnerId: Number(partnerId),
       ...(directFulfillment ? { warehouseId: Number(warehouseId) } : {}),
       notes,
+      paymentTerms,
       lines: lines.map(
         ({
           productId,
@@ -729,6 +732,10 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                   </section>
 
                   <DocumentDraftNotesField value={notes} onChange={setNotes} />
+                  <div className='space-y-2'>
+                    <Label htmlFor='payment-terms'>{t('pages.documents.commercial.paymentTerms')}</Label>
+                    <Input id='payment-terms' value={paymentTerms} onChange={(event) => setPaymentTerms(event.target.value)} maxLength={500} />
+                  </div>
                 </div>
               </ScrollArea>
             </AppDialogBody>

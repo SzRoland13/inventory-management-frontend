@@ -14,6 +14,7 @@ import { DocumentQueue } from '@/features/documents/components/DocumentQueue';
 import { CreateDocumentDialog } from '@/features/documents/components/CreateDocumentDialog';
 import { StartStockCountDialog } from '@/features/documents/components/StartStockCountDialog';
 import { CreateTransferDialog } from '@/features/documents/components/CreateTransferDialog';
+import { CommercialDocumentDialog } from '@/features/documents/components/CommercialDocumentDialog';
 import {
   useDocumentCapabilitiesQuery,
   useDocumentsQuery,
@@ -40,6 +41,12 @@ export default function DocumentsScreen() {
   const [createOpen, setCreateOpen] = useState(false);
   const [countOpen, setCountOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
+  const [commercialType, setCommercialType] = useState<
+    | DocumentType.SUPPLIER_BILL
+    | DocumentType.CUSTOMER_INVOICE
+    | DocumentType.FINANCIAL_CREDIT
+    | null
+  >(null);
   const [selectedDocument, setSelectedDocument] =
     useState<BusinessDocument | null>(null);
 
@@ -128,6 +135,13 @@ export default function DocumentsScreen() {
                 <FilePlus2 className='h-4 w-4' />
                 {t('pages.documents.create.new')}
               </Button>
+              {([DocumentType.SUPPLIER_BILL, DocumentType.CUSTOMER_INVOICE, DocumentType.FINANCIAL_CREDIT] as const)
+                .filter((type) => capabilitiesQuery.data?.payload.creatableTypes.includes(type))
+                .map((type) => (
+                  <Button key={type} variant='outline' onClick={() => setCommercialType(type)} className='h-10 shrink-0 border-zinc-600 bg-zinc-900 text-zinc-100'>
+                    {t(`pages.documents.actions.CREATE_${type === DocumentType.SUPPLIER_BILL ? 'SUPPLIER_BILL' : type === DocumentType.CUSTOMER_INVOICE ? 'CUSTOMER_INVOICE' : 'CREDIT'}`)}
+                  </Button>
+                ))}
               {capabilitiesQuery.data?.payload.creatableTypes.includes(
                 DocumentType.STOCK_COUNT,
               ) && (
@@ -246,6 +260,11 @@ export default function DocumentsScreen() {
       </main>
 
       <CreateDocumentDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <CommercialDocumentDialog
+        open={commercialType !== null}
+        type={commercialType}
+        onOpenChange={(open) => { if (!open) setCommercialType(null); }}
+      />
       {countOpen && (
         <StartStockCountDialog
           onClose={() => setCountOpen(false)}

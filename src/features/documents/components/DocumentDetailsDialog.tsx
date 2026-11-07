@@ -19,16 +19,20 @@ import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import {
   useConfirmOrderMutation,
+  useCommercialActionMutation,
   useDocumentQuery,
   useGeneratePdfMutation,
   useRetryPdfMutation,
+  useSettlementOwnersQuery,
 } from '@/features/documents/queries/documentQueries';
 import { DocumentService } from '@/features/documents/services/DocumentService';
 import { createIdempotencyKey } from '@/features/shared/api/idempotencyKey';
 import {
+  CommercialDocumentOperation,
   DocumentAction,
   DocumentFileSource,
   DocumentFileStatus,
+  DocumentType,
 } from '@/features/documents/enums/documentEnums';
 import type { BusinessDocument } from '@/features/documents/types/documents';
 import {
@@ -62,6 +66,7 @@ import { ReturnOperationDialog } from '@/features/documents/components/ReturnOpe
 import { StockCountReconciliationDialog } from '@/features/documents/components/StockCountReconciliationDialog';
 import { DocumentCorrectionDialog } from '@/features/documents/components/DocumentCorrectionDialog';
 import { DocumentDraftEditor } from '@/features/documents/components/DocumentDraftEditor';
+import { CommercialDocumentDialog } from '@/features/documents/components/CommercialDocumentDialog';
 import {
   documentRelationLabel,
   documentStatusLabel,
@@ -106,9 +111,12 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   const retryPdf = useRetryPdfMutation();
   const generatePdf = useGeneratePdfMutation();
   const confirmOrder = useConfirmOrderMutation();
+  const commercialAction = useCommercialActionMutation();
   const [fulfillmentOpen, setFulfillmentOpen] = useState(false);
   const [closeRemainingOpen, setCloseRemainingOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
+  const [commercialEditorOpen, setCommercialEditorOpen] = useState(false);
+  const [selectedSettlementOwner, setSelectedSettlementOwner] = useState('');
   const [workflowAction, setWorkflowAction] =
     useState<DocumentWorkflowAction | null>(null);
   const [pdfLanguage, setPdfLanguage] = useState<'en' | 'hu'>(
@@ -116,6 +124,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
   );
   const current =
     detailQuery.data?.payload ?? (activeId === document?.id ? document : null);
+  const settlementOwnersQuery = useSettlementOwnersQuery(Boolean(current?.financialSettlementRequired));
   const currenciesById = new Map(
     (currenciesQuery.data?.payload.currencies ?? []).map((currency) => [
       currency.id,
@@ -123,7 +132,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
     ]),
   );
   function closeDetails() {
-    if (editorOpen) return;
+    if (editorOpen || commercialEditorOpen) return;
     onClose();
   }
   if (!document) return null;
@@ -236,6 +245,36 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
         version: current.version,
       });
       toast.success(t('pages.documents.actions.confirmed'));
+    } catch (error) {
+      toastApiError(t, error);
+    }
+  }
+
+  async function runCommercialAction(action: CommercialDocumentOperation) {
+    if (!current) {
+      return;
+    }
+
+    try {
+      if (action === CommercialDocumentOperation.APPROVE || action === CommercialDocumentOperation.REJECT) {
+        const comment = window.prompt(t('pages.documents.commercial.decisionComment'));
+        if (!comment?.trim()) {
+          return;
+        }
+
+        await commercialAction.mutateAsync({ action, id: current.id, version: current.version, comment });
+      } else if (action === CommercialDocumentOperation.FINALIZE) {
+        await commercialAction.mutateAsync({ action, id: current.id, version: current.version });
+      } else {
+        if (!selectedSettlementOwner) {
+          return;
+        }
+
+        await commercialAction.mutateAsync({ action, id: current.id, version: current.version, ownerId: Number(selectedSettlementOwner) });
+      }
+
+      await detailQuery.refetch();
+      toast.success(t('pages.documents.commercial.actionSaved'));
     } catch (error) {
       toastApiError(t, error);
     }
@@ -370,6 +409,13 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                         {documentStatusLabel(current.status, t)}
                       </Badge>
                     </div>
+                    {(current.paymentTerms || current.approvalRequired || current.financialSettlementRequired) && (
+                      <div className='mb-3 space-y-2 rounded-lg border border-zinc-700 bg-zinc-950/40 p-3 text-sm'>
+                        {current.paymentTerms && <p className='text-zinc-300'>{t('pages.documents.commercial.paymentTerms')}: {current.paymentTerms}</p>}
+                        {current.approvalRequired && current.approvalStatus && <p className='text-amber-200'>{t('pages.documents.commercial.approval')}: {t(`pages.documents.commercial.approvalStatus.${current.approvalStatus}`)} {current.approvalComment ? `· ${current.approvalComment}` : ''}</p>}
+                        {current.financialSettlementRequired && <p className='text-amber-200'>{t('pages.documents.commercial.settlementRequired')} · {current.financialSettlementOwnerName ?? t('pages.documents.commercial.unassigned')}</p>}
+                      </div>
+                    )}
                     <div className='space-y-2'>
                       {current.lines.map((line) => (
                         <article
@@ -675,7 +721,11 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
           current.allowedActions.includes(DocumentAction.CONFIRM) ||
           current.allowedActions.includes(DocumentAction.POST) ||
           current.allowedActions.includes(DocumentAction.CLOSE_REMAINING) ||
-          current.allowedActions.includes(DocumentAction.GENERATE_PDF)) && (
+          current.allowedActions.includes(DocumentAction.GENERATE_PDF) ||
+          current.allowedActions.includes(DocumentAction.APPROVE) ||
+          current.allowedActions.includes(DocumentAction.REJECT) ||
+          current.allowedActions.includes(DocumentAction.FINALIZE) ||
+          current.allowedActions.includes(DocumentAction.ASSIGN_SETTLEMENT)) && (
           <AppDialogFooter>
             {current.allowedActions.includes(DocumentAction.POST) && (
               <Button
@@ -739,7 +789,10 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
             {current.allowedActions.includes(DocumentAction.EDIT) && (
               <Button
                 variant='outline'
-                onClick={() => setEditorOpen(true)}
+                onClick={() => {
+                  if ([DocumentType.SUPPLIER_BILL, DocumentType.CUSTOMER_INVOICE, DocumentType.FINANCIAL_CREDIT].includes(current.type as DocumentType)) setCommercialEditorOpen(true);
+                  else setEditorOpen(true);
+                }}
                 className={appDialogCancelButtonClass}
               >
                 {t('pages.documents.actions.EDIT')}
@@ -755,6 +808,18 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                 {t('pages.documents.actions.CONFIRM')}
               </Button>
             )}
+            {current.allowedActions.includes(DocumentAction.APPROVE) && <Button onClick={() => void runCommercialAction(CommercialDocumentOperation.APPROVE)} disabled={commercialAction.isPending}>{t('pages.documents.actions.APPROVE')}</Button>}
+            {current.allowedActions.includes(DocumentAction.REJECT) && <Button variant='outline' onClick={() => void runCommercialAction(CommercialDocumentOperation.REJECT)} disabled={commercialAction.isPending}>{t('pages.documents.actions.REJECT')}</Button>}
+            {current.allowedActions.includes(DocumentAction.FINALIZE) && <Button onClick={() => void runCommercialAction(CommercialDocumentOperation.FINALIZE)} disabled={commercialAction.isPending}>{t('pages.documents.actions.FINALIZE')}</Button>}
+            {current.allowedActions.includes(DocumentAction.ASSIGN_SETTLEMENT) && <div className='flex items-center gap-2'>
+              <Select value={selectedSettlementOwner} onValueChange={setSelectedSettlementOwner}>
+                <SelectTrigger aria-label={t('pages.documents.commercial.ownerSelect')} className='w-56 border-zinc-600 bg-zinc-800 text-zinc-100'><SelectValue placeholder={t('pages.documents.commercial.ownerSelect')} /></SelectTrigger>
+                <SelectContent className='border-zinc-700 bg-zinc-800 text-zinc-100'>
+                  {(settlementOwnersQuery.data?.payload ?? []).map((owner) => <SelectItem key={owner.id} value={String(owner.id)}>{owner.username} · {owner.role}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Button variant='outline' onClick={() => void runCommercialAction(CommercialDocumentOperation.ASSIGN_SETTLEMENT)} disabled={commercialAction.isPending || !selectedSettlementOwner}>{t('pages.documents.actions.ASSIGN_SETTLEMENT')}</Button>
+            </div>}
           </AppDialogFooter>
         )}
       </ThemedDialogContent>
@@ -778,6 +843,16 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
         onClose={() => {
           setEditorOpen(false);
           void detailQuery.refetch();
+        }}
+      />
+      <CommercialDocumentDialog
+        key={`commercial-edit-${current.id}-${current.version}`}
+        open={commercialEditorOpen}
+        type={null}
+        editDocument={commercialEditorOpen ? current : null}
+        onOpenChange={(open) => {
+          setCommercialEditorOpen(open);
+          if (!open) void detailQuery.refetch();
         }}
       />
       {(workflowAction === DocumentAction.DISPATCH ||

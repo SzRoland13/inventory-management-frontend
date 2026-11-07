@@ -2,10 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { requireSuccessfulResponse } from '@/features/shared/api/apiResponse';
 import { queryKeys } from '@/features/shared/api/queryKeys';
 import { DocumentService } from '@/features/documents/services/DocumentService';
-import { DocumentFileStatus } from '@/features/documents/enums/documentEnums';
+import { CommercialDocumentOperation, DocumentFileStatus, TransferMutationAction } from '@/features/documents/enums/documentEnums';
 import type {
   CloseRemainingRequest,
   DocumentDraftRequest,
+  CommercialDraftRequest,
+  CommercialDraftUpdateRequest,
   DocumentListRequest,
   DraftUpdateRequest,
   FulfillmentDraftRequest,
@@ -85,6 +87,66 @@ export function useCreateDocumentDraftMutation() {
     mutationFn: (request: DocumentDraftRequest) =>
       requireSuccessfulResponse(DocumentService.createDraft(request)),
     onSuccess: () => invalidate(),
+  });
+}
+
+export function useCreateCommercialDraftMutation() {
+  const invalidate = useInvalidateDocuments();
+  return useMutation({
+    mutationFn: (request: CommercialDraftRequest) =>
+      requireSuccessfulResponse(DocumentService.createCommercialDraft(request)),
+    onSuccess: () => invalidate(),
+  });
+}
+
+export function useUpdateCommercialDraftMutation() {
+  const invalidate = useInvalidateDocuments();
+  return useMutation({
+    mutationFn: ({ id, request }: { id: number; request: CommercialDraftUpdateRequest }) =>
+      requireSuccessfulResponse(DocumentService.updateCommercialDraft(id, request)),
+    onSuccess: (saved, variables) => invalidate(variables.id || saved.payload.id),
+  });
+}
+
+export function useCommercialActionMutation() {
+  const invalidate = useInvalidateDocuments();
+  return useMutation({
+    mutationFn: async (request:
+      | { action: CommercialDocumentOperation.APPROVE | CommercialDocumentOperation.REJECT; id: number; version: string; comment: string }
+      | { action: CommercialDocumentOperation.FINALIZE; id: number; version: string }
+      | { action: CommercialDocumentOperation.ASSIGN_SETTLEMENT; id: number; version: string; ownerId: number }) => {
+      if (request.action === CommercialDocumentOperation.APPROVE || request.action === CommercialDocumentOperation.REJECT) {
+        return requireSuccessfulResponse(
+          DocumentService.decideCommercial(
+            request.id,
+            request.version,
+            request.comment,
+            request.action,
+          ),
+        );
+      }
+      if (request.action === CommercialDocumentOperation.FINALIZE) {
+        return requireSuccessfulResponse(
+          DocumentService.finalizeCommercial(request.id, request.version),
+        );
+      }
+      if (request.action === CommercialDocumentOperation.ASSIGN_SETTLEMENT) {
+        return requireSuccessfulResponse(
+          DocumentService.assignSettlementOwner(request.id, request.version, request.ownerId),
+        );
+      }
+      throw new Error('Unsupported commercial action');
+    },
+    onSuccess: (saved) => invalidate(saved.payload.id),
+  });
+}
+
+export function useSettlementOwnersQuery(enabled = true) {
+  return useQuery({
+    queryKey: [...queryKeys.documents.all, 'settlement-owners'],
+    queryFn: () => requireSuccessfulResponse(DocumentService.settlementOwners()),
+    enabled,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -210,13 +272,13 @@ export function useTransferActionMutation() {
       request,
     }: {
       id: number;
-      action: 'dispatch' | 'receive' | 'resolve';
+      action: TransferMutationAction;
       request: TransferActionRequest;
     }) =>
       requireSuccessfulResponse(
-        action === 'dispatch'
+        action === TransferMutationAction.DISPATCH
           ? DocumentService.dispatchTransfer(id, request)
-          : action === 'receive'
+          : action === TransferMutationAction.RECEIVE
             ? DocumentService.receiveTransfer(id, request)
             : DocumentService.resolveTransfer(id, request),
       ),

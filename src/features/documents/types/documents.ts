@@ -7,11 +7,13 @@ import {
   DocumentStatus,
   DocumentType,
   DocumentCorrectionOperation,
+  CommercialApprovalStatus,
   ReturnDirection,
   ReturnDisposition,
   TransferMovementOperation,
   TransferResolutionOperation,
 } from '@/features/documents/enums/documentEnums';
+import { UserRole } from '@/features/users/types/user';
 
 export type OrderDocumentType =
   DocumentType.PURCHASE_ORDER | DocumentType.SALES_ORDER;
@@ -36,6 +38,8 @@ export type DocumentLine = {
   mainUnit?: { id: number; code: string; name: string; symbol: string } | null;
   secondaryUnit?: { id: number; code: string; name: string; symbol: string } | null;
   secondaryUnitsPerMainUnit?: number | null;
+  vatRate?: number | null;
+  netAmount?: number | null;
   orderedQuantity: number;
   fulfilledQuantity: number;
   operationQuantity?: number;
@@ -126,6 +130,16 @@ export type BusinessDocument = {
   activity: DocumentActivity[];
   files: DocumentFile[];
   version: string;
+  paymentTerms?: string | null;
+  approvalRequired?: boolean;
+  approvalStatus?: CommercialApprovalStatus | null;
+  approvalComment?: string | null;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  financialSettlementRequired?: boolean;
+  financialSettlementOwnerId?: number | null;
+  financialSettlementOwnerName?: string | null;
+  referenceNumber?: string | null;
 };
 
 export type DocumentListRequest = {
@@ -152,6 +166,7 @@ export type DocumentDraftRequest = {
   type: DraftDocumentType;
   currencyId: number;
   exchangeRates: DocumentExchangeRate[];
+  paymentTerms?: string;
   partnerId?: number;
   warehouseId?: number;
   date: string;
@@ -165,6 +180,34 @@ export type DocumentDraftRequest = {
     sourceCurrencyId?: number;
   }>;
 };
+
+export type CommercialDocumentType =
+  | DocumentType.SUPPLIER_BILL
+  | DocumentType.CUSTOMER_INVOICE
+  | DocumentType.FINANCIAL_CREDIT;
+
+export type CommercialDraftRequest = {
+  type: CommercialDocumentType;
+  sourceDocumentIds: number[];
+  date: string;
+  currencyId: number;
+  reason?: string;
+  referenceNumber?: string;
+  lines: Array<{
+    sourceLineId: number;
+    quantity: number;
+    unitPrice?: number;
+    vatRate?: number;
+    amount?: number;
+  }>;
+};
+
+export type CommercialDraftUpdateRequest = {
+  version: string;
+  draft: CommercialDraftRequest;
+};
+
+export type SettlementOwner = { id: number; username: string; role: UserRole };
 
 export type DraftUpdateRequest = {
   version: string;

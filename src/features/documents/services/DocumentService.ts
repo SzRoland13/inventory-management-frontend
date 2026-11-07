@@ -1,4 +1,5 @@
 import axiosClient from '@/features/shared/api/axios';
+import { CommercialDocumentOperation } from '@/features/documents/enums/documentEnums';
 import { BaseService } from '@/features/shared/api/BaseService';
 import type { ApiResponse } from '@/features/shared/types/genericDtos';
 import type {
@@ -6,6 +7,9 @@ import type {
   DocumentCapabilitiesResponse,
   CloseRemainingRequest,
   DocumentDraftRequest,
+  CommercialDraftRequest,
+  CommercialDraftUpdateRequest,
+  SettlementOwner,
   DocumentListRequest,
   DocumentListResponse,
   DraftUpdateRequest,
@@ -45,6 +49,49 @@ export const DocumentService = {
     BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/drafts`,
       request,
+    ),
+
+  createCommercialDraft: (request: CommercialDraftRequest) =>
+    BaseService.post<ApiResponse<BusinessDocument>>(
+      `${DOCUMENTS_URL}/commercial/drafts`,
+      request,
+    ),
+
+  updateCommercialDraft: (id: number, request: CommercialDraftUpdateRequest) =>
+    BaseService.put<ApiResponse<BusinessDocument>>(
+      `${DOCUMENTS_URL}/${id}/commercial/draft`,
+      { version: Number(request.version), draft: request.draft },
+    ),
+
+  decideCommercial: (
+    id: number,
+    version: string,
+    comment: string,
+    action: CommercialDocumentOperation.APPROVE | CommercialDocumentOperation.REJECT,
+  ) =>
+    BaseService.post<ApiResponse<BusinessDocument>>(
+      `${DOCUMENTS_URL}/${id}/commercial/${action === CommercialDocumentOperation.APPROVE ? 'approve' : 'reject'}`,
+      { version: Number(version), comment },
+      { headers: { 'If-Match': version } },
+    ),
+
+  finalizeCommercial: (id: number, version: string) =>
+    BaseService.post<ApiResponse<BusinessDocument>>(
+      `${DOCUMENTS_URL}/${id}/commercial/finalize`,
+      undefined,
+      { headers: { 'If-Match': version } },
+    ),
+
+  assignSettlementOwner: (id: number, version: string, ownerId: number) =>
+    BaseService.post<ApiResponse<BusinessDocument>>(
+      `${DOCUMENTS_URL}/${id}/commercial/settlement-owner`,
+      { version: Number(version), ownerId },
+      { headers: { 'If-Match': version } },
+    ),
+
+  settlementOwners: () =>
+    BaseService.get<ApiResponse<SettlementOwner[]>>(
+      `${DOCUMENTS_URL}/commercial/settlement-owners`,
     ),
 
   updateDraft: (id: number, request: DraftUpdateRequest) =>

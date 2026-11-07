@@ -67,6 +67,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
   const saveStateRef = useRef<SaveState>('saved');
   const [date, setDate] = useState(current?.date ?? '');
   const [notes, setNotes] = useState(current?.notes ?? '');
+  const [paymentTerms, setPaymentTerms] = useState(current?.paymentTerms ?? '');
   const [quantities, setQuantities] = useState<Record<number, number>>(() =>
     Object.fromEntries(
       (current?.lines ?? []).map((line) => [line.id, line.orderedQuantity]),
@@ -92,6 +93,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     current,
     date,
     notes,
+    paymentTerms,
     quantities,
     unitIds,
     currencyId,
@@ -101,6 +103,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     current,
     date,
     notes,
+    paymentTerms,
     quantities,
     unitIds,
     currencyId,
@@ -164,7 +167,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     };
     // saveDraft reads the latest form state after the debounce.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date, notes, quantities, unitIds, currencyId, exchangeRates]);
+  }, [date, notes, paymentTerms, quantities, unitIds, currencyId, exchangeRates]);
 
   async function saveDraft(version = versionRef.current): Promise<boolean> {
     if (saveInFlight.current) {
@@ -248,6 +251,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
       warehouseId: documentSnapshot.warehouseId ?? undefined,
       date: snapshot.date,
       notes: snapshot.notes,
+      paymentTerms: snapshot.paymentTerms,
       lines: resolvedLines.map(({ line, unitId }) => {
         const sourceUnitPrice = line.sourceUnitPrice ?? line.unitPrice;
         return {
@@ -551,6 +555,10 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
               value={notes}
               onChange={(value) => change(setNotes, value)}
             />
+            <div className='space-y-2'>
+              <label htmlFor='editor-payment-terms' className='text-sm font-medium text-zinc-200'>{t('pages.documents.commercial.paymentTerms')}</label>
+              <Input id='editor-payment-terms' value={paymentTerms} maxLength={500} onChange={(event) => change(setPaymentTerms, event.target.value)} />
+            </div>
           </div>
         </AppDialogBody>
         <AppDialogFooter>
