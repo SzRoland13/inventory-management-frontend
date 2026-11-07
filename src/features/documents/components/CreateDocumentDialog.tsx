@@ -692,7 +692,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                                 )
                               }
                               aria-label={t('pages.documents.create.quantity')}
-                              className='appearance-none border-zinc-600 bg-zinc-950 text-right tabular-nums [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
+                              className='border-zinc-600 bg-zinc-950 text-right tabular-nums'
                             />
                             <Button
                               type='button'

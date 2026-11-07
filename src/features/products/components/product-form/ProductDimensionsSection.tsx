@@ -4,7 +4,6 @@ import { Input } from '@/features/shared/components/ui/input';
 import { ValidationMessage } from '@/features/shared/components/ValidationMessage';
 import type { ProductFormFields } from './formTypes';
 import { FieldLabel, FormSection } from './FormSection';
-import { numberInputClassName } from './styles';
 
 export function ProductDimensionsSection({
   register,
@@ -25,7 +24,6 @@ export function ProductDimensionsSection({
             <Input
               id={`product-${fieldName}`}
               {...register(fieldName)}
-              className={numberInputClassName}
               type='number'
               min='0'
               step='any'

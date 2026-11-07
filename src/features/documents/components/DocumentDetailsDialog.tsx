@@ -775,7 +775,10 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
       />
       <DocumentDraftEditor
         document={editorOpen ? current : null}
-        onClose={() => setEditorOpen(false)}
+        onClose={() => {
+          setEditorOpen(false);
+          void detailQuery.refetch();
+        }}
       />
       {(workflowAction === DocumentAction.DISPATCH ||
         workflowAction === DocumentAction.RECEIVE_TRANSFER ||

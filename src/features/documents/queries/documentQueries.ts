@@ -88,8 +88,10 @@ export function useCreateDocumentDraftMutation() {
   });
 }
 
-export function useUpdateDocumentDraftMutation() {
-  const invalidate = useInvalidateDocuments();
+export function useUpdateDocumentDraftMutation(
+  { updateDetailCache = true }: { updateDetailCache?: boolean } = {},
+) {
+  const client = useQueryClient();
   return useMutation({
     mutationFn: ({
       id,
@@ -98,7 +100,14 @@ export function useUpdateDocumentDraftMutation() {
       id: number;
       request: DraftUpdateRequest;
     }) => requireSuccessfulResponse(DocumentService.updateDraft(id, request)),
-    onSuccess: (_, variables) => invalidate(variables.id),
+    onSuccess: async (saved, variables) => {
+      if (updateDetailCache) {
+        client.setQueryData(queryKeys.documents.detail(variables.id), saved);
+      }
+      await client.invalidateQueries({
+        queryKey: queryKeys.documents.lists(),
+      });
+    },
   });
 }
 

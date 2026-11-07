@@ -27,6 +27,17 @@ export function convertLineQuantity(
   return (quantity * fromFactor) / toFactor;
 }
 
+export function convertLineUnitPrice(
+  unitPrice: number,
+  line: DocumentLine,
+  fromUnitId: number | null | undefined,
+  toUnitId: number | null | undefined,
+) {
+  const fromFactor = lineUnitFactor(line, fromUnitId);
+  const toFactor = lineUnitFactor(line, toUnitId);
+  return (unitPrice * toFactor) / fromFactor;
+}
+
 export function lineUnitName(line: DocumentLine, unitId: number | null | undefined) {
   return (
     lineUnitOptions(line).find((unit) => unit.id === unitId)?.symbol ??

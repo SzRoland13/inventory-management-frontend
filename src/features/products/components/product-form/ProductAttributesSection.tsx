@@ -16,7 +16,7 @@ import {
 } from '@/features/products/types/product';
 import type { ProductFormFields } from './formTypes';
 import { FieldLabel, FormSection } from './FormSection';
-import { numberInputClassName, productSelectTriggerClassName } from './styles';
+import { productSelectTriggerClassName } from './styles';
 
 type ProductAttributesSectionProps = Pick<
   ProductFormFields,
@@ -139,11 +139,6 @@ export function ProductAttributesSection({
                             ProductAttributeValueType.NUMBER
                           ? 'number'
                           : 'text'
-                    }
-                    className={
-                      definition.valueType === ProductAttributeValueType.NUMBER
-                        ? numberInputClassName
-                        : undefined
                     }
                     step={
                       definition.valueType === ProductAttributeValueType.NUMBER

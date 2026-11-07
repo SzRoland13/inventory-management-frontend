@@ -339,7 +339,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
                       setPreview(null);
                       setPreviewSignature('');
                     }}
-                    className='h-11 border-zinc-600 bg-zinc-950/80 text-right text-base font-semibold tabular-nums shadow-inner shadow-black/20 [appearance:textfield] focus-visible:border-indigo-400 focus-visible:ring-indigo-400/20 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
+                    className='h-11 border-zinc-600 bg-zinc-950/80 text-right text-base font-semibold tabular-nums shadow-inner shadow-black/20 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/20'
                   />
                   <span className='mt-1 block text-right text-xs text-zinc-400'>{lineUnitName(line, unitIds[line.id] ?? line.unitId)}</span>
                 </label>

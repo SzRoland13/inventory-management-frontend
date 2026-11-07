@@ -30,7 +30,12 @@ import {
   appDialogCancelButtonClass,
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
-import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
+import {
+  convertLineQuantity,
+  convertLineUnitPrice,
+  lineUnitName,
+  lineUnitOptions,
+} from '@/features/documents/utils/lineUnits';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/features/shared/components/ui/select';
 import {
   DocumentDraftCurrencyFields,
@@ -44,7 +49,7 @@ type SaveState = 'saved' | 'saving' | 'error' | 'conflict';
 export function DocumentDraftEditor({ document, onClose }: Props) {
   const t = useTranslations();
   const detail = useDocumentQuery(document?.id ?? null, false);
-  const update = useUpdateDocumentDraftMutation();
+  const update = useUpdateDocumentDraftMutation({ updateDetailCache: false });
   const resolveUnitId = useDocumentLineUnitResolver();
   const company = useExtendedCompanyQuery();
   const currenciesQuery = useCurrenciesQuery();
@@ -243,26 +248,84 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
       warehouseId: documentSnapshot.warehouseId ?? undefined,
       date: snapshot.date,
       notes: snapshot.notes,
-      lines: resolvedLines.map(({ line, unitId }) => ({
-        productId: line.productId,
-        unitId: unitId!,
-        quantity: snapshot.quantities[line.id] ?? line.orderedQuantity,
-        ...(line.sourceUnitPrice === undefined && line.unitPrice === undefined
-          ? {}
-          : { sourceUnitPrice: line.sourceUnitPrice ?? line.unitPrice }),
-        sourceCurrencyId:
-          line.sourceCurrencyId ??
-          documentSnapshot.currencyId ??
-          targetCurrencyId,
-      })),
+      lines: resolvedLines.map(({ line, unitId }) => {
+        const sourceUnitPrice = line.sourceUnitPrice ?? line.unitPrice;
+        return {
+          productId: line.productId,
+          unitId: unitId!,
+          quantity: snapshot.quantities[line.id] ?? line.orderedQuantity,
+          ...(sourceUnitPrice === undefined
+            ? {}
+            : {
+                sourceUnitPrice: convertLineUnitPrice(
+                  sourceUnitPrice,
+                  line,
+                  line.unitId,
+                  unitId,
+                ),
+              }),
+          sourceCurrencyId:
+            line.sourceCurrencyId ??
+            documentSnapshot.currencyId ??
+            targetCurrencyId,
+        };
+      }),
     };
     saveInFlight.current = true;
+    const focusedElement = window.document.activeElement;
+    const focusedDraftElement =
+      focusedElement instanceof HTMLElement &&
+      focusedElement.closest('[data-draft-editor]')
+        ? focusedElement
+        : null;
+    const selectionTarget =
+      focusedDraftElement instanceof HTMLTextAreaElement ||
+      (focusedDraftElement instanceof HTMLInputElement &&
+        ['text', 'search', 'tel', 'url', 'password'].includes(
+          focusedDraftElement.type,
+        ))
+        ? focusedDraftElement
+        : null;
+    const selection =
+      selectionTarget
+        ? {
+            start: selectionTarget.selectionStart,
+            end: selectionTarget.selectionEnd,
+          }
+        : null;
     const operation = (async () => {
       try {
         const saved = await update.mutateAsync({
           id: documentSnapshot.id,
           request: { version, draft: request },
         });
+        const activeElement = window.document.activeElement;
+        const activeDialog =
+          activeElement instanceof Element
+            ? activeElement.closest('[data-slot="dialog-content"]')
+            : null;
+        if (
+          focusedDraftElement?.isConnected &&
+          (activeElement === window.document.body ||
+            (activeDialog && !activeDialog.hasAttribute('data-draft-editor')))
+        ) {
+          focusedDraftElement.focus({ preventScroll: true });
+          if (
+            selectionTarget &&
+            selection &&
+            selection.start !== null &&
+            selection.end !== null
+          ) {
+            try {
+              selectionTarget.setSelectionRange(
+                selection.start,
+                selection.end,
+              );
+            } catch {
+              // Number inputs do not support selection ranges.
+            }
+          }
+        }
         versionRef.current = saved.payload.version;
         if (sequence === editSequence.current) {
           dirtyRef.current = false;
@@ -370,7 +433,10 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
 
   return (
     <Dialog open onOpenChange={(open) => !open && void closeEditor()}>
-      <ThemedDialogContent className='!max-w-2xl'>
+      <ThemedDialogContent
+        data-draft-editor
+        className='!max-w-2xl'
+      >
         <AppDialogHeader
           title={t('pages.documents.editor.title', {
             number: current.number || t('pages.documents.draft'),
