@@ -770,6 +770,7 @@
         "postAdjustments": "Confirm and post adjustments",
         "countPosted": "Count adjustments posted",
         "correctionDescription": "Choose how to handle the posted document {number}.",
+        "selectCorrectionLine": "Include {product} in this correction",
         "correctionProgress": "Original {original} · fulfilled {fulfilled} · closed {closed} · returned {returned} · remaining {remaining}",
         "correctedQuantity": "Corrected fulfilled quantity",
         "correctedProduct": "Corrected product",

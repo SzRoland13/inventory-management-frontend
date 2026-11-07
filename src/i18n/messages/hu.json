@@ -770,6 +770,7 @@
         "postAdjustments": "Korrekciók jóváhagyása és rögzítése",
         "countPosted": "Leltárkorrekciók rögzítve",
         "correctionDescription": "Válaszd ki, hogyan kezeled a(z) {number} rögzített dokumentumot.",
+        "selectCorrectionLine": "A(z) {product} felvétele a helyesbítésbe",
         "correctionProgress": "Eredeti {original} · teljesült {fulfilled} · lezárt {closed} · visszáru {returned} · hátralék {remaining}",
         "correctedQuantity": "Javított teljesült mennyiség",
         "correctedProduct": "Javított termék",

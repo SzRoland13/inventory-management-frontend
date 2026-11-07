@@ -14,7 +14,6 @@ import {
 import type {
   BusinessDocument,
   CorrectionPreviewRequest,
-  CorrectionRequest,
   DocumentOperationPreview,
 } from '@/features/documents/types/documents';
 import {
@@ -30,6 +29,7 @@ import {
 } from '@/features/warehouses/types/warehouse';
 import { toastApiError } from '@/features/shared/api/apiResponse';
 import { Button } from '@/features/shared/components/ui/button';
+import { Checkbox } from '@/features/shared/components/ui/checkbox';
 import { Input } from '@/features/shared/components/ui/input';
 import { Label } from '@/features/shared/components/ui/label';
 import {
@@ -76,6 +76,9 @@ export function DocumentCorrectionDialog({
       : (document.sourceWarehouseId ?? document.warehouseId);
   const [intent, setIntent] = useState<DocumentCorrectionIntent | null>(null);
   const [reason, setReason] = useState('');
+  const [selectedLineIds, setSelectedLineIds] = useState<Set<number>>(
+    () => new Set(),
+  );
   const [quantities, setQuantities] = useState<Record<number, string>>(() =>
     Object.fromEntries(
       document.lines.map((line) => [line.id, String(line.fulfilledQuantity)]),
@@ -102,19 +105,27 @@ export function DocumentCorrectionDialog({
   const [previewKey, setPreviewKey] = useState('');
   const lines = useMemo(
     () =>
-      document.lines.map((line) => ({
-        sourceLineId: line.id,
-        productId: line.productId,
-        quantity: Number(quantities[line.id] ?? 0),
-        correctedQuantity: Number(quantities[line.id] ?? 0),
-        correctedProductId: Number(
-          correctedProductIds[line.id] ?? line.productId,
-        ),
-        ...(correctedWarehouseIds[line.id]
-          ? { correctedWarehouseId: Number(correctedWarehouseIds[line.id]) }
-          : {}),
-      })),
-    [document.lines, quantities, correctedProductIds, correctedWarehouseIds],
+      document.lines
+        .filter((line) => selectedLineIds.has(line.id))
+        .map((line) => ({
+          sourceLineId: line.id,
+          productId: line.productId,
+          quantity: Number(quantities[line.id] ?? 0),
+          correctedQuantity: Number(quantities[line.id] ?? 0),
+          correctedProductId: Number(
+            correctedProductIds[line.id] ?? line.productId,
+          ),
+          ...(correctedWarehouseIds[line.id]
+            ? { correctedWarehouseId: Number(correctedWarehouseIds[line.id]) }
+            : {}),
+        })),
+    [
+      document.lines,
+      selectedLineIds,
+      quantities,
+      correctedProductIds,
+      correctedWarehouseIds,
+    ],
   );
   const signature = JSON.stringify({
     version: document.version,
@@ -125,7 +136,7 @@ export function DocumentCorrectionDialog({
   const currentPreview = preview?.valid && previewKey === signature;
 
   async function previewCorrection() {
-    if (!reason.trim() || busy) return;
+    if (!lines.length || !reason.trim() || busy) return;
     setPreview(null);
     try {
       const request: CorrectionPreviewRequest = {
@@ -146,7 +157,7 @@ export function DocumentCorrectionDialog({
   }
 
   async function submitCorrection() {
-    if (!currentPreview || !reason.trim() || busy) return;
+    if (!lines.length || !currentPreview || !reason.trim() || busy) return;
     try {
       await correctionMutation.mutateAsync({
         id: document.id,
@@ -228,9 +239,34 @@ export function DocumentCorrectionDialog({
                 >
                   <div className='min-w-0 space-y-3'>
                     <div>
-                      <p className='truncate text-sm font-medium'>
-                        {line.productName}
-                      </p>
+                      <div className='flex items-start gap-2'>
+                        <Checkbox
+                          id={`correction-line-${line.id}`}
+                          checked={selectedLineIds.has(line.id)}
+                          aria-label={t(
+                            'pages.documents.operations.selectCorrectionLine',
+                            { product: line.productName },
+                          )}
+                          onCheckedChange={(checked) => {
+                            setSelectedLineIds((current) => {
+                              const next = new Set(current);
+                              if (checked === true) next.add(line.id);
+                              else next.delete(line.id);
+                              return next;
+                            });
+                            setPreview(null);
+                          }}
+                          className='mt-0.5 border-zinc-500'
+                        />
+                        <Label
+                          htmlFor={`correction-line-${line.id}`}
+                          className='min-w-0 cursor-pointer'
+                        >
+                          <span className='block truncate text-sm font-medium'>
+                            {line.productName}
+                          </span>
+                        </Label>
+                      </div>
                       <p className='text-xs text-zinc-400'>
                         {t('pages.documents.operations.correctionProgress', {
                           original: line.orderedQuantity,
@@ -444,7 +480,7 @@ export function DocumentCorrectionDialog({
                 variant='outline'
                 className={appDialogCancelButtonClass}
                 onClick={() => void previewCorrection()}
-                disabled={busy || !reason.trim()}
+                disabled={busy || !lines.length || !reason.trim()}
               >
                 {t(
                   busy
