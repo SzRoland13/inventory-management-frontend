@@ -24,9 +24,7 @@ import {
   AppDialogBody,
   AppDialogCard,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { Button } from '@/features/shared/components/ui/button';
 import { Badge } from '@/features/shared/components/ui/badge';
@@ -235,8 +233,7 @@ export function WarehousesTable() {
               <Plus /> {t('pages.warehouses.actions.add')}
             </Button>
             <Button
-              variant='outline'
-              className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+              variant='subtleOutline'
               disabled={!selectedWarehouse || busy}
               onClick={() => {
                 if (!selectedWarehouse) return;
@@ -247,8 +244,7 @@ export function WarehousesTable() {
               <Pencil /> {t('pages.warehouses.actions.edit')}
             </Button>
             <Button
-              variant='outline'
-              className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+              variant='subtleOutline'
               disabled={!selectedWarehouse || busy}
               onClick={() => setLifecycleOpen(true)}
             >
@@ -262,8 +258,7 @@ export function WarehousesTable() {
           </>
         )}
         <Button
-          variant='outline'
-          className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+          variant='subtleOutline'
           disabled={!selectedWarehouse}
           onClick={() => setDetailsOpen(true)}
         >
@@ -420,16 +415,14 @@ export function WarehousesTable() {
             </AppDialogBody>
             <AppDialogFooter>
               <Button
-                variant='outline'
-                className={appDialogCancelButtonClass}
+                variant='mutedOutline'
                 disabled={busy}
                 onClick={() => setLifecycleOpen(false)}
               >
                 {t('common.cancel')}
               </Button>
               <Button
-                variant={archived ? 'default' : 'destructive'}
-                className={archived ? appDialogPrimaryButtonClass : undefined}
+                variant={archived ? 'accentSolid' : 'destructive'}
                 disabled={busy || !selectedWarehouse}
                 onClick={() => void changeLifecycle()}
               >

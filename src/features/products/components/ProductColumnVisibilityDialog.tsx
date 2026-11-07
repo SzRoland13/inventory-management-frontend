@@ -9,9 +9,7 @@ import { Dialog } from '@/features/shared/components/ui/dialog';
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import type { Table } from '@tanstack/react-table';
@@ -221,7 +219,7 @@ export function ProductColumnVisibilityDialog({
             title={t('pages.products.columns.move-up', { column: label })}
             disabled={columnIndex === 0}
             onClick={() => moveColumn(column.id, -1)}
-            className='text-zinc-400 hover:bg-zinc-700 hover:text-white disabled:opacity-30'
+            className='text-zinc-400 disabled:opacity-30'
           >
             <ChevronUp aria-hidden='true' />
           </Button>
@@ -235,7 +233,7 @@ export function ProductColumnVisibilityDialog({
             title={t('pages.products.columns.move-down', { column: label })}
             disabled={columnIndex === groupColumnIds.length - 1}
             onClick={() => moveColumn(column.id, 1)}
-            className='text-zinc-400 hover:bg-zinc-700 hover:text-white disabled:opacity-30'
+            className='text-zinc-400 disabled:opacity-30'
           >
             <ChevronDown aria-hidden='true' />
           </Button>
@@ -304,15 +302,14 @@ export function ProductColumnVisibilityDialog({
         <AppDialogFooter className='justify-between sm:flex-row'>
           <Button
             type='button'
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={onReset}
           >
             {t('pages.products.columns.reset')}
           </Button>
           <Button
             type='button'
-            className={appDialogPrimaryButtonClass}
+            variant='accentSolid'
             onClick={() => handleOpenChange(false)}
           >
             {t('common.done')}

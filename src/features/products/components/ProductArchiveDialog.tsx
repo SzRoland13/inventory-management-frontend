@@ -8,8 +8,7 @@ import {
   AppDialogBody,
   AppDialogCard,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 
@@ -52,8 +51,7 @@ export function ProductArchiveDialog({
         </AppDialogBody>
         <AppDialogFooter>
           <Button
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={() => onOpenChange(false)}
             disabled={saving}
           >

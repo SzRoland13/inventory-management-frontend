@@ -16,8 +16,6 @@ const MAX_IMAGES = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const UPLOAD_CONCURRENCY = 3;
-const IMAGE_OUTLINE_BUTTON_CLASS =
-  'border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100';
 
 export type ProductImageEditorItem = Omit<
   ProductImageResponse,
@@ -271,9 +269,8 @@ export function ProductImagesSection({
           </p>
           <Button
             type='button'
-            variant='outline'
             size='sm'
-            className={`gap-2 ${IMAGE_OUTLINE_BUTTON_CLASS}`}
+            variant='subtleOutline'
             disabled={disabled || images.length >= MAX_IMAGES}
             onClick={() => inputRef.current?.click()}
           >
@@ -458,9 +455,8 @@ export function ProductImagesSection({
                         </span>
                         <Button
                           type='button'
-                          variant='outline'
                           size='xs'
-                          className='border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+                          variant='subtleOutline'
                           aria-label={t('pages.products.images.retry', {
                             filename: image.filename,
                           })}

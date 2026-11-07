@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import {
   DocumentAction,
+  TransferMutationAction,
   TransferMovementOperation,
   TransferResolutionOperation,
 } from '@/features/documents/enums/documentEnums';
@@ -157,10 +158,10 @@ export function TransferOperationDialog({
         id: document.id,
         action:
           action === DocumentAction.DISPATCH
-            ? 'dispatch'
+            ? TransferMutationAction.DISPATCH
             : action === DocumentAction.RECEIVE_TRANSFER
-              ? 'receive'
-              : 'resolve',
+              ? TransferMutationAction.RECEIVE
+              : TransferMutationAction.RESOLVE,
         request,
       });
       toast.success(t('pages.documents.operations.transferSaved'));

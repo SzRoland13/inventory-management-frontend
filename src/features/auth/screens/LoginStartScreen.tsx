@@ -85,7 +85,7 @@ export default function LoginStartPage() {
         <Button
           type='submit'
           disabled={isSubmitting}
-          className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+          variant='mutedSolid' className='w-full'
         >
           {isSubmitting ? t('common.submitting') : t('common.continue')}
         </Button>

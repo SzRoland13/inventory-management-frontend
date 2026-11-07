@@ -1,6 +1,7 @@
 import {
   AlertCircle,
   ArrowUpRight,
+  CircleDollarSign,
   ClipboardList,
   FileClock,
   FileText,
@@ -38,6 +39,7 @@ const queueViews: Array<{ id: DocumentQueueView; icon: typeof FileText }> = [
   { id: DocumentQueueView.CUSTOMER_INVOICES, icon: FileText },
   { id: DocumentQueueView.FINANCIAL_CREDITS, icon: RotateCcw },
   { id: DocumentQueueView.NEEDS_APPROVAL, icon: ShieldCheck },
+  { id: DocumentQueueView.FINANCIAL_SETTLEMENT, icon: CircleDollarSign },
   { id: DocumentQueueView.ALL, icon: FileText },
 ];
 

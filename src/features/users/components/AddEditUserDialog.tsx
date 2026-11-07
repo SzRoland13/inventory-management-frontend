@@ -6,9 +6,7 @@ import {
   AppDialogBody,
   AppDialogFooter,
   AppDialogHeader,
-  AppDialogSection,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogSection
 } from '@/features/shared/components/AppDialogLayout';
 import { Input } from '@/features/shared/components/ui/input';
 import { Label } from '@/features/shared/components/ui/label';
@@ -189,8 +187,7 @@ export function AddEditUserDialog({
           <AppDialogFooter>
             <Button
               type='button'
-              variant='outline'
-              className={appDialogCancelButtonClass}
+              variant='mutedOutline'
               onClick={() => {
                 reset();
                 onClose();
@@ -201,7 +198,7 @@ export function AddEditUserDialog({
             </Button>
             <Button
               type='submit'
-              className={appDialogPrimaryButtonClass}
+              variant='accentSolid'
               disabled={saving || isSubmitting}
             >
               {isSubmitting ? t('common.saving') : t('common.save')}

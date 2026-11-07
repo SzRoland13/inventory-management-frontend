@@ -25,8 +25,7 @@ import {
   AppDialogCard,
   AppDialogFooter,
   AppDialogHeader,
-  AppDialogSection,
-  appDialogCancelButtonClass,
+  AppDialogSection
 } from '@/features/shared/components/AppDialogLayout';
 import { Badge } from '@/features/shared/components/ui/badge';
 import { Button } from '@/features/shared/components/ui/button';
@@ -224,8 +223,7 @@ export default function PartnersScreen() {
                 {t('pages.partners.actions.add')}
               </Button>
               <Button
-                variant='outline'
-                className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+                variant='subtleOutline'
                 disabled={!selectedPartner || archived || busy}
                 onClick={() => setFormPartner(selectedPartner)}
               >
@@ -233,8 +231,7 @@ export default function PartnersScreen() {
                 {t('pages.partners.actions.edit')}
               </Button>
               <Button
-                variant='outline'
-                className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+                variant='subtleOutline'
                 disabled={!selectedPartner || busy}
                 onClick={() =>
                   setLifecycleAction(archived ? 'restore' : 'archive')
@@ -248,8 +245,7 @@ export default function PartnersScreen() {
             </>
           )}
           <Button
-            variant='outline'
-            className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+            variant='subtleOutline'
             disabled={!selectedPartner}
             onClick={() => setDetailsOpen(true)}
           >
@@ -257,8 +253,7 @@ export default function PartnersScreen() {
             {t('pages.partners.actions.view')}
           </Button>
           <Button
-            variant='outline'
-            className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+            variant='subtleOutline'
             disabled={!selectedPartner}
             onClick={() => setContactsOpen(true)}
           >
@@ -382,8 +377,7 @@ export default function PartnersScreen() {
           )}
           <AppDialogFooter>
             <Button
-              variant='outline'
-              className={appDialogCancelButtonClass}
+              variant='mutedOutline'
               onClick={() => setDetailsOpen(false)}
             >
               {t('common.done')}
@@ -427,8 +421,7 @@ export default function PartnersScreen() {
           </AppDialogBody>
           <AppDialogFooter>
             <Button
-              variant='outline'
-              className={appDialogCancelButtonClass}
+              variant='mutedOutline'
               disabled={busy}
               onClick={() => setLifecycleAction(null)}
             >

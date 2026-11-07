@@ -43,9 +43,7 @@ import { Dialog } from '@/features/shared/components/ui/dialog';
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { ReturnOperationDialog } from '@/features/documents/components/ReturnOperationDialog';
@@ -626,8 +624,7 @@ export function DocumentCorrectionDialog({
         </AppDialogBody>
         <AppDialogFooter>
           <Button
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={onClose}
             disabled={busy}
           >
@@ -636,8 +633,7 @@ export function DocumentCorrectionDialog({
           {intent === DocumentCorrectionIntent.RECORDING_ERROR && (
             <>
               <Button
-                variant='outline'
-                className={appDialogCancelButtonClass}
+                variant='mutedOutline'
                 onClick={() => void previewCorrection()}
                 disabled={busy || !lines.length || !reason.trim()}
               >
@@ -648,7 +644,7 @@ export function DocumentCorrectionDialog({
                 )}
               </Button>
               <Button
-                className={appDialogPrimaryButtonClass}
+                variant='accentSolid'
                 onClick={() => void submitCorrection()}
                 disabled={busy || !currentPreview}
               >
@@ -788,9 +784,8 @@ function CorrectedProductPicker({
                 <Button
                   type='button'
                   size='sm'
-                  variant='outline'
                   onClick={() => void productsQuery.refetch()}
-                  className='border-zinc-600 bg-zinc-800'
+                  variant='subtleOutline'
                 >
                   {t('common.retry')}
                 </Button>
@@ -802,7 +797,7 @@ function CorrectedProductPicker({
                 variant='ghost'
                 onClick={loadMoreProducts}
                 disabled={productsQuery.isFetchingNextPage}
-                className='w-full text-xs text-zinc-300 hover:bg-zinc-800'
+                className='w-full text-xs text-zinc-300'
               >
                 {t(
                   productsQuery.isFetchingNextPage

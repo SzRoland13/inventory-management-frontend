@@ -122,7 +122,7 @@ export default function LoginPage() {
           <Button
             type='button'
             disabled={isSubmitting}
-            className='flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+            variant='mutedSolid' className='flex-1'
             onClick={() => router.push(Routes.Login_Start)}
           >
             {t('common.back')}
@@ -130,7 +130,7 @@ export default function LoginPage() {
           <Button
             type='submit'
             disabled={isSubmitting}
-            className='flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+            variant='mutedSolid' className='flex-1'
           >
             {isSubmitting ? t('common.submitting') : t('common.continue')}
           </Button>

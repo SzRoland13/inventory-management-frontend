@@ -27,9 +27,7 @@ import {
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 
@@ -286,15 +284,14 @@ export function CreateTransferDialog({
         </AppDialogBody>
         <AppDialogFooter>
           <Button
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={onClose}
             disabled={createTransfer.isPending}
           >
             {t('common.cancel')}
           </Button>
           <Button
-            className={appDialogPrimaryButtonClass}
+            variant='accentSolid'
             onClick={() => void submit()}
             disabled={
               !sourceWarehouseId ||

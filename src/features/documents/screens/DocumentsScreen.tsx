@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import {
   ArrowRight,
   ClipboardList,
+  CreditCard,
   FilePlus2,
+  FileText,
   Inbox,
+  ReceiptText,
   Search,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -14,6 +17,7 @@ import { DocumentQueue } from '@/features/documents/components/DocumentQueue';
 import { CreateDocumentDialog } from '@/features/documents/components/CreateDocumentDialog';
 import { StartStockCountDialog } from '@/features/documents/components/StartStockCountDialog';
 import { CreateTransferDialog } from '@/features/documents/components/CreateTransferDialog';
+import { CommercialDocumentDialog } from '@/features/documents/components/CommercialDocumentDialog';
 import {
   useDocumentCapabilitiesQuery,
   useDocumentsQuery,
@@ -40,6 +44,12 @@ export default function DocumentsScreen() {
   const [createOpen, setCreateOpen] = useState(false);
   const [countOpen, setCountOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
+  const [commercialType, setCommercialType] = useState<
+    | DocumentType.SUPPLIER_BILL
+    | DocumentType.CUSTOMER_INVOICE
+    | DocumentType.FINANCIAL_CREDIT
+    | null
+  >(null);
   const [selectedDocument, setSelectedDocument] =
     useState<BusinessDocument | null>(null);
 
@@ -108,8 +118,8 @@ export default function DocumentsScreen() {
       <main className='mx-auto w-full max-w-[1440px] space-y-6 p-4 sm:p-6 lg:p-8'>
         <section className='relative overflow-hidden rounded-2xl border border-zinc-700/80 bg-gradient-to-br from-zinc-800 via-zinc-900 to-indigo-950/40 p-5 shadow-xl sm:p-7'>
           <div className='pointer-events-none absolute -right-10 -top-16 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl' />
-          <div className='relative flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between'>
-            <div className='max-w-2xl'>
+          <div className='relative flex flex-col gap-6'>
+            <div className='max-w-3xl'>
               <p className='mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300'>
                 {t('pages.documents.eyebrow')}
               </p>
@@ -120,21 +130,36 @@ export default function DocumentsScreen() {
                 {t('pages.documents.description')}
               </p>
             </div>
-            <div className='flex flex-wrap gap-2'>
+            <div className='grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3'>
               <Button
+                variant='accentSolid'
                 onClick={() => setCreateOpen(true)}
-                className='h-10 shrink-0 gap-2 bg-indigo-500 px-4 text-white shadow-lg shadow-indigo-950/30 hover:bg-indigo-400'
+                className='h-11 w-full justify-center px-4 shadow-lg shadow-indigo-950/30'
               >
                 <FilePlus2 className='h-4 w-4' />
                 {t('pages.documents.create.new')}
               </Button>
+              {([DocumentType.SUPPLIER_BILL, DocumentType.CUSTOMER_INVOICE, DocumentType.FINANCIAL_CREDIT] as const)
+                .filter((type) => capabilitiesQuery.data?.payload.creatableTypes.includes(type))
+                .map((type) => (
+                  <Button key={type} variant='subtleOutline' onClick={() => setCommercialType(type)} className='h-11 w-full justify-center px-3 text-center'>
+                    {type === DocumentType.SUPPLIER_BILL ? (
+                      <ReceiptText className='h-4 w-4 shrink-0 text-indigo-300' />
+                    ) : type === DocumentType.CUSTOMER_INVOICE ? (
+                      <FileText className='h-4 w-4 shrink-0 text-indigo-300' />
+                    ) : (
+                      <CreditCard className='h-4 w-4 shrink-0 text-indigo-300' />
+                    )}
+                    {t(`pages.documents.actions.CREATE_${type === DocumentType.SUPPLIER_BILL ? 'SUPPLIER_BILL' : type === DocumentType.CUSTOMER_INVOICE ? 'CUSTOMER_INVOICE' : 'CREDIT'}`)}
+                  </Button>
+                ))}
               {capabilitiesQuery.data?.payload.creatableTypes.includes(
                 DocumentType.STOCK_COUNT,
               ) && (
                 <Button
-                  variant='outline'
+                  variant='subtleOutline'
                   onClick={() => setCountOpen(true)}
-                  className='h-10 shrink-0 gap-2 border-zinc-600 bg-zinc-900 text-zinc-100'
+                  className='h-11 w-full justify-center px-3 text-center'
                 >
                   <ClipboardList className='h-4 w-4' />
                   {t('pages.documents.operations.startCount')}
@@ -144,9 +169,9 @@ export default function DocumentsScreen() {
                 DocumentType.WAREHOUSE_TRANSFER,
               ) && (
                 <Button
-                  variant='outline'
+                  variant='subtleOutline'
                   onClick={() => setTransferOpen(true)}
-                  className='h-10 shrink-0 gap-2 border-zinc-600 bg-zinc-900 text-zinc-100'
+                  className='h-11 w-full justify-center px-3 text-center'
                 >
                   <FilePlus2 className='h-4 w-4' />
                   {t('pages.documents.operations.createTransfer')}
@@ -221,20 +246,18 @@ export default function DocumentsScreen() {
               </p>
               <div className='flex gap-2'>
                 <Button
-                  variant='outline'
                   size='sm'
                   disabled={page === 0}
                   onClick={() => setPage((current) => Math.max(0, current - 1))}
-                  className='border-zinc-700 bg-zinc-900'
+                  variant='mutedOutline'
                 >
                   {t('pages.documents.pagination.previous')}
                 </Button>
                 <Button
-                  variant='outline'
                   size='sm'
                   disabled={(page + 1) * PAGE_SIZE >= response.total}
                   onClick={() => setPage((current) => current + 1)}
-                  className='border-zinc-700 bg-zinc-900'
+                  variant='mutedOutline'
                 >
                   {t('pages.documents.pagination.next')}
                   <ArrowRight />
@@ -246,6 +269,11 @@ export default function DocumentsScreen() {
       </main>
 
       <CreateDocumentDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <CommercialDocumentDialog
+        open={commercialType !== null}
+        type={commercialType}
+        onOpenChange={(open) => { if (!open) setCommercialType(null); }}
+      />
       {countOpen && (
         <StartStockCountDialog
           onClose={() => setCountOpen(false)}

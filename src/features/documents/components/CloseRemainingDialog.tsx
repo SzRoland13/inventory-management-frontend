@@ -14,9 +14,7 @@ import { Label } from '@/features/shared/components/ui/label';
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 
@@ -115,8 +113,7 @@ export function CloseRemainingDialog({ document, onClose }: Props) {
         <AppDialogFooter className='gap-2 sm:gap-2'>
           <Button
             type='button'
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={onClose}
           >
             {t('common.cancel')}
@@ -128,7 +125,7 @@ export function CloseRemainingDialog({ document, onClose }: Props) {
               closeRemaining.isPending ||
               !document.lines.some((line) => line.remainingQuantity > 0)
             }
-            className={appDialogPrimaryButtonClass}
+            variant='accentSolid'
           >
             {t(
               closeRemaining.isPending

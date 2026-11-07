@@ -623,6 +623,48 @@
         "saveDraft": "Tervezet mentése",
         "created": "Tervezet létrehozva"
       },
+      "commercial": {
+        "title": "Pénzügyi bizonylat",
+        "description": "Válassz jogosult forrásbizonylatokat és tételeket. A számlázás és a pénzügyi jóváírás nem mozgat készletet.",
+        "sources": "Jogosult forrásbizonylatok",
+        "noSources": "Nincs elérhető jogosult forrásbizonylat.",
+        "selectSources": "Válassz forrásbizonylatot a tételek megtekintéséhez.",
+        "noLines": "Nincs elérhető jogosult forrástétel.",
+        "lines": "Forrástételek",
+        "vat": "ÁFA %",
+        "amount": "Nettó összeg",
+        "quantity": "Mennyiség",
+        "available": "jogosult: {quantity}",
+        "billingBalance": "Jogosult {eligible} · számlázva {billed} · fennmaradó {remaining}",
+        "creditBalance": "Mennyiség: eredeti {original}, jóváírva {credited}, fennmaradó {remaining}",
+        "creditAmountBalance": "Nettó összeg: eredeti {original}, jóváírva {credited}, fennmaradó {remaining}",
+        "sourcePricing": "Forrásár {price} · ÁFA {vat}%",
+        "previewTotals": "Jóváírás előnézete",
+        "previewLoading": "Előnézet számítása…",
+        "previewError": "Az előnézet nem számítható ki. Ellenőrizd a forrást és a megadott összegeket, majd próbáld újra.",
+        "allocationInvalid": "A kért mennyiség vagy jóváírás meghaladja a fennmaradó jogosult keretet.",
+        "approvalPreview": "Az ár vagy az ÁFA eltér a forrástól. ADMIN vagy MANAGER jóváhagyása szükséges.",
+        "reason": "Indok vagy hivatkozás",
+        "referenceNumber": "Beszállítói vagy vevői hivatkozás",
+        "created": "Pénzügyi tervezet létrehozva",
+        "saving": "Tervezet létrehozása…",
+        "createDraft": "Tervezet létrehozása",
+        "saveChanges": "Módosítások mentése",
+        "paymentTerms": "Fizetési feltételek",
+        "approval": "Jóváhagyás",
+        "approvalStatus": {
+          "NOT_REQUIRED": "Nem szükséges",
+          "PENDING": "Függőben",
+          "APPROVED": "Jóváhagyva",
+          "REJECTED": "Elutasítva"
+        },
+        "settlementRequired": "Pénzügyi rendezés szükséges",
+        "unassigned": "Nincs felelős hozzárendelve",
+        "decisionComment": "Add meg a jóváhagyás vagy elutasítás megjegyzését",
+        "ownerId": "Add meg a pénzügyi rendezésért felelős vállalati felhasználó azonosítóját",
+        "ownerSelect": "Válassz pénzügyi felelőst",
+        "actionSaved": "Pénzügyi bizonylat frissítve"
+      },
       "summary": {
         "drafts": "Saját tervezetek",
         "toReceive": "Bevételezésre vár",
@@ -646,6 +688,7 @@
           "CUSTOMER_INVOICES": "Vevői számlák",
           "FINANCIAL_CREDITS": "Pénzügyi jóváírások",
           "NEEDS_APPROVAL": "Jóváhagyásra vár",
+          "FINANCIAL_SETTLEMENT": "Pénzügyi rendezés",
           "ALL": "Minden dokumentum"
         }
       },
@@ -670,6 +713,8 @@
         "CONFIRMED": "Jóváhagyva",
         "PARTIALLY_COMPLETED": "Részben teljesült",
         "COMPLETED": "Teljesült",
+        "RECEIVED": "Beérkezett",
+        "ISSUED": "Kiállítva",
         "CANCELLED": "Visszavonva"
       },
       "types": {
@@ -677,7 +722,6 @@
         "GOODS_RECEIPT": "Áruátvétel",
         "SALES_ORDER": "Értékesítési rendelés",
         "DELIVERY_NOTE": "Szállítólevél",
-        "INVOICE": "Régi, általános számla",
         "WAREHOUSE_TRANSFER": "Raktárközi áthelyezés",
         "STOCK_COUNT": "Készletleltár",
         "CORRECTION": "Helyesbítés",
@@ -707,7 +751,9 @@
         "CREATE_CUSTOMER_INVOICE": "Vevői számla létrehozása",
         "CREATE_CREDIT": "Pénzügyi jóváírás létrehozása",
         "APPROVE": "Jóváhagyás",
-        "REJECT": "Elutasítás"
+        "REJECT": "Elutasítás",
+        "FINALIZE": "Bizonylat véglegesítése",
+        "ASSIGN_SETTLEMENT": "Pénzügyi felelős kijelölése"
       },
       "operations": {
         "effectiveAt": "Készletmozgás hatálybalépése (nem kötelező)",
@@ -1091,7 +1137,9 @@
               "SALES_QUOTATION": "Értékesítési ajánlat",
               "SALES_ORDER": "Vevői rendelés",
               "DELIVERY_NOTE": "Szállítólevél",
-              "INVOICE": "Számla",
+              "SUPPLIER_BILL": "Beszállítói számla",
+              "CUSTOMER_INVOICE": "Vevői számla",
+              "FINANCIAL_CREDIT": "Pénzügyi jóváírás",
               "TRANSFER_REQUEST": "Készletátvezetési igény",
               "TRANSFER_DELIVERY": "Készletátvezetési kiadás",
               "TRANSFER_RECEIPT": "Készletátvezetési bevételezés",

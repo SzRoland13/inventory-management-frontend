@@ -11,13 +11,15 @@ specified. `Idempotency-Key` is required for stock-posting mutations.
 
 Extend `type`, `allowedActions`, and `relatedDocuments` with `TRANSFER_REQUEST`,
 `TRANSFER_DELIVERY`, `TRANSFER_RECEIPT`, `WAREHOUSE_TRANSFER`, `RETURN`,
-`STOCK_COUNT`, `STOCK_ADJUSTMENT`, and `CORRECTION` families as applicable.
+`STOCK_COUNT`, `STOCK_ADJUSTMENT`, `CORRECTION`, `SUPPLIER_BILL`,
+`CUSTOMER_INVOICE`, and `FINANCIAL_CREDIT` types as applicable.
 Transfer actions are `DISPATCH`, `RECEIVE_TRANSFER`, and `RESOLVE_TRANSIT`;
 return actions are `CREATE_RETURN`, `RELEASE_QUARANTINE`, and
 `CREATE_REPLACEMENT_DELIVERY`; stock count actions are `RECONCILE`; corrections
 use `CORRECT`. The server returns only actions allowed to the current user.
-Queue views include `TRANSFERS`, `IN_TRANSIT`, `RETURNS`, `STOCK_COUNTS`, and
-`CORRECTIONS` when authorized.
+Queue views include `TRANSFERS`, `IN_TRANSIT`, `RETURNS`, `STOCK_COUNTS`,
+`CORRECTIONS`, `SUPPLIER_BILLS`, `CUSTOMER_INVOICES`, `FINANCIAL_CREDITS`,
+`NEEDS_APPROVAL`, and `FINANCIAL_SETTLEMENT` when authorized.
 
 Document lines expose optional `sourceLineId`, `returnedQuantity`,
 `returnableQuantity`, `inTransitQuantity`, `expectedQuantity`,
@@ -26,7 +28,7 @@ expose `warehouseId`, `sourceWarehouseId`, `destinationWarehouseId`,
 `transitWarehouseId`, `countedAt`, `reason`, `disposition`, `direction`,
 `calculationVersion`, and `nonBillable` where relevant. Related documents
 support `CREATED_FROM`, `FULFILLS`, `CANCELS`, `CORRECTS`, `RETURNS`,
-`REPLACES`, and `TRANSFER_STEP`.
+`REPLACES`, `TRANSFER_STEP`, and `FINANCIAL_CREDIT`.
 
 Document line responses include `unitId`, `conversionFactorSnapshot`,
 `mainUnit`, `secondaryUnit`, and `secondaryUnitsPerMainUnit`. A quantity is
@@ -98,8 +100,48 @@ recording-error correction endpoint. The backend must reject negative-stock,
 duplicate-restoration, or inconsistent closed-quantity results with actionable
 blockers. Corrections never edit/cancel the original document or silently change
 related documents/movements. Billing rematching, approval invalidation, and
-financial settlement belong to the later billing workflow and are outside this
-implementation.
+financial settlement are handled by the commercial document workflow below.
+
+## Commercial documents
+
+`POST /documents/commercial/preview` accepts
+`{draft: CommercialDraft, excludeDocumentId?}` and returns `{lines, totals,
+approvalRequired, valid}` without persisting a document. Each line reports the
+eligible, billed, remaining, credited, and remaining-creditable quantities,
+credited and remaining net amounts, alongside the requested allocation.
+Existing drafts reserve billing and credit availability;
+`excludeDocumentId` is accepted only for an editable company-scoped draft.
+Totals use the same per-line rounding as persisted
+documents. Preview balances are advisory; create and update revalidate them.
+
+`POST /documents/commercial/drafts` accepts
+`{type: SUPPLIER_BILL|CUSTOMER_INVOICE|FINANCIAL_CREDIT, sourceDocumentIds,
+date, currencyId, reason?, referenceNumber?, lines:[{sourceLineId, quantity,
+unitPrice?, vatRate?, amount?}]}`. Draft lines retain source line, currency,
+VAT, and product snapshots. Bills are sourced from completed goods receipts;
+customer invoices are sourced from completed, billable delivery notes.
+Consolidated customer sources must match company, customer, currency, and
+payment terms. Draft and final invoice quantities count against source quantity.
+Credit drafts reference one received supplier bill or issued customer invoice;
+`amount` is an optional net amount allocation, capped with quantity by the
+source line's remaining creditable balance.
+
+`PUT /documents/{id}/commercial/draft` accepts `{version, draft}` and updates
+the existing source allocations. It resets prior approval. Price or VAT
+differences set `approvalRequired=true` and `approvalStatus=PENDING`.
+`POST /documents/{id}/commercial/approve` and `/reject` accept
+`{version, comment}` and require ADMIN or MANAGER. A discrepancy must be
+approved before finalization. `POST /documents/{id}/commercial/finalize` accepts
+`If-Match`; supplier bills become `RECEIVED`, customer invoices become `ISSUED`,
+and credits become `COMPLETED`. These operations do not post stock movements.
+
+When a posted receipt or delivery correction affects a draft commercial record,
+matching is refreshed and prior approval is cleared. A finalized bill or invoice
+stays unchanged and is flagged `financialSettlementRequired`.
+`POST /documents/{id}/commercial/settlement-owner` accepts
+`{version, ownerId}` and assigns a company user. Commercial detail responses
+include payment terms, approval decision and timestamp, settlement state and
+owner, and line `billedQuantity`, `vatRate`, and `netAmount`.
 
 ## Existing document behavior
 
@@ -154,9 +196,10 @@ an empty array when no closure needs to be reopened.
 Document responses retain `id`, `type`, nullable `number`, `date`, `ownerName`,
 `status`, string `version`, `lines`, `allowedActions`, `relatedDocuments`,
 `activity`, and `files`, plus currency snapshots and totals. Current statuses
-are `DRAFT`, `SENT`, `CONFIRMED`, `PARTIALLY_COMPLETED`, `COMPLETED`, and
-`CANCELLED`. Existing action values include `EDIT`, `CONFIRM`, `POST`,
-`UPLOAD_FILE`, `GENERATE_PDF`, `RETRY_PDF`, and `CLOSE_REMAINING`. Lines retain
+are `DRAFT`, `SENT`, `CONFIRMED`, `PARTIALLY_COMPLETED`, `COMPLETED`,
+`RECEIVED`, `ISSUED`, and `CANCELLED`. Existing action values include `EDIT`,
+`CONFIRM`, `POST`, `UPLOAD_FILE`, `GENERATE_PDF`, `RETRY_PDF`,
+`CLOSE_REMAINING`, `APPROVE`, `REJECT`, `FINALIZE`, and `ASSIGN_SETTLEMENT`. Lines retain
 ordered, fulfilled, closed, remaining quantities and unit-price/source-currency
 snapshots. HTTP 409 uses `document.error.conflict` and the latest document in
 `payload`; clients retain their local edits until the user reloads or resaves.

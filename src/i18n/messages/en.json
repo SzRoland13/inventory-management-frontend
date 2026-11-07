@@ -623,6 +623,48 @@
         "saveDraft": "Save draft",
         "created": "Draft created"
       },
+      "commercial": {
+        "title": "Commercial document",
+        "description": "Select eligible source documents and lines. Billing and financial credits do not move stock.",
+        "sources": "Eligible source documents",
+        "noSources": "No eligible source documents are available.",
+        "selectSources": "Select a source document to view its lines.",
+        "noLines": "No eligible source lines are available.",
+        "lines": "Source lines",
+        "vat": "VAT %",
+        "amount": "Net amount",
+        "quantity": "Quantity",
+        "available": "eligible {quantity}",
+        "billingBalance": "Eligible {eligible} · billed {billed} · remaining {remaining}",
+        "creditBalance": "Quantity: original {original}, credited {credited}, remaining {remaining}",
+        "creditAmountBalance": "Net amount: original {original}, credited {credited}, remaining {remaining}",
+        "sourcePricing": "Source price {price} · VAT {vat}%",
+        "previewTotals": "Credit total preview",
+        "previewLoading": "Calculating preview…",
+        "previewError": "Could not calculate this preview. Check the source and entered amounts, then try again.",
+        "allocationInvalid": "The requested allocation exceeds the remaining eligible quantity or credit amount.",
+        "approvalPreview": "Price or VAT differs from the source. ADMIN or MANAGER approval will be required.",
+        "reason": "Reason or reference",
+        "referenceNumber": "Supplier or customer reference",
+        "created": "Commercial draft created",
+        "saving": "Creating draft…",
+        "createDraft": "Create draft",
+        "saveChanges": "Save changes",
+        "paymentTerms": "Payment terms",
+        "approval": "Approval",
+        "approvalStatus": {
+          "NOT_REQUIRED": "Not required",
+          "PENDING": "Pending",
+          "APPROVED": "Approved",
+          "REJECTED": "Rejected"
+        },
+        "settlementRequired": "Financial settlement required",
+        "unassigned": "No owner assigned",
+        "decisionComment": "Enter an approval or rejection comment",
+        "ownerId": "Enter the company user ID responsible for settlement",
+        "ownerSelect": "Choose settlement owner",
+        "actionSaved": "Commercial document updated"
+      },
       "summary": {
         "drafts": "My drafts",
         "toReceive": "Ready to receive",
@@ -646,6 +688,7 @@
           "CUSTOMER_INVOICES": "Customer invoices",
           "FINANCIAL_CREDITS": "Financial credits",
           "NEEDS_APPROVAL": "Needs approval",
+          "FINANCIAL_SETTLEMENT": "Financial settlement",
           "ALL": "All documents"
         }
       },
@@ -670,6 +713,8 @@
         "CONFIRMED": "Confirmed",
         "PARTIALLY_COMPLETED": "Partially completed",
         "COMPLETED": "Completed",
+        "RECEIVED": "Received",
+        "ISSUED": "Issued",
         "CANCELLED": "Cancelled"
       },
       "types": {
@@ -677,7 +722,6 @@
         "GOODS_RECEIPT": "Goods receipt",
         "SALES_ORDER": "Sales order",
         "DELIVERY_NOTE": "Delivery note",
-        "INVOICE": "Legacy invoice",
         "WAREHOUSE_TRANSFER": "Warehouse transfer",
         "STOCK_COUNT": "Stock count",
         "CORRECTION": "Correction",
@@ -707,7 +751,9 @@
         "CREATE_CUSTOMER_INVOICE": "Create customer invoice",
         "CREATE_CREDIT": "Create financial credit",
         "APPROVE": "Approve",
-        "REJECT": "Reject"
+        "REJECT": "Reject",
+        "FINALIZE": "Finalize document",
+        "ASSIGN_SETTLEMENT": "Assign settlement owner"
       },
       "operations": {
         "effectiveAt": "Effective movement time (optional)",
@@ -1091,7 +1137,9 @@
               "SALES_QUOTATION": "Sales quotation",
               "SALES_ORDER": "Sales order",
               "DELIVERY_NOTE": "Delivery note",
-              "INVOICE": "Invoice",
+              "SUPPLIER_BILL": "Supplier bill",
+              "CUSTOMER_INVOICE": "Customer invoice",
+              "FINANCIAL_CREDIT": "Financial credit",
               "TRANSFER_REQUEST": "Stock transfer request",
               "TRANSFER_DELIVERY": "Stock transfer delivery",
               "TRANSFER_RECEIPT": "Stock transfer receipt",

@@ -20,6 +20,7 @@ export const documentDraftSchema = z
     partnerId: z.number().positive('pages.documents.validation.required'),
     warehouseId: z.number().positive().optional(),
     notes: z.string().max(2000, 'pages.documents.validation.notesTooLong'),
+    paymentTerms: z.string().max(500).optional(),
     lines: z
       .array(
         z.object({

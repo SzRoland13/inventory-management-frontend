@@ -56,7 +56,7 @@ import { formatDocumentAmount } from '@/features/documents/helpers/documentPrese
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import {
@@ -115,6 +115,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
     {},
   );
   const [notes, setNotes] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('');
   const [productPickerOpen, setProductPickerOpen] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [debouncedProductSearch, setDebouncedProductSearch] = useState('');
@@ -226,6 +227,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
     setCurrencyId('');
     setExchangeRates({});
     setNotes('');
+    setPaymentTerms('');
     setProductPickerOpen(false);
     setProductSearch('');
     setDebouncedProductSearch('');
@@ -246,6 +248,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
       partnerId: Number(partnerId),
       ...(directFulfillment ? { warehouseId: Number(warehouseId) } : {}),
       notes,
+      paymentTerms,
       lines: lines.map(
         ({
           productId,
@@ -320,9 +323,8 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                 </p>
                 <Button
                   size='sm'
-                  variant='outline'
                   onClick={() => void capabilitiesQuery.refetch()}
-                  className='mt-3 border-zinc-600 bg-zinc-800'
+                  variant='subtleOutline' className='mt-3'
                 >
                   <RefreshCw className='h-4 w-4' />
                   {t('common.retry')}
@@ -588,9 +590,8 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                                 <Button
                                   type='button'
                                   size='sm'
-                                  variant='outline'
                                   onClick={() => void productsQuery.refetch()}
-                                  className='border-zinc-600 bg-zinc-800'
+                                  variant='subtleOutline'
                                 >
                                   {t('common.retry')}
                                 </Button>
@@ -602,7 +603,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                                 variant='ghost'
                                 onClick={loadMoreProducts}
                                 disabled={productsQuery.isFetchingNextPage}
-                                className='w-full text-xs text-zinc-300 hover:bg-zinc-800'
+                                className='w-full text-xs text-zinc-300'
                               >
                                 {t(
                                   productsQuery.isFetchingNextPage
@@ -729,14 +730,17 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                   </section>
 
                   <DocumentDraftNotesField value={notes} onChange={setNotes} />
+                  <div className='space-y-2'>
+                    <Label htmlFor='payment-terms'>{t('pages.documents.commercial.paymentTerms')}</Label>
+                    <Input id='payment-terms' value={paymentTerms} onChange={(event) => setPaymentTerms(event.target.value)} maxLength={500} />
+                  </div>
                 </div>
               </ScrollArea>
             </AppDialogBody>
             <AppDialogFooter className='gap-2 sm:gap-2'>
               <Button
                 type='button'
-                variant='outline'
-                className='border-zinc-600 bg-zinc-800'
+                variant='subtleOutline'
                 onClick={() => onOpenChange(false)}
               >
                 {t('common.cancel')}
@@ -748,7 +752,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                   !creatableTypes.includes(type) ||
                   !selectedCurrencyId
                 }
-                className='bg-indigo-500 text-white hover:bg-indigo-400'
+                variant='accentSolid'
               >
                 {createDraft.isPending
                   ? t('pages.documents.create.saving')
