@@ -9,6 +9,8 @@ import type {
   DocumentDraftRequest,
   CommercialDraftRequest,
   CommercialDraftUpdateRequest,
+  CommercialPreviewRequest,
+  CommercialPreviewResponse,
   SettlementOwner,
   DocumentListRequest,
   DocumentListResponse,
@@ -54,6 +56,12 @@ export const DocumentService = {
   createCommercialDraft: (request: CommercialDraftRequest) =>
     BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/commercial/drafts`,
+      request,
+    ),
+
+  previewCommercialDraft: (request: CommercialPreviewRequest) =>
+    BaseService.post<ApiResponse<CommercialPreviewResponse>>(
+      `${DOCUMENTS_URL}/commercial/preview`,
       request,
     ),
 

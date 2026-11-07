@@ -104,6 +104,16 @@ financial settlement are handled by the commercial document workflow below.
 
 ## Commercial documents
 
+`POST /documents/commercial/preview` accepts
+`{draft: CommercialDraft, excludeDocumentId?}` and returns `{lines, totals,
+approvalRequired, valid}` without persisting a document. Each line reports the
+eligible, billed, remaining, credited, and remaining-creditable quantities,
+credited and remaining net amounts, alongside the requested allocation.
+Existing drafts reserve billing and credit availability;
+`excludeDocumentId` is accepted only for an editable company-scoped draft.
+Totals use the same per-line rounding as persisted
+documents. Preview balances are advisory; create and update revalidate them.
+
 `POST /documents/commercial/drafts` accepts
 `{type: SUPPLIER_BILL|CUSTOMER_INVOICE|FINANCIAL_CREDIT, sourceDocumentIds,
 date, currencyId, reason?, referenceNumber?, lines:[{sourceLineId, quantity,

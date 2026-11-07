@@ -207,6 +207,31 @@ export type CommercialDraftUpdateRequest = {
   draft: CommercialDraftRequest;
 };
 
+export type CommercialPreviewRequest = {
+  draft: CommercialDraftRequest;
+  excludeDocumentId?: number;
+};
+
+export type CommercialPreviewLine = {
+  sourceLineId: number;
+  eligibleQuantity: number;
+  billedQuantity: number;
+  remainingQuantity: number;
+  creditedQuantity: number;
+  remainingCreditableQuantity: number;
+  creditedNetAmount: number;
+  remainingCreditableNetAmount: number;
+  requestedQuantity: number;
+  requestedNetAmount: number;
+};
+
+export type CommercialPreviewResponse = {
+  lines: CommercialPreviewLine[];
+  totals: DocumentTotals;
+  approvalRequired: boolean;
+  valid: boolean;
+};
+
 export type SettlementOwner = { id: number; username: string; role: UserRole };
 
 export type DraftUpdateRequest = {

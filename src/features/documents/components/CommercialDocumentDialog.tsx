@@ -1,10 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FilePlus2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useTranslations } from 'next-intl';
-import { useCreateCommercialDraftMutation, useDocumentsQuery, useUpdateCommercialDraftMutation } from '@/features/documents/queries/documentQueries';
+import { useLocale, useTranslations } from 'next-intl';
+import { useCommercialDraftPreviewMutation, useCreateCommercialDraftMutation, useDocumentsQuery, useUpdateCommercialDraftMutation } from '@/features/documents/queries/documentQueries';
 import { DocumentQueueView, DocumentRelationKind, DocumentStatus, DocumentType } from '@/features/documents/enums/documentEnums';
 import type { BusinessDocument, CommercialDocumentType, DocumentLine } from '@/features/documents/types/documents';
 import { toastApiError } from '@/features/shared/api/apiResponse';
@@ -20,6 +20,7 @@ import {
   AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
+import { formatDocumentAmount } from '@/features/documents/helpers/documentPresentation';
 
 type Props = { open: boolean; type: CommercialDocumentType | null; editDocument?: BusinessDocument | null; onOpenChange: (open: boolean) => void };
 
@@ -29,9 +30,11 @@ function sourceLines(document: BusinessDocument): DocumentLine[] {
 
 export function CommercialDocumentDialog({ open, type, editDocument = null, onOpenChange }: Props) {
   const t = useTranslations();
+  const locale = useLocale();
   const docsQuery = useDocumentsQuery({ view: DocumentQueueView.ALL, page: 0, pageSize: 100 });
   const create = useCreateCommercialDraftMutation();
   const update = useUpdateCommercialDraftMutation();
+  const previewMutation = useCommercialDraftPreviewMutation();
   const activeType = type ?? (editDocument?.type as CommercialDocumentType | undefined) ?? null;
   const [sourceIds, setSourceIds] = useState<number[]>(() => editDocument?.relatedDocuments.filter((doc) => doc.relationKind === DocumentRelationKind.CREATED_FROM || doc.relationKind === DocumentRelationKind.FINANCIAL_CREDIT).map((doc) => doc.id) ?? []);
   const [date, setDate] = useState(() => editDocument?.date ?? new Date().toISOString().slice(0, 10));
@@ -40,6 +43,12 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
   const [prices, setPrices] = useState<Record<number, string>>(() => Object.fromEntries((editDocument?.lines ?? []).filter((line) => line.sourceLineId).map((line) => [line.sourceLineId!, String(line.unitPrice ?? '')])));
   const [vatRates, setVatRates] = useState<Record<number, string>>(() => Object.fromEntries((editDocument?.lines ?? []).filter((line) => line.sourceLineId && line.vatRate !== null && line.vatRate !== undefined).map((line) => [line.sourceLineId!, String(line.vatRate)])));
   const [amounts, setAmounts] = useState<Record<number, string>>(() => Object.fromEntries((editDocument?.lines ?? []).filter((line) => line.sourceLineId && line.netAmount !== null && line.netAmount !== undefined).map((line) => [line.sourceLineId!, String(line.netAmount)])));
+  const [previewResult, setPreviewResult] = useState<{
+    key: string;
+    payload: Awaited<ReturnType<typeof previewMutation.mutateAsync>>['payload'];
+  } | null>(null);
+  const [previewErrorKey, setPreviewErrorKey] = useState<string | null>(null);
+  const previewSequence = useRef(0);
 
   const candidates = useMemo(() => {
     const docs = docsQuery.data?.payload.items ?? [];
@@ -52,10 +61,71 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
     const expectedType = activeType === DocumentType.SUPPLIER_BILL ? DocumentType.GOODS_RECEIPT : DocumentType.DELIVERY_NOTE;
     return docs.filter((doc) => doc.type === expectedType && doc.status === DocumentStatus.COMPLETED && !doc.nonBillable);
   }, [docsQuery.data?.payload.items, activeType]);
-  const selected = candidates.filter((doc) => sourceIds.includes(doc.id));
-  const editableLineIds = new Set((editDocument?.lines ?? []).map((line) => line.sourceLineId).filter((id): id is number => id !== null && id !== undefined));
-  const lines = selected.flatMap((doc) => sourceLines(doc).map((line) => ({ document: doc, line })))
-    .filter(({ line }) => !editDocument || editableLineIds.has(line.id));
+  const selected = useMemo(() => candidates.filter((doc) => sourceIds.includes(doc.id)), [candidates, sourceIds]);
+  const editableLineIds = useMemo(() => new Set((editDocument?.lines ?? []).map((line) => line.sourceLineId).filter((id): id is number => id !== null && id !== undefined)), [editDocument?.lines]);
+  const lines = useMemo(() => selected.flatMap((doc) => sourceLines(doc).map((line) => ({ document: doc, line })))
+    .filter(({ line }) => !editDocument || editableLineIds.has(line.id)), [selected, editDocument, editableLineIds]);
+
+  const draftRequest = useMemo(() => {
+    if (!activeType || !selected.length || !selected[0].currencyId || !lines.length) return null;
+    return {
+      type: activeType,
+      sourceDocumentIds: selected.map((doc) => doc.id),
+      date,
+      currencyId: selected[0].currencyId,
+      ...(activeType === DocumentType.FINANCIAL_CREDIT
+        ? { reason: reason.trim() || undefined }
+        : { referenceNumber: reason.trim() || undefined }),
+      lines: lines.map(({ line }) => ({
+        sourceLineId: line.id,
+        quantity: Number(quantities[line.id] ?? (activeType === DocumentType.FINANCIAL_CREDIT
+          ? line.operationQuantity ?? line.orderedQuantity
+          : Math.max(0, (line.operationQuantity ?? line.orderedQuantity) - (line.billedQuantity ?? 0)))),
+        unitPrice: prices[line.id] ? Number(prices[line.id]) : line.unitPrice,
+        vatRate: vatRates[line.id] ? Number(vatRates[line.id]) : line.vatRate ?? undefined,
+        ...(activeType === DocumentType.FINANCIAL_CREDIT
+          ? { amount: Number(amounts[line.id] ?? (Number(quantities[line.id] ?? line.operationQuantity ?? line.orderedQuantity) * Number(line.unitPrice ?? 0))) }
+          : {}),
+      })),
+    };
+  }, [activeType, selected, lines, date, reason, quantities, prices, vatRates, amounts]);
+
+  const previewKey = JSON.stringify({ draft: draftRequest, excludeDocumentId: editDocument?.id });
+  const preview = previewResult?.key === previewKey ? previewResult.payload : null;
+  const previewError = previewErrorKey === previewKey;
+  const runPreview = previewMutation.mutateAsync;
+
+  useEffect(() => {
+    const sequence = ++previewSequence.current;
+    if (!open || !draftRequest || draftRequest.lines.some((line) => !Number.isFinite(line.quantity) || line.quantity < 0)) return;
+    const requestKey = JSON.stringify({ draft: draftRequest, excludeDocumentId: editDocument?.id });
+    const timer = window.setTimeout(() => {
+      void runPreview({ draft: draftRequest, excludeDocumentId: editDocument?.id })
+        .then((response) => {
+          if (previewSequence.current === sequence) {
+            setPreviewResult({ key: requestKey, payload: response.payload });
+            setPreviewErrorKey((current) => current === requestKey ? null : current);
+            setQuantities((current) => {
+              const defaults = { ...current };
+              let changed = false;
+              for (const line of response.payload.lines) {
+                if (defaults[line.sourceLineId] === undefined) {
+                  defaults[line.sourceLineId] = String(activeType === DocumentType.FINANCIAL_CREDIT
+                    ? line.remainingCreditableQuantity
+                    : line.remainingQuantity);
+                  changed = true;
+                }
+              }
+              return changed ? defaults : current;
+            });
+          }
+        })
+        .catch(() => {
+          if (previewSequence.current === sequence) setPreviewErrorKey(requestKey);
+        });
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [open, draftRequest, editDocument?.id, runPreview, activeType]);
 
   function toggleSource(id: number) {
     setSourceIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
@@ -64,26 +134,9 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
   async function submit() {
     if (!activeType || !selected.length || !lines.length || !selected[0].currencyId) return;
     try {
-      const request = {
-        type: activeType,
-        sourceDocumentIds: selected.map((doc) => doc.id),
-        date,
-        currencyId: selected[0].currencyId,
-        ...(activeType === DocumentType.FINANCIAL_CREDIT
-          ? { reason: reason.trim() || undefined }
-          : { referenceNumber: reason.trim() || undefined }),
-        lines: lines.map(({ line }) => ({
-          sourceLineId: line.id,
-          quantity: Number(quantities[line.id] ?? line.operationQuantity ?? line.orderedQuantity),
-          unitPrice: prices[line.id] ? Number(prices[line.id]) : line.unitPrice,
-          vatRate: vatRates[line.id] ? Number(vatRates[line.id]) : line.vatRate ?? undefined,
-          ...(activeType === DocumentType.FINANCIAL_CREDIT
-            ? { amount: Number(amounts[line.id] ?? (Number(quantities[line.id] ?? line.operationQuantity ?? line.orderedQuantity) * Number(line.unitPrice ?? 0))) }
-            : {}),
-        })),
-      };
-      if (editDocument) await update.mutateAsync({ id: editDocument.id, request: { version: editDocument.version, draft: request } });
-      else await create.mutateAsync(request);
+      if (!draftRequest || !preview) return;
+      if (editDocument) await update.mutateAsync({ id: editDocument.id, request: { version: editDocument.version, draft: draftRequest } });
+      else await create.mutateAsync(draftRequest);
       toast.success(t('pages.documents.commercial.created'));
       setSourceIds([]);
       setReason('');
@@ -163,6 +216,10 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
                 {lines.map(({ document, line }) => {
                   const max = line.operationQuantity ?? line.orderedQuantity;
                   const isCredit = activeType === DocumentType.FINANCIAL_CREDIT;
+                  const sourceProgress = preview?.lines.find((item) => item.sourceLineId === line.id);
+                  const available = isCredit
+                    ? sourceProgress?.remainingCreditableQuantity ?? max
+                    : sourceProgress?.remainingQuantity ?? Math.max(0, max - (line.billedQuantity ?? 0));
                   const fieldClass = 'h-11 px-3 text-sm tabular-nums';
                   return (
                     <article
@@ -173,12 +230,36 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
                         <p className='truncate text-sm font-medium text-zinc-100'>
                           {line.productName}
                         </p>
-                        <p className='mt-1 truncate text-xs text-zinc-400'>
+                        <p className='mt-1 text-xs text-zinc-400'>
                           {document.number} · {line.unitName} ·{' '}
-                          {t('pages.documents.commercial.available', {
-                            quantity: max,
-                          })}
+                    {activeType === DocumentType.FINANCIAL_CREDIT
+                      ? <>
+                          <span>{t('pages.documents.commercial.creditBalance', {
+                            original: sourceProgress?.eligibleQuantity ?? max,
+                            credited: sourceProgress?.creditedQuantity ?? 0,
+                            remaining: sourceProgress?.remainingCreditableQuantity ?? max,
+                          })}</span>
+                          <br />
+                          <span>{t('pages.documents.commercial.creditAmountBalance', {
+                            original: formatDocumentAmount((sourceProgress?.creditedNetAmount ?? 0) + (sourceProgress?.remainingCreditableNetAmount ?? max * Number(line.unitPrice ?? 0)), document.currencyCode, locale),
+                            credited: formatDocumentAmount(sourceProgress?.creditedNetAmount ?? 0, document.currencyCode, locale),
+                            remaining: formatDocumentAmount(sourceProgress?.remainingCreditableNetAmount ?? max * Number(line.unitPrice ?? 0), document.currencyCode, locale),
+                          })}</span>
+                        </>
+                      : t('pages.documents.commercial.billingBalance', {
+                          eligible: preview?.lines.find((item) => item.sourceLineId === line.id)?.eligibleQuantity ?? max,
+                          billed: sourceProgress?.billedQuantity ?? line.billedQuantity ?? 0,
+                          remaining: sourceProgress?.remainingQuantity ?? Math.max(0, max - (line.billedQuantity ?? 0)),
+                        })}
                         </p>
+                        {activeType !== DocumentType.FINANCIAL_CREDIT && (
+                          <p className='mt-1 text-xs text-zinc-500'>
+                            {t('pages.documents.commercial.sourcePricing', {
+                              price: formatDocumentAmount(line.unitPrice ?? 0, document.currencyCode, locale),
+                              vat: line.vatRate ?? 0,
+                            })}
+                          </p>
+                        )}
                       </div>
                       <div
                         className={`grid grid-cols-2 gap-2 ${
@@ -192,9 +273,11 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
                             className={fieldClass}
                             type='number'
                             min={isCredit ? '0' : '0.00000001'}
-                            max={max}
+                            max={isCredit
+                              ? sourceProgress?.remainingCreditableQuantity ?? max
+                              : preview?.lines.find((item) => item.sourceLineId === line.id)?.remainingQuantity ?? Math.max(0, max - (line.billedQuantity ?? 0))}
                             step='any'
-                            value={quantities[line.id] ?? String(max)}
+                            value={quantities[line.id] ?? String(available)}
                             onChange={(event) =>
                               setQuantities((current) => ({
                                 ...current,
@@ -277,10 +360,32 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
               </div>
             </ScrollArea>
           </section>
+          {activeType === DocumentType.FINANCIAL_CREDIT && (
+            <section aria-live='polite' className='rounded-xl border border-zinc-700 bg-zinc-950/40 p-4'>
+              <h3 className='mb-3 text-sm font-medium text-zinc-200'>{t('pages.documents.commercial.previewTotals')}</h3>
+              {previewError && <p role='alert' className='text-sm text-rose-300'>{t('pages.documents.commercial.previewError')}</p>}
+              {!preview && !previewError && <p className='text-sm text-zinc-400'>{t('pages.documents.commercial.previewLoading')}</p>}
+              {preview && !preview.valid && <p role='alert' className='mb-3 text-sm text-rose-300'>{t('pages.documents.commercial.allocationInvalid')}</p>}
+              {preview && <dl className='grid grid-cols-3 gap-3 text-sm'>
+                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.net')}</dt><dd className='mt-1 font-medium'>{formatDocumentAmount(preview.totals.net, selected[0]?.currencyCode, locale)}</dd></div>
+                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.tax')}</dt><dd className='mt-1 font-medium'>{formatDocumentAmount(preview.totals.tax, selected[0]?.currencyCode, locale)}</dd></div>
+                <div><dt className='text-xs text-zinc-500'>{t('pages.documents.details.gross')}</dt><dd className='mt-1 font-medium'>{formatDocumentAmount(preview.totals.gross, selected[0]?.currencyCode, locale)}</dd></div>
+              </dl>}
+            </section>
+          )}
+          {preview?.approvalRequired && (
+            <p role='status' className='rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100'>{t('pages.documents.commercial.approvalPreview')}</p>
+          )}
+          {preview && !preview.valid && activeType !== DocumentType.FINANCIAL_CREDIT && (
+            <p role='alert' className='text-sm text-rose-300'>{t('pages.documents.commercial.allocationInvalid')}</p>
+          )}
+          {previewError && activeType !== DocumentType.FINANCIAL_CREDIT && (
+            <p role='alert' className='text-sm text-rose-300'>{t('pages.documents.commercial.previewError')}</p>
+          )}
         </AppDialogBody>
         <AppDialogFooter>
           <Button variant='mutedOutline' onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
-          <Button variant='accentSolid' onClick={() => void submit()} disabled={create.isPending || update.isPending || !selected.length || !lines.length}>
+          <Button variant='accentSolid' onClick={() => void submit()} disabled={create.isPending || update.isPending || !selected.length || !lines.length || !preview || !preview.valid || previewError}>
             {create.isPending || update.isPending ? t('pages.documents.commercial.saving') : editDocument ? t('pages.documents.commercial.saveChanges') : t('pages.documents.commercial.createDraft')}
           </Button>
         </AppDialogFooter>

@@ -8,6 +8,7 @@ import type {
   DocumentDraftRequest,
   CommercialDraftRequest,
   CommercialDraftUpdateRequest,
+  CommercialPreviewRequest,
   DocumentListRequest,
   DraftUpdateRequest,
   FulfillmentDraftRequest,
@@ -96,6 +97,13 @@ export function useCreateCommercialDraftMutation() {
     mutationFn: (request: CommercialDraftRequest) =>
       requireSuccessfulResponse(DocumentService.createCommercialDraft(request)),
     onSuccess: () => invalidate(),
+  });
+}
+
+export function useCommercialDraftPreviewMutation() {
+  return useMutation({
+    mutationFn: (request: CommercialPreviewRequest) =>
+      requireSuccessfulResponse(DocumentService.previewCommercialDraft(request)),
   });
 }
 
