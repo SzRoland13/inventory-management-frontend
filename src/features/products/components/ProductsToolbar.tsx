@@ -77,19 +77,17 @@ export function ProductsToolbar({
             {t('pages.products.actions.add')}
           </Button>
           <Button
-            variant='outline'
             onClick={onEdit}
             disabled={!hasSelection || actionsDisabled}
-            className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+            variant='subtleOutline'
           >
             <Pencil />
             {t('pages.products.actions.edit')}
           </Button>
           <Button
-            variant='outline'
             onClick={onArchive}
             disabled={!hasSelection}
-            className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+            variant='subtleOutline'
           >
             <Archive />
             {t('pages.products.actions.archive')}
@@ -98,19 +96,17 @@ export function ProductsToolbar({
       )}
 
       <Button
-        variant='outline'
         onClick={onView}
         disabled={!hasSelection}
-        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+        variant='subtleOutline'
       >
         <Eye />
         {t('pages.products.actions.view')}
       </Button>
 
       <Button
-        variant='outline'
         onClick={onManageColumns}
-        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white'
+        variant='subtleOutline'
       >
         <Columns3 />
         {t('pages.products.columns.button')}

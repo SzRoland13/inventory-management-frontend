@@ -9,9 +9,7 @@ import {
   AppDialogBody,
   AppDialogFooter,
   AppDialogHeader,
-  AppDialogSection,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogSection
 } from '@/features/shared/components/AppDialogLayout';
 import { Button } from '@/features/shared/components/ui/button';
 import { Checkbox } from '@/features/shared/components/ui/checkbox';
@@ -243,8 +241,7 @@ export function WarehouseFormDialog({
           <AppDialogFooter>
             <Button
               type='button'
-              variant='outline'
-              className={appDialogCancelButtonClass}
+              variant='mutedOutline'
               onClick={() => onOpenChange(false)}
               disabled={saving}
             >
@@ -252,7 +249,7 @@ export function WarehouseFormDialog({
             </Button>
             <Button
               type='submit'
-              className={appDialogPrimaryButtonClass}
+              variant='accentSolid'
               disabled={saving || isSubmitting}
             >
               {saving ? t('common.saving') : t('common.save')}

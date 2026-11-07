@@ -1,6 +1,8 @@
 import { useTranslations } from 'next-intl';
 import { Boxes } from 'lucide-react';
-import { AppDialogHeader } from '@/features/shared/components/AppDialogLayout';
+import {
+  AppDialogHeader
+} from '@/features/shared/components/AppDialogLayout';
 
 export function ProductFormDialogHeader({ editing }: { editing: boolean }) {
   const t = useTranslations();

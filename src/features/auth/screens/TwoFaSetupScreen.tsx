@@ -178,7 +178,7 @@ export default function TwoFaSetupPage() {
             <Button
               type='submit'
               disabled={emailSubmitting}
-              className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+              variant='mutedSolid' className='w-full'
             >
               {emailSubmitting ? t('common.requesting') : t('common.request')}
             </Button>
@@ -218,7 +218,7 @@ export default function TwoFaSetupPage() {
               <Button
                 type='submit'
                 disabled={totpSubmitting}
-                className='w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+                variant='mutedSolid' className='w-full'
               >
                 {totpSubmitting ? t('common.verifying') : t('common.verify')}
               </Button>

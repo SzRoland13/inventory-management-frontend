@@ -112,9 +112,3 @@ export function AppDialogCard({ children }: { children: ReactNode }) {
     </div>
   );
 }
-
-export const appDialogCancelButtonClass =
-  'border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white';
-
-export const appDialogPrimaryButtonClass =
-  'bg-indigo-500 text-white hover:bg-indigo-400 disabled:bg-zinc-700 disabled:text-zinc-400 disabled:opacity-100';

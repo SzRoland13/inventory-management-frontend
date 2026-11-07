@@ -41,9 +41,7 @@ import {
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
@@ -391,8 +389,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
         </AppDialogBody>
         <AppDialogFooter className='gap-2 sm:gap-2'>
           <Button
-            variant='outline'
-            className={`${appDialogCancelButtonClass} h-11 px-5`}
+            variant='mutedOutline' className='h-11 px-5'
             disabled={
               busy || postingAttempted || warehouseRequired || !lines.length
             }
@@ -412,7 +409,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
               warehouseRequired
             }
             onClick={() => void submit()}
-            className={`${appDialogPrimaryButtonClass} h-11 px-5`}
+            variant='accentSolid' className='h-11 px-5'
           >
             {t('pages.documents.fulfillment.post')}
           </Button>

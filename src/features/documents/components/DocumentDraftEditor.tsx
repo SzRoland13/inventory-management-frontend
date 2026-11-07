@@ -26,8 +26,7 @@ import { Input } from '@/features/shared/components/ui/input';
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import {
@@ -475,8 +474,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
               <div className='mt-3 flex flex-wrap gap-2'>
                 <Button
                   size='sm'
-                  variant='outline'
-                  className='border-zinc-600 bg-zinc-800'
+                  variant='subtleOutline'
                   onClick={() => void reloadServerVersion()}
                 >
                   {t('pages.documents.editor.reload')}
@@ -563,9 +561,8 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
         </AppDialogBody>
         <AppDialogFooter>
           <Button
-            variant='outline'
             onClick={() => void closeEditor()}
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
           >
             {t('common.done')}
           </Button>

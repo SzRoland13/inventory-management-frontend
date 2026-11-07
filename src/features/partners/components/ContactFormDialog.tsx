@@ -9,9 +9,7 @@ import {
   AppDialogBody,
   AppDialogFooter,
   AppDialogHeader,
-  AppDialogSection,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogSection
 } from '@/features/shared/components/AppDialogLayout';
 import { Button } from '@/features/shared/components/ui/button';
 import { Dialog } from '@/features/shared/components/ui/dialog';
@@ -203,8 +201,7 @@ export function ContactFormDialog({
           <AppDialogFooter>
             <Button
               type='button'
-              variant='outline'
-              className={appDialogCancelButtonClass}
+              variant='mutedOutline'
               disabled={saving || isSubmitting}
               onClick={() => onOpenChange(false)}
             >
@@ -212,7 +209,7 @@ export function ContactFormDialog({
             </Button>
             <Button
               type='submit'
-              className={appDialogPrimaryButtonClass}
+              variant='accentSolid'
               disabled={saving || isSubmitting}
             >
               {saving || isSubmitting ? t('common.saving') : t('common.save')}

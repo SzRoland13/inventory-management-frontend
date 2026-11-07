@@ -11,7 +11,7 @@ import { Dialog, DialogTrigger } from '@/features/shared/components/ui/dialog';
 import {
   AppDialogBody,
   AppDialogCard,
-  AppDialogHeader,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { Input } from '@/features/shared/components/ui/input';
@@ -236,7 +236,7 @@ export default function SetupPasswordPage() {
         <Button
           type='submit'
           disabled={isSubmitting}
-          className='mt-4 w-full bg-zinc-700 hover:bg-zinc-600 text-zinc-100 transition-colors'
+          variant='mutedSolid' className='mt-4 w-full'
         >
           {isSubmitting ? t('common.submitting') : t('common.continue')}
         </Button>

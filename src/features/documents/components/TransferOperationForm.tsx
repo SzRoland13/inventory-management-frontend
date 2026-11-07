@@ -17,9 +17,7 @@ import { Label } from '@/features/shared/components/ui/label';
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import {
@@ -148,16 +146,14 @@ export function TransferOperationForm({
         </AppDialogBody>
         <AppDialogFooter>
           <Button
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={onClose}
             disabled={busy}
           >
             {t('common.cancel')}
           </Button>
           <Button
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={onPreview}
             disabled={
               busy ||
@@ -173,7 +169,7 @@ export function TransferOperationForm({
             )}
           </Button>
           <Button
-            className={appDialogPrimaryButtonClass}
+            variant='accentSolid'
             onClick={onSubmit}
             disabled={busy || !preview?.valid}
           >

@@ -8,8 +8,7 @@ import {
   AppDialogBody,
   AppDialogCard,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 
@@ -58,8 +57,7 @@ export function ProductCatalogDeleteDialog({
         <AppDialogFooter>
           <Button
             type='button'
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={() => onOpenChange(false)}
           >
             {t('common.cancel')}

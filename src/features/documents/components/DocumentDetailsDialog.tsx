@@ -54,9 +54,7 @@ import {
   AppDialogBody,
   AppDialogFooter,
   AppDialogHeader,
-  AppDialogSection,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogSection
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { FulfillmentDialog } from '@/features/documents/components/FulfillmentDialog';
@@ -154,9 +152,8 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
           <AppDialogBody>
             {detailQuery.isError ? (
               <Button
-                variant='outline'
                 onClick={() => void detailQuery.refetch()}
-                className={appDialogCancelButtonClass}
+                variant='mutedOutline'
               >
                 {t('common.retry')}
               </Button>
@@ -388,9 +385,8 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                         .map((action) => (
                           <Button
                             key={action}
-                            variant='outline'
                             onClick={() => setWorkflowAction(action)}
-                            className='border-zinc-600 bg-zinc-800'
+                            variant='subtleOutline'
                           >
                             {t(`pages.documents.actions.${action}`)}
                           </Button>
@@ -582,8 +578,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                       ) && (
                         <Button
                           size='sm'
-                          variant='outline'
-                          className='border-zinc-600 bg-zinc-800'
+                          variant='subtleOutline'
                           onClick={() => fileInput.current?.click()}
                         >
                           <Upload />
@@ -730,7 +725,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
             {current.allowedActions.includes(DocumentAction.POST) && (
               <Button
                 onClick={() => setFulfillmentOpen(true)}
-                className='bg-indigo-500 text-white hover:bg-indigo-400'
+                variant='accentSolid'
               >
                 <PackageCheck />
                 {t('pages.documents.actions.POST')}
@@ -740,9 +735,8 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
               DocumentAction.CLOSE_REMAINING,
             ) && (
               <Button
-                variant='outline'
                 onClick={() => setCloseRemainingOpen(true)}
-                className={appDialogCancelButtonClass}
+                variant='mutedOutline'
               >
                 {t('pages.documents.actions.CLOSE_REMAINING')}
               </Button>
@@ -772,10 +766,9 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                   </SelectContent>
                 </Select>
                 <Button
-                  variant='outline'
                   onClick={() => void generate()}
                   disabled={generatePdf.isPending}
-                  className={appDialogCancelButtonClass}
+                  variant='mutedOutline'
                 >
                   <FileText />
                   {t(
@@ -788,12 +781,11 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
             )}
             {current.allowedActions.includes(DocumentAction.EDIT) && (
               <Button
-                variant='outline'
                 onClick={() => {
                   if ([DocumentType.SUPPLIER_BILL, DocumentType.CUSTOMER_INVOICE, DocumentType.FINANCIAL_CREDIT].includes(current.type as DocumentType)) setCommercialEditorOpen(true);
                   else setEditorOpen(true);
                 }}
-                className={appDialogCancelButtonClass}
+                variant='mutedOutline'
               >
                 {t('pages.documents.actions.EDIT')}
               </Button>
@@ -802,15 +794,15 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
               <Button
                 onClick={() => void confirm()}
                 disabled={confirmOrder.isPending}
-                className={appDialogPrimaryButtonClass}
+                variant='accentSolid'
               >
                 <Check />
                 {t('pages.documents.actions.CONFIRM')}
               </Button>
             )}
-            {current.allowedActions.includes(DocumentAction.APPROVE) && <Button onClick={() => void runCommercialAction(CommercialDocumentOperation.APPROVE)} disabled={commercialAction.isPending}>{t('pages.documents.actions.APPROVE')}</Button>}
-            {current.allowedActions.includes(DocumentAction.REJECT) && <Button variant='outline' onClick={() => void runCommercialAction(CommercialDocumentOperation.REJECT)} disabled={commercialAction.isPending}>{t('pages.documents.actions.REJECT')}</Button>}
-            {current.allowedActions.includes(DocumentAction.FINALIZE) && <Button onClick={() => void runCommercialAction(CommercialDocumentOperation.FINALIZE)} disabled={commercialAction.isPending}>{t('pages.documents.actions.FINALIZE')}</Button>}
+            {current.allowedActions.includes(DocumentAction.APPROVE) && <Button variant='accentSolid' onClick={() => void runCommercialAction(CommercialDocumentOperation.APPROVE)} disabled={commercialAction.isPending}>{t('pages.documents.actions.APPROVE')}</Button>}
+            {current.allowedActions.includes(DocumentAction.REJECT) && <Button variant='mutedOutline' onClick={() => void runCommercialAction(CommercialDocumentOperation.REJECT)} disabled={commercialAction.isPending}>{t('pages.documents.actions.REJECT')}</Button>}
+            {current.allowedActions.includes(DocumentAction.FINALIZE) && <Button variant='accentSolid' onClick={() => void runCommercialAction(CommercialDocumentOperation.FINALIZE)} disabled={commercialAction.isPending}>{t('pages.documents.actions.FINALIZE')}</Button>}
             {current.allowedActions.includes(DocumentAction.ASSIGN_SETTLEMENT) && <div className='flex items-center gap-2'>
               <Select value={selectedSettlementOwner} onValueChange={setSelectedSettlementOwner}>
                 <SelectTrigger aria-label={t('pages.documents.commercial.ownerSelect')} className='w-56 border-zinc-600 bg-zinc-800 text-zinc-100'><SelectValue placeholder={t('pages.documents.commercial.ownerSelect')} /></SelectTrigger>
@@ -818,7 +810,7 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                   {(settlementOwnersQuery.data?.payload ?? []).map((owner) => <SelectItem key={owner.id} value={String(owner.id)}>{owner.username} · {owner.role}</SelectItem>)}
                 </SelectContent>
               </Select>
-              <Button variant='outline' onClick={() => void runCommercialAction(CommercialDocumentOperation.ASSIGN_SETTLEMENT)} disabled={commercialAction.isPending || !selectedSettlementOwner}>{t('pages.documents.actions.ASSIGN_SETTLEMENT')}</Button>
+              <Button variant='mutedOutline' onClick={() => void runCommercialAction(CommercialDocumentOperation.ASSIGN_SETTLEMENT)} disabled={commercialAction.isPending || !selectedSettlementOwner}>{t('pages.documents.actions.ASSIGN_SETTLEMENT')}</Button>
             </div>}
           </AppDialogFooter>
         )}

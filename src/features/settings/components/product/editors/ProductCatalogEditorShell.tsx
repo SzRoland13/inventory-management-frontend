@@ -9,9 +9,7 @@ import {
   AppDialogBody,
   AppDialogFooter,
   AppDialogHeader,
-  AppDialogSection,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogSection
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { Label } from '@/features/shared/components/ui/label';
@@ -47,8 +45,7 @@ export function EditorShell({
           <AppDialogFooter>
             <Button
               type='button'
-              variant='outline'
-              className={appDialogCancelButtonClass}
+              variant='mutedOutline'
               onClick={() => onOpenChange(false)}
             >
               {t('common.cancel')}
@@ -56,7 +53,7 @@ export function EditorShell({
             <Button
               type='submit'
               disabled={pending}
-              className={appDialogPrimaryButtonClass}
+              variant='accentSolid'
             >
               {pending ? t('common.saving') : t('common.save')}
             </Button>

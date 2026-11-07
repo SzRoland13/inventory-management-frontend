@@ -10,8 +10,7 @@ import {
   AppDialogCard,
   AppDialogFooter,
   AppDialogHeader,
-  AppDialogSection,
-  appDialogCancelButtonClass,
+  AppDialogSection
 } from '@/features/shared/components/AppDialogLayout';
 import { Badge } from '@/features/shared/components/ui/badge';
 import { Button } from '@/features/shared/components/ui/button';
@@ -189,8 +188,7 @@ export function PartnerContactsDialog({
           )}
           <AppDialogFooter>
             <Button
-              variant='outline'
-              className={appDialogCancelButtonClass}
+              variant='mutedOutline'
               onClick={() => onOpenChange(false)}
             >
               {t('common.done')}
@@ -229,8 +227,7 @@ export function PartnerContactsDialog({
           </AppDialogBody>
           <AppDialogFooter>
             <Button
-              variant='outline'
-              className={appDialogCancelButtonClass}
+              variant='mutedOutline'
               disabled={removeContact.isPending}
               onClick={() => setContactToRemove(null)}
             >

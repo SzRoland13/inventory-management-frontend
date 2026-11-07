@@ -63,40 +63,36 @@ export function UsersToolbar({
       </Button>
 
       <Button
-        variant='outline'
         disabled={!hasSelection}
         onClick={onEdit}
-        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+        variant='subtleOutline'
       >
         <Edit className='h-4 w-4' />
         {t('pages.users.toolbar.edit')}
       </Button>
 
       <Button
-        variant='outline'
         disabled={!canResetPassword}
         onClick={onResetPassword}
-        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+        variant='subtleOutline'
       >
         <KeyRound className='h-4 w-4' />
         {t('pages.users.toolbar.reset-password')}
       </Button>
 
       <Button
-        variant='outline'
         disabled={!canReset2FA}
         onClick={onReset2FA}
-        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+        variant='subtleOutline'
       >
         <RotateCcw className='h-4 w-4' />
         {t('pages.users.toolbar.reset-2fa')}
       </Button>
 
       <Button
-        variant='outline'
         disabled={!canToggleSuspend}
         onClick={onToggleSuspend}
-        className='gap-2 border-zinc-600 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 hover:text-white disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-100'
+        variant='subtleOutline'
       >
         {suspendButtonIcon}
         {suspendButtonText}

@@ -108,7 +108,7 @@ export default function LogoCard() {
       <Button
         onClick={handleSaveLogo}
         disabled={!logo?.id}
-        className='bg-zinc-500 w-72'
+        variant='mutedSolid' className='w-72'
       >
         {t('pages.settings.tabs.company.logo.save')}
       </Button>

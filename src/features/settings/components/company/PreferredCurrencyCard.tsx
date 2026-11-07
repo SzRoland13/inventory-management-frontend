@@ -145,7 +145,7 @@ export default function PreferredCurrencyCard({ preferredCurrency }: Props) {
         <Button
           onClick={handleSave}
           disabled={!hasChanges}
-          className='bg-zinc-500 w-72 self-center'
+          variant='mutedSolid' className='w-72 self-center'
         >
           {t('common.save')}
         </Button>

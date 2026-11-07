@@ -21,9 +21,7 @@ import { Dialog } from '@/features/shared/components/ui/dialog';
 import {
   AppDialogBody,
   AppDialogFooter,
-  AppDialogHeader,
-  appDialogCancelButtonClass,
-  appDialogPrimaryButtonClass,
+  AppDialogHeader
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
@@ -239,16 +237,14 @@ export function StockCountReconciliationDialog({
         </AppDialogBody>
         <AppDialogFooter>
           <Button
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={onClose}
             disabled={busy}
           >
             {t('common.cancel')}
           </Button>
           <Button
-            variant='outline'
-            className={appDialogCancelButtonClass}
+            variant='mutedOutline'
             onClick={() => void previewCount()}
             disabled={busy}
           >
@@ -259,7 +255,7 @@ export function StockCountReconciliationDialog({
             )}
           </Button>
           <Button
-            className={appDialogPrimaryButtonClass}
+            variant='accentSolid'
             onClick={() => void postCount()}
             disabled={busy || !previewIsCurrent}
           >

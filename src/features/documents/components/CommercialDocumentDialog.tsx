@@ -12,7 +12,11 @@ import { Button } from '@/features/shared/components/ui/button';
 import { Input } from '@/features/shared/components/ui/input';
 import { Label } from '@/features/shared/components/ui/label';
 import { Dialog } from '@/features/shared/components/ui/dialog';
-import { AppDialogBody, AppDialogFooter, AppDialogHeader } from '@/features/shared/components/AppDialogLayout';
+import {
+  AppDialogBody,
+  AppDialogFooter,
+  AppDialogHeader
+} from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 
 type Props = { open: boolean; type: CommercialDocumentType | null; editDocument?: BusinessDocument | null; onOpenChange: (open: boolean) => void };
@@ -129,8 +133,8 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
           </section>}
         </AppDialogBody>
         <AppDialogFooter>
-          <Button variant='outline' onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
-          <Button onClick={() => void submit()} disabled={create.isPending || update.isPending || !selected.length || !lines.length}>
+          <Button variant='mutedOutline' onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
+          <Button variant='accentSolid' onClick={() => void submit()} disabled={create.isPending || update.isPending || !selected.length || !lines.length}>
             {create.isPending || update.isPending ? t('pages.documents.commercial.saving') : editDocument ? t('pages.documents.commercial.saveChanges') : t('pages.documents.commercial.createDraft')}
           </Button>
         </AppDialogFooter>
