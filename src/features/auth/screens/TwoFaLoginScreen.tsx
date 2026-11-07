@@ -157,7 +157,7 @@ export default function TwoFaLoginPage() {
         />
         <AuthFormField
           id='code'
-          label={t('pages.2fa.qr.title')}
+          label={t('pages.2fa.login.codeLabel')}
           type='text'
           placeholder='123456'
           maxLength={6}
