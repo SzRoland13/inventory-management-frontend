@@ -141,6 +141,7 @@
       "login": {
         "title": "Two-Factor Authentication",
         "subtitle": "Authenticate yourself with 2FA (Authenticator app).",
+        "codeLabel": "Enter the 6-digit code from your Authenticator app",
         "footer": "If you cannot authenticate yourself, please contact your administrator."
       },
       "countdown": "This countdown shows how long you have to complete 2FA verification."
@@ -737,6 +738,9 @@
         "selectWarehouse": "Select a warehouse",
         "noTransit": "No transit warehouse",
         "resolution": "Resolution",
+        "preview": "Preview operation",
+        "previewValid": "The operation is valid. Review the effects below.",
+        "previewInvalid": "The operation has issues that must be resolved.",
         "LOSS": "Lost",
         "DAMAGE": "Damaged",
         "REVERSAL": "Reverse dispatch",
@@ -1140,7 +1144,9 @@
       "one-time-code-expired": "The one-time code has expired. Please request a new one.",
       "one-time-code": {
         "validate-before-two-fa": "Please validate your one-time code before setting up 2FA."
-      }
+      },
+      "account-suspended": "This account is suspended.",
+      "token-valid": "Your session is valid."
     },
     "user": {
       "registration-successful": "User registered successfully.",
@@ -1155,7 +1161,8 @@
       "password-reset-complete": "Password has been reset successfully.",
       "two-fa-not-enabled": "Two-factor authentication is not enabled for this user.",
       "avatar-updated": "Profile picture updated successfully.",
-      "password": "User has not set up a password yet."
+      "password": "User has not set up a password yet.",
+      "password-not-set": "This user has not set up a password yet."
     },
     "product": {
       "error": {
@@ -1174,7 +1181,50 @@
         "invalid_unit_configuration": "The secondary unit configuration is invalid.",
         "exactly_one_attribute_value": "Provide exactly one value for this attribute.",
         "page_size_limit": "Choose a page size of 100 or less."
-      }
+      },
+      "archived": "Product archived successfully.",
+      "archived_list": {
+        "retrieved": "Archived products loaded successfully."
+      },
+      "created": "Product created successfully.",
+      "list": {
+        "retrieved": "Products loaded successfully."
+      },
+      "restored": "Product restored successfully.",
+      "retrieved": "Product loaded successfully.",
+      "settings": {
+        "attribute": {
+          "created": "Product attribute created successfully.",
+          "deleted": "Product attribute deleted successfully.",
+          "updated": "Product attribute updated successfully."
+        },
+        "attribute_option": {
+          "created": "Product attribute option created successfully.",
+          "deleted": "Product attribute option deleted successfully.",
+          "updated": "Product attribute option updated successfully."
+        },
+        "attributes": {
+          "retrieved": "Product attributes loaded successfully."
+        },
+        "categories": {
+          "reordered": "Product categories reordered successfully.",
+          "retrieved": "Product categories loaded successfully."
+        },
+        "category": {
+          "created": "Product category created successfully.",
+          "deleted": "Product category deleted successfully.",
+          "updated": "Product category updated successfully."
+        },
+        "unit": {
+          "created": "Product unit created successfully.",
+          "deleted": "Product unit deleted successfully.",
+          "updated": "Product unit updated successfully."
+        },
+        "units": {
+          "retrieved": "Product units loaded successfully."
+        }
+      },
+      "updated": "Product updated successfully."
     },
     "warehouse": {
       "error": {
@@ -1187,7 +1237,14 @@
         "type_cannot_change_with_stock": "The transit type cannot be changed while this warehouse has stock.",
         "invalid_transit_document": "This transit warehouse cannot be used for that document.",
         "company_mismatch": "This warehouse and product belong to different companies."
-      }
+      },
+      "archived": "Warehouse archived successfully.",
+      "created": "Warehouse created successfully.",
+      "list": {
+        "retrieved": "Warehouses loaded successfully."
+      },
+      "restored": "Warehouse restored successfully.",
+      "updated": "Warehouse updated successfully."
     },
     "partner": {
       "error": {
@@ -1195,18 +1252,38 @@
         "already_archived": "This partner is already archived.",
         "not_archived": "This partner is not archived.",
         "archived_for_transaction": "Archived partners cannot be used for new transactions."
-      }
+      },
+      "archived": "Partner archived successfully.",
+      "created": "Partner created successfully.",
+      "list": {
+        "retrieved": "Partners loaded successfully."
+      },
+      "restored": "Partner restored successfully.",
+      "retrieved": "Partner loaded successfully.",
+      "updated": "Partner updated successfully."
     },
     "contact": {
       "error": {
         "already_removed": "This contact has already been removed.",
         "removed_read_only": "Removed contacts cannot be edited."
-      }
+      },
+      "created": "Contact created successfully.",
+      "list": {
+        "retrieved": "Contacts loaded successfully."
+      },
+      "removed": "Contact removed successfully.",
+      "updated": "Contact updated successfully."
     },
     "brand": {
       "error": {
         "already_exists": "A brand with this name already exists."
-      }
+      },
+      "created": "Brand created successfully.",
+      "deleted": "Brand deleted successfully.",
+      "list": {
+        "retrieved": "Brands loaded successfully."
+      },
+      "updated": "Brand updated successfully."
     },
     "company": {
       "logo-updated": "Company logo updated successfully.",
@@ -1214,14 +1291,25 @@
     },
     "error": {
       "generic": "An unexpected error occurred.",
-      "validation": "Validation error occurred."
+      "validation": {
+        "generic": "Validation error occurred.",
+        "invalid_format": "The request contains a value in an invalid format."
+      }
     },
     "request": {
       "success": "Request completed successfully."
     },
     "media": {
       "url-generated": "Media URL generated successfully.",
-      "deleted": "Media deleted successfully."
+      "deleted": "Media deleted successfully.",
+      "thumbnail": {
+        "encoder-unavailable": "Image preview generation is unavailable.",
+        "generation-failed": "The image preview could not be generated.",
+        "image-invalid": "This image file is invalid or unsupported.",
+        "job-invalid": "The image preview request is invalid.",
+        "job-not-found": "The image preview request could not be found.",
+        "payload-invalid": "The image preview data is invalid."
+      }
     },
     "not-found": {
       "user": "User not found.",
@@ -1234,7 +1322,99 @@
       "media-usage": "Media usage not found.",
       "currency": "Currency not found.",
       "document-sequence": "Document sequence not found.",
-      "document-prefix": "Document prefix not found."
+      "document-prefix": "Document prefix not found.",
+      "brand": "Brand not found.",
+      "contact": "Contact not found.",
+      "document": "Document not found.",
+      "document-line": "Document line not found.",
+      "document-relation": "Document relationship not found.",
+      "product-attribute-definition": "Product attribute not found.",
+      "product-attribute-option": "Product attribute option not found.",
+      "product-attribute-value": "Product attribute value not found.",
+      "product-category": "Product category not found.",
+      "stock-balance": "Stock balance not found.",
+      "stock-movement": "Stock movement not found.",
+      "unit": "Unit not found.",
+      "partner": "Partner not found."
+    },
+    "async": {
+      "email": {
+        "delivery-failed": "Email delivery failed."
+      },
+      "outbox": {
+        "encryption-configuration-invalid": "The outbox encryption configuration is invalid.",
+        "encryption-failed": "The outbox payload could not be encrypted.",
+        "job-not-found": "The background job could not be found.",
+        "job-type-unsupported": "This background job type is not supported.",
+        "payload-invalid": "The background job payload is invalid.",
+        "payload-serialization-failed": "The background job payload could not be prepared."
+      },
+      "rabbitmq": {
+        "message-unroutable": "The background message could not be routed.",
+        "publish-rejected": "The background message was rejected.",
+        "retry-publish-failed": "The background message could not be scheduled for retry."
+      }
+    },
+    "document": {
+      "error": {
+        "closure_reopen_invalid": "The reopened quantity must be positive and no greater than the quantity already closed on the order line.",
+        "closure_reopen_reason_required": "A reason is required when reopening a closed quantity.",
+        "conflict": "This document changed elsewhere. Reload it and try again.",
+        "correction_blocked": "This correction cannot be applied because of related activity.",
+        "correction_closed_quantity_conflict": "The corrected and closed quantities exceed the ordered quantity. Review the closure before correcting.",
+        "correction_negative_stock": "This correction would make available stock negative.",
+        "correction_workflow_required": "Use the return workflow for physical goods movement.",
+        "cross_company_reference": "A referenced record belongs to a different company.",
+        "direct_fulfillment_not_allowed": "Direct fulfillment is not allowed for this document.",
+        "idempotency_key_required": "A request identifier is required. Refresh the document and try again.",
+        "insufficient_stock": "There is not enough available stock for this operation.",
+        "invalid_lines": "One or more document lines are invalid. Review the quantities and items.",
+        "invalid_queue_view": "This document queue view is not available.",
+        "invalid_transition": "This document cannot move to the requested status.",
+        "pdf_empty_result": "The generated PDF is empty. Try generating it again.",
+        "pdf_job_invalid": "The PDF generation request is invalid.",
+        "pdf_job_not_found": "The PDF generation request could not be found.",
+        "pdf_language_invalid": "Choose a supported language for the PDF.",
+        "pdf_payload_invalid": "The document data could not be used to generate a PDF.",
+        "pdf_render_failed": "The PDF could not be generated. Try again later.",
+        "reason_required": "Enter a reason to continue.",
+        "return_quantity_exceeded": "The return quantity exceeds the remaining returnable quantity.",
+        "sequence_unavailable": "A document number could not be assigned. Try again.",
+        "version_required": "The document version is missing. Reload the document and try again.",
+        "warehouse_required": "Select a warehouse to continue."
+      },
+      "success": {
+        "confirmed": "Document confirmed successfully.",
+        "created": "Document created successfully.",
+        "file_uploaded": "File uploaded successfully.",
+        "pdf_queued": "PDF generation has been queued.",
+        "posted": "Document posted successfully.",
+        "saved": "Document saved successfully."
+      }
+    },
+    "document_line": {
+      "error": {
+        "invalid_conversion_factor": "The unit conversion factor is invalid.",
+        "invalid_unit": "The selected unit is not valid for this product.",
+        "product_required": "Select a product for each document line.",
+        "unit_required": "Select a unit for each document line."
+      }
+    },
+    "mail": {
+      "factory-configuration-invalid": "Email delivery is not configured correctly.",
+      "factory-not-found": "The email delivery service is unavailable.",
+      "invalid-mailable": "This email could not be prepared for delivery."
+    },
+    "stock": {
+      "balances": {
+        "retrieved": "Stock balances loaded successfully."
+      },
+      "movements": {
+        "retrieved": "Stock movements loaded successfully."
+      }
+    },
+    "storage": {
+      "object-read-failed": "The requested file could not be read."
     }
   },
   "sidebar": {
