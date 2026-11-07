@@ -628,6 +628,8 @@
         "description": "Válassz jogosult forrásbizonylatokat és tételeket. A számlázás és a pénzügyi jóváírás nem mozgat készletet.",
         "sources": "Jogosult forrásbizonylatok",
         "noSources": "Nincs elérhető jogosult forrásbizonylat.",
+        "selectSources": "Válassz forrásbizonylatot a tételek megtekintéséhez.",
+        "noLines": "Nincs elérhető jogosult forrástétel.",
         "lines": "Forrástételek",
         "vat": "ÁFA %",
         "amount": "Nettó összeg",

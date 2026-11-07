@@ -628,6 +628,8 @@
         "description": "Select eligible source documents and lines. Billing and financial credits do not move stock.",
         "sources": "Eligible source documents",
         "noSources": "No eligible source documents are available.",
+        "selectSources": "Select a source document to view its lines.",
+        "noLines": "No eligible source lines are available.",
         "lines": "Source lines",
         "vat": "VAT %",
         "amount": "Net amount",
