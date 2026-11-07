@@ -53,6 +53,7 @@ import {
   appDialogPrimaryButtonClass,
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
+import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
 
 type Action =
   | DocumentAction.CREATE_RETURN
@@ -116,6 +117,9 @@ export function ReturnOperationDialog({
   const [dispositions, setDispositions] = useState<
     Record<number, ReturnDisposition>
   >({});
+  const [unitIds, setUnitIds] = useState<Record<number, number | null>>(() =>
+    Object.fromEntries(document.lines.map((line) => [line.id, line.unitId ?? null])),
+  );
   const [quantities, setQuantities] = useState<Record<number, string>>(() =>
     Object.fromEntries(
       document.lines.map((line) => [
@@ -143,6 +147,7 @@ export function ReturnOperationDialog({
         .map((line) => ({
           sourceLineId: line.id,
           productId: line.productId,
+          unitId: unitIds[line.id] ?? undefined,
           quantity: Number(quantities[line.id] ?? 0),
           reason: reason.trim(),
           ...(action === DocumentAction.CREATE_RETURN
@@ -158,6 +163,7 @@ export function ReturnOperationDialog({
       reason,
       action,
       dispositions,
+      unitIds,
       defaultDisposition,
     ],
   );
@@ -387,6 +393,26 @@ export function ReturnOperationDialog({
                       unit: line.unitName,
                     })}
                   </p>
+                  {lineUnitOptions(line).length > 1 && (
+                    <Select
+                      value={String(unitIds[line.id] ?? line.unitId ?? line.mainUnit?.id)}
+                      onValueChange={(value) => {
+                        const nextUnitId = Number(value);
+                        const previousUnitId = unitIds[line.id] ?? line.unitId;
+                        setQuantities((current) => ({
+                          ...current,
+                          [line.id]: String(convertLineQuantity(Number(current[line.id] ?? 0), line, previousUnitId, nextUnitId)),
+                        }));
+                        setUnitIds((current) => ({ ...current, [line.id]: nextUnitId }));
+                        setPreview(null);
+                      }}
+                    >
+                      <SelectTrigger className='mt-2 w-40 border-zinc-600 bg-zinc-900 text-zinc-100'><SelectValue /></SelectTrigger>
+                      <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>
+                        {lineUnitOptions(line).map((unit) => <SelectItem key={unit.id} value={String(unit.id)}>{unit.name} · {unit.symbol}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  )}
                   {action === DocumentAction.CREATE_RETURN && (
                     <Select
                       value={dispositions[line.id] ?? defaultDisposition}
@@ -419,7 +445,7 @@ export function ReturnOperationDialog({
                   min='0'
                   max={
                     action === DocumentAction.CREATE_RETURN
-                      ? line.returnableQuantity
+                      ? convertLineQuantity(line.returnableQuantity ?? line.remainingQuantity, line, line.unitId, unitIds[line.id] ?? line.unitId)
                       : undefined
                   }
                   step='any'
@@ -432,6 +458,7 @@ export function ReturnOperationDialog({
                     setPreview(null);
                   }}
                 />
+                <span className='text-xs text-zinc-400'>{lineUnitName(line, unitIds[line.id] ?? line.unitId)}</span>
               </div>
             ))}
           </div>

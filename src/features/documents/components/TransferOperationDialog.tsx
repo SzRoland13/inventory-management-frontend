@@ -77,6 +77,9 @@ export function TransferOperationDialog({
       ]),
     ),
   );
+  const [unitIds, setUnitIds] = useState<Record<number, number | null>>(() =>
+    Object.fromEntries(document.lines.map((line) => [line.id, line.unitId ?? null])),
+  );
   const [preview, setPreview] = useState<DocumentOperationPreview | null>(null);
   const lines = useMemo(
     () =>
@@ -84,10 +87,11 @@ export function TransferOperationDialog({
         .map((line) => ({
           sourceLineId: line.id,
           productId: line.productId,
+          unitId: unitIds[line.id] ?? undefined,
           quantity: Number(quantities[line.id] ?? 0),
         }))
         .filter((line) => line.quantity > 0),
-    [document.lines, quantities],
+    [document.lines, quantities, unitIds],
   );
   const selectionValid =
     action === DocumentAction.RESOLVE_TRANSIT ||
@@ -182,6 +186,7 @@ export function TransferOperationDialog({
       reason={reason}
       effectiveAt={effectiveAt}
       quantities={quantities}
+      unitIds={unitIds}
       preview={preview}
       busy={busy}
       selectionValid={selectionValid}
@@ -212,6 +217,11 @@ export function TransferOperationDialog({
       }}
       onQuantityChange={(lineId, value) => {
         setQuantities((current) => ({ ...current, [lineId]: value }));
+        setPreview(null);
+      }}
+      onUnitChange={(lineId, unitId, quantity) => {
+        setUnitIds((current) => ({ ...current, [lineId]: unitId }));
+        setQuantities((current) => ({ ...current, [lineId]: String(quantity) }));
         setPreview(null);
       }}
       onPreview={() => void previewOperation()}

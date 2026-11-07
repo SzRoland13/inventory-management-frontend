@@ -41,6 +41,7 @@ export function TransferOperationForm({
   reason,
   effectiveAt,
   quantities,
+  unitIds,
   preview,
   busy,
   selectionValid,
@@ -52,6 +53,7 @@ export function TransferOperationForm({
   onReasonChange,
   onEffectiveAtChange,
   onQuantityChange,
+  onUnitChange,
   onPreview,
   onSubmit,
   onClose,
@@ -66,6 +68,7 @@ export function TransferOperationForm({
   reason: string;
   effectiveAt: string;
   quantities: Record<number, string>;
+  unitIds: Record<number, number | null>;
   preview: DocumentOperationPreview | null;
   busy: boolean;
   selectionValid: boolean;
@@ -77,6 +80,7 @@ export function TransferOperationForm({
   onReasonChange: (value: string) => void;
   onEffectiveAtChange: (value: string) => void;
   onQuantityChange: (lineId: number, value: string) => void;
+  onUnitChange: (lineId: number, unitId: number, quantity: number) => void;
   onPreview: () => void;
   onSubmit: () => void;
   onClose: () => void;
@@ -122,7 +126,9 @@ export function TransferOperationForm({
             action={action}
             lines={document.lines}
             quantities={quantities}
+            unitIds={unitIds}
             onQuantityChange={onQuantityChange}
+            onUnitChange={onUnitChange}
           />
           {isResolution && (
             <div className='space-y-2'>

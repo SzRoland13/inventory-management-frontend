@@ -46,6 +46,7 @@ import {
   appDialogPrimaryButtonClass,
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
+import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
 
 type Props = {
   source: BusinessDocument;
@@ -80,6 +81,9 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
       source.lines.map((line) => [line.id, String(line.remainingQuantity)]),
     ),
   );
+  const [unitIds, setUnitIds] = useState<Record<number, number | null>>(() =>
+    Object.fromEntries(source.lines.map((line) => [line.id, line.unitId ?? null])),
+  );
   const [preview, setPreview] = useState<FulfillmentPreviewResponse | null>(
     null,
   );
@@ -101,10 +105,11 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
         .map((line) => ({
           sourceLineId: line.id,
           productId: line.productId,
+          unitId: unitIds[line.id] ?? undefined,
           quantity: Number(quantities[line.id] ?? 0),
         }))
         .filter((line) => line.quantity > 0),
-    [source.lines, quantities],
+    [source.lines, quantities, unitIds],
   );
   const signature = JSON.stringify({ warehouseId, type, lines, effectiveAt });
   const selectedWarehouse = warehouses.find(
@@ -119,12 +124,10 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
       toast.error(t('pages.documents.validation.currencyUnavailable'));
       return false;
     }
-    const resolvedLines = await Promise.all(
-      source.lines.map(async (line) => ({
-        line,
-        unitId: await resolveUnitId(line),
-      })),
-    );
+    const resolvedLines = await Promise.all(source.lines.map(async (line) => ({
+      line,
+      unitId: unitIds[line.id] ?? await resolveUnitId(line),
+    })));
     if (resolvedLines.some(({ unitId }) => unitId === null)) {
       toast.error(t('pages.documents.editor.unitUnavailable'));
       return false;
@@ -303,6 +306,19 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
                       unit: line.unitName,
                     })}
                   </p>
+                  {lineUnitOptions(line).length > 1 && (
+                    <Select value={String(unitIds[line.id] ?? line.unitId ?? line.mainUnit?.id)} onValueChange={(value) => {
+                      const nextUnitId = Number(value);
+                      const previousUnitId = unitIds[line.id] ?? line.unitId;
+                      setQuantities((current) => ({ ...current, [line.id]: String(convertLineQuantity(Number(current[line.id] ?? 0), line, previousUnitId, nextUnitId)) }));
+                      setUnitIds((current) => ({ ...current, [line.id]: nextUnitId }));
+                      setPreview(null);
+                      setPreviewSignature('');
+                    }} disabled={postingAttempted}>
+                      <SelectTrigger className='w-40 border-zinc-600 bg-zinc-900 text-zinc-100'><SelectValue /></SelectTrigger>
+                      <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>{lineUnitOptions(line).map((unit) => <SelectItem key={unit.id} value={String(unit.id)}>{unit.name} · {unit.symbol}</SelectItem>)}</SelectContent>
+                    </Select>
+                  )}
                 </div>
                 <label className='block min-w-0'>
                   <span className='mb-2 block text-xs font-medium uppercase tracking-wide text-zinc-400'>
@@ -311,7 +327,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
                   <Input
                     type='number'
                     min='0'
-                    max={line.remainingQuantity}
+                    max={convertLineQuantity(line.remainingQuantity, line, line.unitId, unitIds[line.id] ?? line.unitId)}
                     step='any'
                     value={quantities[line.id] ?? '0'}
                     disabled={postingAttempted}
@@ -325,6 +341,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
                     }}
                     className='h-11 border-zinc-600 bg-zinc-950/80 text-right text-base font-semibold tabular-nums shadow-inner shadow-black/20 [appearance:textfield] focus-visible:border-indigo-400 focus-visible:ring-indigo-400/20 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
                   />
+                  <span className='mt-1 block text-right text-xs text-zinc-400'>{lineUnitName(line, unitIds[line.id] ?? line.unitId)}</span>
                 </label>
               </div>
             ))}

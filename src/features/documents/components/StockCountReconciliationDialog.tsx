@@ -26,6 +26,8 @@ import {
   appDialogPrimaryButtonClass,
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
+import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/features/shared/components/ui/select';
 
 export function StockCountReconciliationDialog({
   document,
@@ -48,6 +50,9 @@ export function StockCountReconciliationDialog({
     ),
   );
   const [reasons, setReasons] = useState<Record<number, string>>({});
+  const [unitIds, setUnitIds] = useState<Record<number, number | null>>(() =>
+    Object.fromEntries(document.lines.map((line) => [line.id, line.unitId ?? null])),
+  );
   const [preview, setPreview] = useState<DocumentOperationPreview | null>(null);
   const [previewKey, setPreviewKey] = useState('');
   const lines = useMemo(
@@ -56,12 +61,13 @@ export function StockCountReconciliationDialog({
         .map((line) => ({
           sourceLineId: line.id,
           productId: line.productId,
+          unitId: unitIds[line.id] ?? undefined,
           quantity: Number(quantities[line.id] ?? 0),
           countedQuantity: Number(quantities[line.id] ?? 0),
           varianceReason: reasons[line.id] || undefined,
         }))
         .filter((line) => line.quantity >= 0),
-    [document.lines, quantities, reasons],
+    [document.lines, quantities, reasons, unitIds],
   );
   const countedAt = document.countedAt ?? document.date;
   const signature = JSON.stringify({
@@ -137,8 +143,28 @@ export function StockCountReconciliationDialog({
                 </p>
                 <p className='text-xs text-zinc-400'>
                   {t('pages.documents.operations.expectedAtCount')}:{' '}
-                  {line.expectedQuantity ?? 0} {line.unitName}
+                  {convertLineQuantity(line.expectedQuantity ?? 0, line, line.unitId, unitIds[line.id] ?? line.unitId)} {lineUnitName(line, unitIds[line.id] ?? line.unitId)}
                 </p>
+                {lineUnitOptions(line).length > 1 && (
+                  <Select
+                    value={String(unitIds[line.id] ?? line.unitId ?? line.mainUnit?.id)}
+                    onValueChange={(value) => {
+                      const nextUnitId = Number(value);
+                      const previousUnitId = unitIds[line.id] ?? line.unitId;
+                      setQuantities((current) => ({
+                        ...current,
+                        [line.id]: String(convertLineQuantity(Number(current[line.id] ?? 0), line, previousUnitId, nextUnitId)),
+                      }));
+                      setUnitIds((current) => ({ ...current, [line.id]: nextUnitId }));
+                      setPreview(null);
+                    }}
+                  >
+                    <SelectTrigger className='mt-2 w-40 border-zinc-600 bg-zinc-900 text-zinc-100'><SelectValue /></SelectTrigger>
+                    <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>
+                      {lineUnitOptions(line).map((unit) => <SelectItem key={unit.id} value={String(unit.id)}>{unit.name} · {unit.symbol}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                )}
                 <Input
                   className='mt-2'
                   aria-label={`${line.productName} ${t('pages.documents.operations.varianceReason')}`}

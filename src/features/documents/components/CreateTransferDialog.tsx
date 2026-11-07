@@ -33,7 +33,7 @@ import {
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 
-type Line = { productId: number; productName: string; quantity: string };
+type Line = { productId: number; productName: string; quantity: string; unitId: number; mainUnit: { id: number; name: string; symbol: string }; secondaryUnit: { id: number; name: string; symbol: string } | null; factor: number | null };
 
 export function CreateTransferDialog({
   onClose,
@@ -66,10 +66,14 @@ export function CreateTransferDialog({
     if (!product || !Number.isFinite(amount) || amount <= 0) return;
     setLines((current) => {
       const existing = current.find((line) => line.productId === product.id);
+      const amountInExistingUnit = existing
+        ? amount * (product.units.secondaryUnitsPerMainUnit ?? 1) /
+          (existing.unitId === existing.mainUnit.id ? (existing.factor ?? 1) : 1)
+        : amount;
       return existing
         ? current.map((line) =>
             line.productId === product.id
-              ? { ...line, quantity: String(Number(line.quantity) + amount) }
+              ? { ...line, quantity: String(Number(line.quantity) + amountInExistingUnit) }
               : line,
           )
         : [
@@ -78,6 +82,10 @@ export function CreateTransferDialog({
               productId: product.id,
               productName: product.name,
               quantity: String(amount),
+              unitId: product.units.main.id,
+              mainUnit: product.units.main,
+              secondaryUnit: product.units.secondary,
+              factor: product.units.secondaryUnitsPerMainUnit,
             },
           ];
     });
@@ -101,6 +109,7 @@ export function CreateTransferDialog({
         date: new Date().toISOString().slice(0, 10),
         lines: lines.map((line) => ({
           productId: line.productId,
+          unitId: line.unitId,
           quantity: Number(line.quantity),
         })),
       });
@@ -224,6 +233,23 @@ export function CreateTransferDialog({
                 <span className='min-w-0 flex-1 truncate text-sm'>
                   {line.productName}
                 </span>
+                {line.secondaryUnit && line.factor && (
+                  <Select value={String(line.unitId)} onValueChange={(value) => {
+                    const nextId = Number(value);
+                    setLines((current) => current.map((item) => {
+                      if (item.productId !== line.productId) return item;
+                      const oldFactor = item.unitId === item.mainUnit.id ? item.factor ?? 1 : 1;
+                      const nextFactor = nextId === item.mainUnit.id ? item.factor ?? 1 : 1;
+                      return { ...item, unitId: nextId, quantity: String(Number(item.quantity) * oldFactor / nextFactor) };
+                    }));
+                  }}>
+                    <SelectTrigger className='w-36 border-zinc-600 bg-zinc-900 text-zinc-100'><SelectValue /></SelectTrigger>
+                    <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>
+                      <SelectItem value={String(line.mainUnit.id)}>{line.mainUnit.name} · {line.mainUnit.symbol}</SelectItem>
+                      <SelectItem value={String(line.secondaryUnit.id)}>{line.secondaryUnit.name} · {line.secondaryUnit.symbol}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
                 <Input
                   aria-label={line.productName}
                   type='number'

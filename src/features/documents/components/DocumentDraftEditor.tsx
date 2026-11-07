@@ -30,6 +30,8 @@ import {
   appDialogCancelButtonClass,
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
+import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/features/shared/components/ui/select';
 import {
   DocumentDraftCurrencyFields,
   DocumentDraftDateField,
@@ -65,6 +67,9 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
       (current?.lines ?? []).map((line) => [line.id, line.orderedQuantity]),
     ),
   );
+  const [unitIds, setUnitIds] = useState<Record<number, number | null>>(() =>
+    Object.fromEntries((current?.lines ?? []).map((line) => [line.id, line.unitId ?? null])),
+  );
   const [currencyId, setCurrencyId] = useState(
     String(current?.currencyId ?? ''),
   );
@@ -83,6 +88,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     date,
     notes,
     quantities,
+    unitIds,
     currencyId,
     exchangeRates,
   });
@@ -91,6 +97,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     date,
     notes,
     quantities,
+    unitIds,
     currencyId,
     exchangeRates,
   };
@@ -121,6 +128,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
           current.lines.map((line) => [line.id, line.orderedQuantity]),
         ),
       );
+      setUnitIds(Object.fromEntries(current.lines.map((line) => [line.id, line.unitId ?? null])));
       setCurrencyId(
         String(
           current.currencyId ??
@@ -151,7 +159,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
     };
     // saveDraft reads the latest form state after the debounce.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date, notes, quantities, currencyId, exchangeRates]);
+  }, [date, notes, quantities, unitIds, currencyId, exchangeRates]);
 
   async function saveDraft(version = versionRef.current): Promise<boolean> {
     if (saveInFlight.current) {
@@ -179,7 +187,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
       resolvedLines = await Promise.all(
         documentSnapshot.lines.map(async (line) => ({
           line,
-          unitId: await resolveUnitId(line),
+          unitId: snapshot.unitIds[line.id] ?? await resolveUnitId(line),
         })),
       );
     } catch (error) {
@@ -443,9 +451,18 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
                     <p className='truncate text-sm font-medium'>
                       {line.productName}
                     </p>
-                    <p className='text-xs text-zinc-500'>
-                      {line.productCode} · {line.unitName}
-                    </p>
+                    <p className='text-xs text-zinc-500'>{line.productCode} · {lineUnitName(line, unitIds[line.id] ?? line.unitId)}</p>
+                    {lineUnitOptions(line).length > 1 && (
+                      <Select value={String(unitIds[line.id] ?? line.unitId ?? line.mainUnit?.id)} onValueChange={(value) => {
+                        const nextUnitId = Number(value);
+                        const previousUnitId = unitIds[line.id] ?? line.unitId;
+                        change(setQuantities, { ...quantities, [line.id]: convertLineQuantity(quantities[line.id] ?? line.orderedQuantity, line, previousUnitId, nextUnitId) });
+                        change(setUnitIds, { ...unitIds, [line.id]: nextUnitId });
+                      }}>
+                        <SelectTrigger className='mt-1 h-8 w-40 border-zinc-600 bg-zinc-950 text-xs text-zinc-100'><SelectValue /></SelectTrigger>
+                        <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>{lineUnitOptions(line).map((unit) => <SelectItem key={unit.id} value={String(unit.id)}>{unit.name} · {unit.symbol}</SelectItem>)}</SelectContent>
+                      </Select>
+                    )}
                   </div>
                   <Input
                     type='number'

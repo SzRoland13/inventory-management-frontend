@@ -27,6 +27,7 @@ import { usePartnersQuery } from '@/features/partners/queries/partnerQueries';
 import { PartnerType } from '@/features/partners/types/partner';
 import type { PartnerResponse } from '@/features/partners/types/partner';
 import { useInfiniteProductsQuery } from '@/features/products/queries/productQueries';
+import type { ProductUnit } from '@/features/products/types/product';
 import { useWarehousesQuery } from '@/features/warehouses/queries/warehouseQueries';
 import {
   useCurrenciesQuery,
@@ -81,6 +82,11 @@ type DraftLine = Omit<
   name: string;
   code: string;
   unit: string;
+  mainUnit: ProductUnit;
+  secondaryUnit: ProductUnit | null;
+  secondaryUnitsPerMainUnit: number | null;
+  mainUnitPrice: number;
+  secondaryUnitPrice: number | null;
 };
 
 type Props = { open: boolean; onOpenChange: (open: boolean) => void };
@@ -182,6 +188,11 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
         unitId: product.units.main.id,
         quantity: 1,
         sourceUnitPrice: product.pricing.netPrice,
+        mainUnit: product.units.main,
+        secondaryUnit: product.units.secondary,
+        secondaryUnitsPerMainUnit: product.units.secondaryUnitsPerMainUnit,
+        mainUnitPrice: product.pricing.netPrice,
+        secondaryUnitPrice: product.pricing.secondaryNetPrice,
         sourceCurrencyId,
         name: product.name,
         code: product.sku,
@@ -625,9 +636,33 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                               <p className='truncate text-sm font-medium'>
                                 {line.name}
                               </p>
-                              <p className='text-xs text-zinc-500'>
-                                {line.code} · {line.unit}
-                              </p>
+                              <p className='text-xs text-zinc-500'>{line.code}</p>
+                              {line.secondaryUnit && line.secondaryUnitsPerMainUnit && (
+                                <Select value={String(line.unitId)} onValueChange={(value) => {
+                                  const nextId = Number(value);
+                                  setLines((current) => current.map((entry) => {
+                                    if (entry.productId !== line.productId) return entry;
+                                    const previousFactor = entry.unitId === entry.mainUnit.id ? entry.secondaryUnitsPerMainUnit ?? 1 : 1;
+                                    const nextFactor = nextId === entry.mainUnit.id ? entry.secondaryUnitsPerMainUnit ?? 1 : 1;
+                                    const nextUnit = nextId === entry.mainUnit.id ? entry.mainUnit : entry.secondaryUnit!;
+                                    return {
+                                      ...entry,
+                                      unitId: nextId,
+                                      unit: nextUnit.symbol || nextUnit.name,
+                                      quantity: entry.quantity * previousFactor / nextFactor,
+                                      sourceUnitPrice: nextId === entry.mainUnit.id
+                                        ? entry.mainUnitPrice
+                                        : entry.secondaryUnitPrice ?? entry.mainUnitPrice / (entry.secondaryUnitsPerMainUnit ?? 1),
+                                    };
+                                  }));
+                                }}>
+                                  <SelectTrigger className='mt-1 h-8 w-40 border-zinc-600 bg-zinc-950 text-xs text-zinc-100'><SelectValue /></SelectTrigger>
+                                  <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>
+                                    <SelectItem value={String(line.mainUnit.id)}>{line.mainUnit.name} · {line.mainUnit.symbol}</SelectItem>
+                                    <SelectItem value={String(line.secondaryUnit.id)}>{line.secondaryUnit.name} · {line.secondaryUnit.symbol}</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
                               <p className='mt-1 truncate text-xs tabular-nums text-zinc-400'>
                                 {formatDocumentAmount(
                                   line.sourceUnitPrice,

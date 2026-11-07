@@ -32,6 +32,10 @@ export type DocumentLine = {
   productCode: string;
   unitName: string;
   unitId?: number | null;
+  conversionFactorSnapshot?: number;
+  mainUnit?: { id: number; code: string; name: string; symbol: string } | null;
+  secondaryUnit?: { id: number; code: string; name: string; symbol: string } | null;
+  secondaryUnitsPerMainUnit?: number | null;
   orderedQuantity: number;
   fulfilledQuantity: number;
   operationQuantity?: number;
@@ -206,6 +210,7 @@ export type DocumentOperationLine = {
   sourceLineId?: number;
   productId: number;
   quantity: number;
+  unitId?: number;
   correctedQuantity?: number;
   correctedProductId?: number;
   correctedWarehouseId?: number;
@@ -264,7 +269,7 @@ export type TransferDraftRequest = {
   destinationWarehouseId: number;
   transitWarehouseId?: number;
   date: string;
-  lines: Array<{ productId: number; quantity: number }>;
+  lines: Array<{ productId: number; unitId?: number; quantity: number }>;
 };
 export type TransferPreviewRequest = {
   documentId: number;

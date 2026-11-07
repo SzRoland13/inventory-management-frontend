@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/features/shared/components/ui/select';
+import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
 
 const fieldSelectClass = 'border-zinc-600 bg-zinc-900 text-zinc-100';
 const selectContentClass = 'border-zinc-700 bg-zinc-900 text-zinc-100';
@@ -160,12 +161,16 @@ export function TransferLineQuantities({
   action,
   lines,
   quantities,
+  unitIds,
   onQuantityChange,
+  onUnitChange,
 }: {
   action: TransferAction;
   lines: DocumentLine[];
   quantities: Record<number, string>;
+  unitIds: Record<number, number | null>;
   onQuantityChange: (lineId: number, value: string) => void;
+  onUnitChange: (lineId: number, unitId: number, quantity: number) => void;
 }) {
   const t = useTranslations();
 
@@ -185,6 +190,16 @@ export function TransferLineQuantities({
                 destination: line.destinationQuantity ?? 0,
               })}
             </p>
+            {lineUnitOptions(line).length > 1 && (
+              <Select value={String(unitIds[line.id] ?? line.unitId ?? line.mainUnit?.id)} onValueChange={(value) => {
+                const unitId = Number(value);
+                const quantity = convertLineQuantity(Number(quantities[line.id] ?? 0), line, unitIds[line.id] ?? line.unitId, unitId);
+                onUnitChange(line.id, unitId, quantity);
+              }}>
+                <SelectTrigger className='mt-2 w-40 border-zinc-600 bg-zinc-900 text-zinc-100'><SelectValue /></SelectTrigger>
+                <SelectContent className='border-zinc-700 bg-zinc-900 text-zinc-100'>{lineUnitOptions(line).map((unit) => <SelectItem key={unit.id} value={String(unit.id)}>{unit.name} · {unit.symbol}</SelectItem>)}</SelectContent>
+              </Select>
+            )}
           </div>
           <Input
             aria-label={`${line.productName} ${t('pages.documents.operations.quantity')}`}
@@ -192,13 +207,14 @@ export function TransferLineQuantities({
             min='0'
             max={
               action === DocumentAction.RECEIVE_TRANSFER
-                ? line.inTransitQuantity
-                : line.remainingQuantity
+                ? convertLineQuantity(line.inTransitQuantity ?? 0, line, line.unitId, unitIds[line.id] ?? line.unitId)
+                : convertLineQuantity(line.remainingQuantity, line, line.unitId, unitIds[line.id] ?? line.unitId)
             }
             step='any'
             value={quantities[line.id] ?? '0'}
             onChange={(event) => onQuantityChange(line.id, event.target.value)}
           />
+          <span className='text-xs text-zinc-400'>{lineUnitName(line, unitIds[line.id] ?? line.unitId)}</span>
         </div>
       ))}
     </div>
