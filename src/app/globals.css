@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+input[type='datetime-local'] {
+  color-scheme: dark;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

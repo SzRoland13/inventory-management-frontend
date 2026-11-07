@@ -97,7 +97,7 @@ export function TransferOperationForm({
         <AppDialogBody className='space-y-4'>
           <div className='space-y-2'>
             <Label htmlFor='transfer-effective-at'>{t('pages.documents.operations.effectiveAt')}</Label>
-            <input id='transfer-effective-at' type='datetime-local' value={effectiveAt} onChange={(event) => onEffectiveAtChange(event.target.value)} className='h-10 w-full rounded-md border border-zinc-600 bg-zinc-900 px-3 text-sm text-zinc-100' />
+            <input id='transfer-effective-at' type='datetime-local' value={effectiveAt} onChange={(event) => onEffectiveAtChange(event.target.value)} className='h-10 w-full rounded-md border border-zinc-600 bg-zinc-900 px-3 text-sm text-zinc-100 [color-scheme:dark]' />
           </div>
           {!isResolution && (
             <TransferWarehouseFields
