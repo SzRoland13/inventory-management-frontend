@@ -710,6 +710,7 @@
         "REJECT": "Elutasítás"
       },
       "operations": {
+        "effectiveAt": "Készletmozgás hatálybalépése (nem kötelező)",
         "startCount": "Leltár indítása",
         "startCountDescription": "Válassz raktárat, és add meg a fizikai leltár időpontját.",
         "countStarted": "Leltár elindítva",

@@ -118,7 +118,16 @@ Existing fulfillment endpoints are `POST /documents/fulfillments/drafts`,
 Preview returns per-line validation and signed stock effects, including
 available quantity and shortfall for insufficient deliveries. Posting is atomic
 and idempotent; post/confirm/close calls accept `If-Match` with the current
-document version. File endpoints remain `POST /documents/{id}/files`,
+document version.
+Stock-posting requests may include `effectiveAt` as a local date-time string
+(`YYYY-MM-DDTHH:mm`). It records when the stock movement took effect; the
+movement creation timestamp remains the time the operation was posted. When
+omitted, the backend uses posting time. Fulfillment posting accepts this value
+in its optional JSON body, and transfer, return, quarantine release,
+replacement, and correction requests accept it alongside their existing
+fields.
+
+File endpoints remain `POST /documents/{id}/files`,
 `POST /documents/{id}/pdf`, `POST /documents/{id}/pdf/retry`, and secured file
 URLs in document detail. PDF generation accepts `language=en|hu`; queued
 generation states are `QUEUED`, `PROCESSING`, `COMPLETED`, and `FAILED`.

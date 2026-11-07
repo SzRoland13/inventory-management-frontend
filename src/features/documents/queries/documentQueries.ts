@@ -109,14 +109,16 @@ export function usePostFulfillmentMutation() {
       id,
       version,
       idempotencyKey,
+      effectiveAt,
     }: {
       id: number;
       version: string;
       sourceId?: number;
       idempotencyKey: string;
+      effectiveAt?: string;
     }) =>
       requireSuccessfulResponse(
-        DocumentService.postFulfillment(id, version, idempotencyKey),
+        DocumentService.postFulfillment(id, version, idempotencyKey, effectiveAt),
       ),
     onSuccess: (_, variables) =>
       Promise.all([

@@ -61,6 +61,7 @@ export function TransferOperationDialog({
     String(document.transitWarehouseId ?? ''),
   );
   const [reason, setReason] = useState('');
+  const [effectiveAt, setEffectiveAt] = useState('');
   const [resolution, setResolution] = useState<TransferResolutionOperation>(
     TransferResolutionOperation.LOSS,
   );
@@ -107,6 +108,7 @@ export function TransferOperationDialog({
                 idempotencyKey: createIdempotencyKey(),
                 operation: resolution,
                 reason: reason.trim(),
+                effectiveAt: effectiveAt || undefined,
                 lines,
               },
             })
@@ -119,6 +121,7 @@ export function TransferOperationDialog({
               sourceWarehouseId: Number(sourceId),
               destinationWarehouseId: Number(destinationId),
               transitWarehouseId: Number(transitId) || undefined,
+              effectiveAt: effectiveAt || undefined,
               lines,
             });
       setPreview(response.payload);
@@ -142,6 +145,7 @@ export function TransferOperationDialog({
         ? { operation: resolution }
         : {}),
       ...(isResolution ? { reason: reason.trim() } : {}),
+      effectiveAt: effectiveAt || undefined,
       lines,
     };
     try {
@@ -176,6 +180,7 @@ export function TransferOperationDialog({
       transitId={transitId}
       resolution={resolution}
       reason={reason}
+      effectiveAt={effectiveAt}
       quantities={quantities}
       preview={preview}
       busy={busy}
@@ -199,6 +204,10 @@ export function TransferOperationDialog({
       }}
       onReasonChange={(value) => {
         setReason(value);
+        setPreview(null);
+      }}
+      onEffectiveAtChange={(value) => {
+        setEffectiveAt(value);
         setPreview(null);
       }}
       onQuantityChange={(lineId, value) => {

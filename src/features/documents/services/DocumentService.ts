@@ -74,10 +74,15 @@ export const DocumentService = {
       request,
     ),
 
-  postFulfillment: (id: number, version: string, idempotencyKey: string) =>
+  postFulfillment: (
+    id: number,
+    version: string,
+    idempotencyKey: string,
+    effectiveAt?: string,
+  ) =>
     BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/${id}/post`,
-      undefined,
+      effectiveAt ? { effectiveAt } : undefined,
       { headers: { 'Idempotency-Key': idempotencyKey, 'If-Match': version } },
     ),
 

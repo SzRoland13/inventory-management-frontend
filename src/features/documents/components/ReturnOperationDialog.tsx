@@ -106,6 +106,7 @@ export function ReturnOperationDialog({
           ReturnDisposition.DAMAGED,
         ];
   const [reason, setReason] = useState('');
+  const [effectiveAt, setEffectiveAt] = useState('');
   const [replacementDate] = useState(() =>
     new Date().toISOString().slice(0, 10),
   );
@@ -187,6 +188,7 @@ export function ReturnOperationDialog({
           sourceDocumentId: document.id,
           direction: returnDirection,
           reason: reason.trim(),
+          effectiveAt: effectiveAt || undefined,
           ...(customerReturn && warehouseId
             ? { warehouseId: Number(warehouseId) }
             : {}),
@@ -214,6 +216,7 @@ export function ReturnOperationDialog({
           warehouseId: Number(warehouseId),
           date: replacementDate,
           nonBillable: true,
+          effectiveAt: effectiveAt || undefined,
           lines,
         };
         response = await previewReplacement.mutateAsync(request);
@@ -232,6 +235,7 @@ export function ReturnOperationDialog({
           sourceDocumentId: document.id,
           direction: returnDirection,
           reason: reason.trim(),
+          effectiveAt: effectiveAt || undefined,
           ...(customerReturn && warehouseId
             ? { warehouseId: Number(warehouseId) }
             : {}),
@@ -250,6 +254,7 @@ export function ReturnOperationDialog({
             idempotencyKey: createIdempotencyKey(),
             targetWarehouseId: Number(warehouseId),
             reason: reason.trim(),
+            effectiveAt: effectiveAt || undefined,
             lines,
           },
         });
@@ -261,6 +266,7 @@ export function ReturnOperationDialog({
           warehouseId: Number(warehouseId),
           date: replacementDate,
           nonBillable: true,
+          effectiveAt: effectiveAt || undefined,
           lines,
         };
         const mutationRequest: ReplacementDeliveryMutationRequest = {
@@ -428,6 +434,15 @@ export function ReturnOperationDialog({
                 />
               </div>
             ))}
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='movement-effective-at'>
+              {t('pages.documents.operations.effectiveAt')}
+            </Label>
+            <Input id='movement-effective-at' type='datetime-local' value={effectiveAt} onChange={(event) => {
+              setEffectiveAt(event.target.value);
+              setPreview(null);
+            }} />
           </div>
           <div className='space-y-2'>
             <Label htmlFor='return-reason'>

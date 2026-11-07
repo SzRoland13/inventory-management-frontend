@@ -105,6 +105,7 @@ export function DocumentCorrectionDialog({
     ),
   );
   const [preview, setPreview] = useState<DocumentOperationPreview | null>(null);
+  const [effectiveAt, setEffectiveAt] = useState('');
   const [previewKey, setPreviewKey] = useState('');
   const [closureReopenPrompted, setClosureReopenPrompted] = useState(false);
   const [closureReopenQuantities, setClosureReopenQuantities] = useState<
@@ -187,6 +188,7 @@ export function DocumentCorrectionDialog({
     version: document.version,
     reason,
     lines,
+    effectiveAt,
   });
   const busy = previewMutation.isPending || correctionMutation.isPending;
   const currentPreview = preview?.valid && previewKey === signature;
@@ -199,6 +201,7 @@ export function DocumentCorrectionDialog({
         version: document.version,
         operation: DocumentCorrectionOperation.CORRECT_RECORDING,
         reason: reason.trim(),
+        effectiveAt: effectiveAt || undefined,
         lines,
       };
       const response = await previewMutation.mutateAsync({
@@ -228,6 +231,7 @@ export function DocumentCorrectionDialog({
           version: document.version,
           operation: DocumentCorrectionOperation.CORRECT_RECORDING,
           reason: reason.trim(),
+          effectiveAt: effectiveAt || undefined,
           idempotencyKey: createIdempotencyKey(),
           lines,
         },
@@ -503,6 +507,15 @@ export function DocumentCorrectionDialog({
                   ))}
                 </section>
               )}
+              <div className='space-y-2'>
+                <Label htmlFor='correction-effective-at'>
+                  {t('pages.documents.operations.effectiveAt')}
+                </Label>
+                <Input id='correction-effective-at' type='datetime-local' value={effectiveAt} onChange={(event) => {
+                  setEffectiveAt(event.target.value);
+                  setPreview(null);
+                }} />
+              </div>
               <div className='space-y-2'>
                 <Label htmlFor='correction-reason'>
                   {t('pages.documents.operations.reason')}

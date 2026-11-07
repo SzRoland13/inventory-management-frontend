@@ -74,6 +74,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
   const [warehouseId, setWarehouseId] = useState(
     source.warehouseId ? String(source.warehouseId) : '',
   );
+  const [effectiveAt, setEffectiveAt] = useState('');
   const [quantities, setQuantities] = useState<Record<number, string>>(() =>
     Object.fromEntries(
       source.lines.map((line) => [line.id, String(line.remainingQuantity)]),
@@ -105,7 +106,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
         .filter((line) => line.quantity > 0),
     [source.lines, quantities],
   );
-  const signature = JSON.stringify({ warehouseId, type, lines });
+  const signature = JSON.stringify({ warehouseId, type, lines, effectiveAt });
   const selectedWarehouse = warehouses.find(
     (warehouse) => String(warehouse.id) === warehouseId,
   );
@@ -170,6 +171,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
             : { sourceDocumentId: source.id }),
           type,
           warehouseId: Number(warehouseId || source.warehouseId),
+          effectiveAt: effectiveAt || undefined,
           lines,
         }),
       );
@@ -214,6 +216,7 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
         sourceId: source.id,
         version: documentVersion.current,
         idempotencyKey: idempotencyKey.current,
+        effectiveAt: effectiveAt || undefined,
       });
       toast.success(t('pages.documents.fulfillment.posted'));
       onComplete();
@@ -275,6 +278,14 @@ export function FulfillmentDialog({ source, onClose, onComplete }: Props) {
             </div>
           )}
           <div className='space-y-3'>
+            <label className='block space-y-2 text-sm text-zinc-300'>
+              <span>{t('pages.documents.operations.effectiveAt')}</span>
+              <Input type='datetime-local' value={effectiveAt} onChange={(event) => {
+                setEffectiveAt(event.target.value);
+                setPreview(null);
+                setPreviewSignature('');
+              }} />
+            </label>
             {source.lines.map((line) => (
               <div
                 key={line.id}

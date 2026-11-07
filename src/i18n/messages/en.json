@@ -710,6 +710,7 @@
         "REJECT": "Reject"
       },
       "operations": {
+        "effectiveAt": "Effective movement time (optional)",
         "startCount": "Start stock count",
         "startCountDescription": "Choose a warehouse and record when the physical count takes place.",
         "countStarted": "Stock count started",

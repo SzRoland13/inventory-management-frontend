@@ -39,6 +39,7 @@ export function TransferOperationForm({
   transitId,
   resolution,
   reason,
+  effectiveAt,
   quantities,
   preview,
   busy,
@@ -49,6 +50,7 @@ export function TransferOperationForm({
   onTransitChange,
   onResolutionChange,
   onReasonChange,
+  onEffectiveAtChange,
   onQuantityChange,
   onPreview,
   onSubmit,
@@ -62,6 +64,7 @@ export function TransferOperationForm({
   transitId: string;
   resolution: TransferResolutionOperation;
   reason: string;
+  effectiveAt: string;
   quantities: Record<number, string>;
   preview: DocumentOperationPreview | null;
   busy: boolean;
@@ -72,6 +75,7 @@ export function TransferOperationForm({
   onTransitChange: (value: string) => void;
   onResolutionChange: (value: TransferResolutionOperation) => void;
   onReasonChange: (value: string) => void;
+  onEffectiveAtChange: (value: string) => void;
   onQuantityChange: (lineId: number, value: string) => void;
   onPreview: () => void;
   onSubmit: () => void;
@@ -91,6 +95,10 @@ export function TransferOperationForm({
           icon={Truck}
         />
         <AppDialogBody className='space-y-4'>
+          <div className='space-y-2'>
+            <Label htmlFor='transfer-effective-at'>{t('pages.documents.operations.effectiveAt')}</Label>
+            <input id='transfer-effective-at' type='datetime-local' value={effectiveAt} onChange={(event) => onEffectiveAtChange(event.target.value)} className='h-10 w-full rounded-md border border-zinc-600 bg-zinc-900 px-3 text-sm text-zinc-100' />
+          </div>
           {!isResolution && (
             <TransferWarehouseFields
               warehouses={warehouses}

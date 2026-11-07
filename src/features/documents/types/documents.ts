@@ -179,6 +179,7 @@ export type FulfillmentPreviewRequest = {
   documentId?: number;
   type: DocumentType.GOODS_RECEIPT | DocumentType.DELIVERY_NOTE;
   warehouseId?: number;
+  effectiveAt?: string;
   lines: Array<{ sourceLineId: number; productId: number; quantity: number }>;
 };
 
@@ -271,6 +272,7 @@ export type TransferPreviewRequest = {
   sourceWarehouseId: number;
   destinationWarehouseId: number;
   transitWarehouseId?: number;
+  effectiveAt?: string;
   lines: DocumentOperationLine[];
 };
 export type TransferActionRequest = {
@@ -278,12 +280,14 @@ export type TransferActionRequest = {
   idempotencyKey: string;
   operation?: TransferResolutionOperation;
   reason?: string;
+  effectiveAt?: string;
   lines: DocumentOperationLine[];
 };
 export type ReturnRequest = {
   sourceDocumentId: number;
   direction: ReturnDirection;
   reason: string;
+  effectiveAt?: string;
   warehouseId?: number;
   lines: DocumentOperationLine[];
 };
@@ -295,6 +299,7 @@ export type QuarantineReleaseRequest = {
   idempotencyKey: string;
   targetWarehouseId: number;
   reason: string;
+  effectiveAt?: string;
   lines: DocumentOperationLine[];
 };
 export type ReplacementDeliveryRequest = {
@@ -303,6 +308,7 @@ export type ReplacementDeliveryRequest = {
   warehouseId: number;
   date: string;
   nonBillable: true;
+  effectiveAt?: string;
   lines: DocumentOperationLine[];
 };
 export type ReplacementDeliveryMutationRequest = ReplacementDeliveryRequest & {
@@ -330,6 +336,7 @@ export type CorrectionRequest = {
   idempotencyKey: string;
   operation: DocumentCorrectionOperation;
   reason: string;
+  effectiveAt?: string;
   lines: DocumentOperationLine[];
 };
 export type CorrectionPreviewRequest = Omit<
