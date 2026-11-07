@@ -110,7 +110,10 @@ export function useProductsColumns(
               aria-label={t('common.select-row')}
             />
             <ProductImagePreview
-              mediaAssetId={getPrimaryProductImage(row.original.images)?.mediaAssetId ?? null}
+              mediaAssetId={
+                getPrimaryProductImage(row.original.images)?.mediaAssetId ??
+                null
+              }
               alt={t('pages.products.images.thumbnail-alt', {
                 product: row.original.name,
               })}
@@ -191,7 +194,10 @@ export function useProductsColumns(
         id: 'costPrice',
         header: t('pages.products.table.costPrice'),
         cell: ({ row }) =>
-          formatPrice(row.original.pricing.currencyId, row.original.pricing.costPrice),
+          formatPrice(
+            row.original.pricing.currencyId,
+            row.original.pricing.costPrice,
+          ),
       },
       {
         id: 'secondaryNetPrice',
@@ -205,7 +211,8 @@ export function useProductsColumns(
       {
         id: 'vatRate',
         header: t('pages.products.table.vatRate'),
-        cell: ({ row }) => `${formatNumber(row.original.pricing.vatRate, locale)}%`,
+        cell: ({ row }) =>
+          `${formatNumber(row.original.pricing.vatRate, locale)}%`,
       },
       ...(['weight', 'width', 'height', 'depth'] as const).map((dimension) => ({
         id: dimension,
@@ -233,8 +240,7 @@ export function useProductsColumns(
           ),
         cell: ({ getValue }: CellContext<ProductResponse, unknown>) => {
           const attribute = getValue() as
-            | ProductResponse['attributes'][number]
-            | undefined;
+            ProductResponse['attributes'][number] | undefined;
           return attribute
             ? getAttributeValue(attribute, t('common.yes'), t('common.no'))
             : '—';

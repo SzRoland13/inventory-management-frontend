@@ -22,7 +22,14 @@ export async function requireSuccessfulResponse<T>(
 }
 
 export function getApiErrorMessageKey(error: unknown): string {
-  return error instanceof ApiResponseError ? error.messageKey : 'error.generic';
+  const messageKey =
+    error instanceof ApiResponseError ? error.messageKey : 'error.generic';
+
+  // Keep the generic validation message resolvable after validation keys were
+  // organized under the same namespace for more specific responses.
+  return messageKey === 'error.validation'
+    ? 'error.validation.generic'
+    : messageKey;
 }
 
 export function toastApiError(

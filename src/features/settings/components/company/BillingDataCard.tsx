@@ -27,6 +27,7 @@ export default function BillingDataCard({ initialCompanyData }: Props) {
     formState: { isSubmitting },
   } = useForm<CompanyBillingDataUpdateRequest>();
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const values = watch();
 
   const { hasChanges, setInitialValues, resetToInitial } =

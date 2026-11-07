@@ -149,6 +149,7 @@ export function WarehouseFormDialog({
                     <Select
                       value={typeField.value}
                       onValueChange={typeField.onChange}
+                      disabled={warehouse?.type === WarehouseType.QUARANTINE}
                     >
                       <SelectTrigger
                         className='w-full border-zinc-700 bg-zinc-900 text-zinc-100'
@@ -163,11 +164,17 @@ export function WarehouseFormDialog({
                         avoidCollisions={false}
                         className='border-zinc-700 bg-zinc-800 text-zinc-100'
                       >
-                        {Object.values(WarehouseType).map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {t(`pages.warehouses.types.${type}`)}
-                          </SelectItem>
-                        ))}
+                        {Object.values(WarehouseType)
+                          .filter(
+                            (type) =>
+                              type !== WarehouseType.QUARANTINE ||
+                              warehouse?.type === WarehouseType.QUARANTINE,
+                          )
+                          .map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {t(`pages.warehouses.types.${type}`)}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   )}
@@ -202,7 +209,9 @@ export function WarehouseFormDialog({
               {addressEnabled && (
                 <div className='mt-4 grid gap-4 border-t border-zinc-700 pt-4 sm:grid-cols-2'>
                   <div className='space-y-1'>
-                    <Label htmlFor='warehouse-country'>{t('pages.warehouses.fields.country')}</Label>
+                    <Label htmlFor='warehouse-country'>
+                      {t('pages.warehouses.fields.country')}
+                    </Label>
                     <Controller
                       name='country'
                       control={control}
@@ -216,7 +225,11 @@ export function WarehouseFormDialog({
                         />
                       )}
                     />
-                    {errors.country?.message && <p className='text-sm text-red-400' role='alert'>{t(errors.country.message)}</p>}
+                    {errors.country?.message && (
+                      <p className='text-sm text-red-400' role='alert'>
+                        {t(errors.country.message)}
+                      </p>
+                    )}
                   </div>
                   {field('city', 100)}
                   {field('addressLine1', 255)}

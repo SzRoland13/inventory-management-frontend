@@ -219,12 +219,12 @@ export function StockProductFilter({
             {canSearch &&
               (productsQuery.data?.payload.page.totalElements ?? 0) >
                 products.length && (
-              <p className='px-3 py-2 text-center text-xs text-zinc-400'>
-                {t('pages.stocks.product-search-more', {
-                  count: products.length,
-                })}
-              </p>
-                )}
+                <p className='px-3 py-2 text-center text-xs text-zinc-400'>
+                  {t('pages.stocks.product-search-more', {
+                    count: products.length,
+                  })}
+                </p>
+              )}
           </div>
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>

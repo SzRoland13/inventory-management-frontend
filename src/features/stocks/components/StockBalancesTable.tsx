@@ -134,7 +134,9 @@ export function StockBalancesTable({
           <Search className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400' />
           <Input
             value={search}
-            onChange={(event) => updateFilter(() => setSearch(event.target.value))}
+            onChange={(event) =>
+              updateFilter(() => setSearch(event.target.value))
+            }
             maxLength={200}
             placeholder={t('pages.stocks.search')}
             aria-label={t('pages.stocks.search')}
@@ -164,7 +166,9 @@ export function StockBalancesTable({
         onPageChange={(pageIndex) =>
           setPagination((current) => ({ ...current, pageIndex }))
         }
-        onPageSizeChange={(pageSize) => setPagination({ pageIndex: 0, pageSize })}
+        onPageSizeChange={(pageSize) =>
+          setPagination({ pageIndex: 0, pageSize })
+        }
       />
     </section>
   );

@@ -137,7 +137,8 @@ export function StockMovementsTable({
                 query: { documentId: String(row.original.documentId) },
               }}
             >
-              {row.original.documentNumber ?? `#${row.original.documentId}`}
+              {row.original.documentNumber ??
+                t('pages.documents.numberUnavailable')}
             </Link>
           ),
       },
@@ -175,9 +176,7 @@ export function StockMovementsTable({
         <StockDateRangeFilter
           startDate={startDate}
           endDate={endDate}
-          onStartDateChange={(value) =>
-            updateFilter(() => setStartDate(value))
-          }
+          onStartDateChange={(value) => updateFilter(() => setStartDate(value))}
           onEndDateChange={(value) => updateFilter(() => setEndDate(value))}
         />
       </div>
@@ -195,7 +194,9 @@ export function StockMovementsTable({
         onPageChange={(pageIndex) =>
           setPagination((current) => ({ ...current, pageIndex }))
         }
-        onPageSizeChange={(pageSize) => setPagination({ pageIndex: 0, pageSize })}
+        onPageSizeChange={(pageSize) =>
+          setPagination({ pageIndex: 0, pageSize })
+        }
       />
     </section>
   );

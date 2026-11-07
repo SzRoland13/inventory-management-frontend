@@ -94,8 +94,7 @@ function formatAttributeValue(
   if (attribute.textValue !== null) return attribute.textValue;
   if (attribute.numberValue !== null) return String(attribute.numberValue);
   if (attribute.dateValue !== null) return attribute.dateValue;
-  if (attribute.booleanValue !== null)
-    return attribute.booleanValue ? yes : no;
+  if (attribute.booleanValue !== null) return attribute.booleanValue ? yes : no;
   return '—';
 }
 

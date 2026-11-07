@@ -25,7 +25,8 @@ export function useStockMovementsQuery(
 ) {
   return useQuery({
     queryKey: queryKeys.stocks.movements(params),
-    queryFn: () => requireSuccessfulResponse(StockService.listMovements(params)),
+    queryFn: () =>
+      requireSuccessfulResponse(StockService.listMovements(params)),
     placeholderData: (previous) => previous,
     enabled,
   });

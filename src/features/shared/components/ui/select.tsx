@@ -53,8 +53,11 @@ function SelectTrigger({
 function SelectContent({
   className,
   children,
-  position = 'item-aligned',
-  align = 'center',
+  position = 'popper',
+  side = 'bottom',
+  sideOffset = 4,
+  align = 'start',
+  avoidCollisions = false,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
   return (
@@ -68,7 +71,10 @@ function SelectContent({
           className,
         )}
         position={position}
+        side={side}
+        sideOffset={sideOffset}
         align={align}
+        avoidCollisions={avoidCollisions}
         {...props}
       >
         <SelectScrollUpButton />

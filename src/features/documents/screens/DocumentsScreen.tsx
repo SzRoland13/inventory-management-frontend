@@ -1,16 +1,27 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, FilePlus2, Inbox, Search } from 'lucide-react';
+import {
+  ArrowRight,
+  ClipboardList,
+  FilePlus2,
+  Inbox,
+  Search,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { DocumentDetailsDialog } from '@/features/documents/components/DocumentDetailsDialog';
 import { DocumentQueue } from '@/features/documents/components/DocumentQueue';
 import { CreateDocumentDialog } from '@/features/documents/components/CreateDocumentDialog';
+import { StartStockCountDialog } from '@/features/documents/components/StartStockCountDialog';
+import { CreateTransferDialog } from '@/features/documents/components/CreateTransferDialog';
 import {
   useDocumentCapabilitiesQuery,
   useDocumentsQuery,
 } from '@/features/documents/queries/documentQueries';
-import { DocumentQueueView } from '@/features/documents/enums/documentEnums';
+import {
+  DocumentQueueView,
+  DocumentType,
+} from '@/features/documents/enums/documentEnums';
 import type { BusinessDocument } from '@/features/documents/types/documents';
 import MainHeader from '@/features/shared/components/MainHeader';
 import { Button } from '@/features/shared/components/ui/button';
@@ -20,11 +31,15 @@ const PAGE_SIZE = 20;
 
 export default function DocumentsScreen() {
   const t = useTranslations();
-  const [view, setView] = useState<DocumentQueueView>(DocumentQueueView.MY_DRAFTS);
+  const [view, setView] = useState<DocumentQueueView>(
+    DocumentQueueView.MY_DRAFTS,
+  );
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [page, setPage] = useState(0);
   const [createOpen, setCreateOpen] = useState(false);
+  const [countOpen, setCountOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] =
     useState<BusinessDocument | null>(null);
 
@@ -32,7 +47,7 @@ export default function DocumentsScreen() {
   const availableViews = capabilitiesQuery.data?.payload.availableQueueViews;
   const activeView = availableViews?.includes(view)
     ? view
-    : availableViews?.[0] ?? view;
+    : (availableViews?.[0] ?? view);
 
   useEffect(() => {
     const timeout = window.setTimeout(
@@ -52,10 +67,25 @@ export default function DocumentsScreen() {
   const pageCount = Math.ceil((response?.total ?? 0) / PAGE_SIZE);
   const summaryCards = response
     ? [
-        { label: t('pages.documents.summary.drafts'), count: response.counts.MY_DRAFTS, tone: 'indigo' as const },
-        { label: t('pages.documents.summary.toReceive'), count: response.counts.READY_TO_RECEIVE, tone: 'sky' as const },
-        { label: t('pages.documents.summary.toShip'), count: response.counts.READY_TO_SHIP, tone: 'emerald' as const },
-      ].filter((card): card is typeof card & { count: number } => card.count !== undefined)
+        {
+          label: t('pages.documents.summary.drafts'),
+          count: response.counts.MY_DRAFTS,
+          tone: 'indigo' as const,
+        },
+        {
+          label: t('pages.documents.summary.toReceive'),
+          count: response.counts.READY_TO_RECEIVE,
+          tone: 'sky' as const,
+        },
+        {
+          label: t('pages.documents.summary.toShip'),
+          count: response.counts.READY_TO_SHIP,
+          tone: 'emerald' as const,
+        },
+      ].filter(
+        (card): card is typeof card & { count: number } =>
+          card.count !== undefined,
+      )
     : [];
 
   function changeView(nextView: DocumentQueueView) {
@@ -90,34 +120,61 @@ export default function DocumentsScreen() {
                 {t('pages.documents.description')}
               </p>
             </div>
-            <Button
-              onClick={() => setCreateOpen(true)}
-              className='h-10 shrink-0 gap-2 bg-indigo-500 px-4 text-white shadow-lg shadow-indigo-950/30 hover:bg-indigo-400'
-            >
-              <FilePlus2 className='h-4 w-4' />
-              {t('pages.documents.create.new')}
-            </Button>
+            <div className='flex flex-wrap gap-2'>
+              <Button
+                onClick={() => setCreateOpen(true)}
+                className='h-10 shrink-0 gap-2 bg-indigo-500 px-4 text-white shadow-lg shadow-indigo-950/30 hover:bg-indigo-400'
+              >
+                <FilePlus2 className='h-4 w-4' />
+                {t('pages.documents.create.new')}
+              </Button>
+              {capabilitiesQuery.data?.payload.creatableTypes.includes(
+                DocumentType.STOCK_COUNT,
+              ) && (
+                <Button
+                  variant='outline'
+                  onClick={() => setCountOpen(true)}
+                  className='h-10 shrink-0 gap-2 border-zinc-600 bg-zinc-900 text-zinc-100'
+                >
+                  <ClipboardList className='h-4 w-4' />
+                  {t('pages.documents.operations.startCount')}
+                </Button>
+              )}
+              {capabilitiesQuery.data?.payload.creatableTypes.includes(
+                DocumentType.WAREHOUSE_TRANSFER,
+              ) && (
+                <Button
+                  variant='outline'
+                  onClick={() => setTransferOpen(true)}
+                  className='h-10 shrink-0 gap-2 border-zinc-600 bg-zinc-900 text-zinc-100'
+                >
+                  <FilePlus2 className='h-4 w-4' />
+                  {t('pages.documents.operations.createTransfer')}
+                </Button>
+              )}
+            </div>
           </div>
 
-          {!documentsQuery.isError && (!response || summaryCards.length > 0) && (
-            <div className='relative mt-6 grid gap-3 sm:grid-cols-3'>
-              {!response ? (
-                [0, 1, 2].map((item) => (
-                  <div
-                    key={item}
-                    className='h-[62px] animate-pulse rounded-xl border border-zinc-700/70 bg-zinc-950/40'
-                  />
-                ))
-              ) : summaryCards.map((card) => (
-                <SummaryCard
-                  key={card.label}
-                  label={card.label}
-                  count={card.count}
-                  tone={card.tone}
-                />
-              ))}
-            </div>
-          )}
+          {!documentsQuery.isError &&
+            (!response || summaryCards.length > 0) && (
+              <div className='relative mt-6 grid gap-3 sm:grid-cols-3'>
+                {!response
+                  ? [0, 1, 2].map((item) => (
+                      <div
+                        key={item}
+                        className='h-[62px] animate-pulse rounded-xl border border-zinc-700/70 bg-zinc-950/40'
+                      />
+                    ))
+                  : summaryCards.map((card) => (
+                      <SummaryCard
+                        key={card.label}
+                        label={card.label}
+                        count={card.count}
+                        tone={card.tone}
+                      />
+                    ))}
+              </div>
+            )}
         </section>
 
         <section className='rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4 shadow-xl sm:p-6'>
@@ -189,6 +246,24 @@ export default function DocumentsScreen() {
       </main>
 
       <CreateDocumentDialog open={createOpen} onOpenChange={setCreateOpen} />
+      {countOpen && (
+        <StartStockCountDialog
+          onClose={() => setCountOpen(false)}
+          onCreated={(created) => {
+            setCountOpen(false);
+            setSelectedDocument(created);
+          }}
+        />
+      )}
+      {transferOpen && (
+        <CreateTransferDialog
+          onClose={() => setTransferOpen(false)}
+          onCreated={(created) => {
+            setTransferOpen(false);
+            setSelectedDocument(created);
+          }}
+        />
+      )}
       <DocumentDetailsDialog
         key={selectedDocument?.id ?? 'closed'}
         document={selectedDocument}
@@ -217,7 +292,9 @@ function SummaryCard({
     <div className='flex items-center gap-3 rounded-xl border border-zinc-700/70 bg-zinc-950/50 p-4'>
       <span className={`h-2.5 w-2.5 rounded-full ${accents[tone].dot}`} />
       <span className='min-w-0 flex-1 text-sm text-zinc-400'>{label}</span>
-      <span className={`text-xl font-semibold tabular-nums ${accents[tone].label}`}>
+      <span
+        className={`text-xl font-semibold tabular-nums ${accents[tone].label}`}
+      >
         {count}
       </span>
     </div>

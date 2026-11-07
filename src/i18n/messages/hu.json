@@ -141,6 +141,7 @@
       "login": {
         "title": "Kétlépcsős azonosítás",
         "subtitle": "Azonosítsd magad az Authenticator alkalmazással.",
+        "codeLabel": "Add meg az Authenticator alkalmazásban látható 6 számjegyű kódot",
         "footer": "Ha nem tudsz bejelentkezni, fordulj a rendszergazdához."
       },
       "countdown": "Ez az időzítő mutatja, meddig van lehetőséged a 2FA azonosítás befejezésére."
@@ -404,7 +405,8 @@
       "types": {
         "STANDARD": "Normál",
         "VIRTUAL": "Virtuális",
-        "TRANSIT": "Tranzit"
+        "TRANSIT": "Tranzit",
+        "QUARANTINE": "Zárolási"
       },
       "status": {
         "ACTIVE": "Aktív",
@@ -465,12 +467,43 @@
         "phone": "Telefon",
         "email": "E-mail"
       },
-      "types": { "CUSTOMER": "Vevő", "SUPPLIER": "Beszállító", "BOTH": "Vevő és beszállító" },
-      "contactTypes": { "BILLING": "Számlázási", "SHIPPING": "Szállítási", "BOTH": "Számlázási és szállítási", "OTHER": "Egyéb" },
+      "types": {
+        "CUSTOMER": "Vevő",
+        "SUPPLIER": "Beszállító",
+        "BOTH": "Vevő és beszállító"
+      },
+      "contactTypes": {
+        "BILLING": "Számlázási",
+        "SHIPPING": "Szállítási",
+        "BOTH": "Számlázási és szállítási",
+        "OTHER": "Egyéb"
+      },
       "status": { "ACTIVE": "Aktív", "ARCHIVED": "Archivált" },
-      "filters": { "status": "Szűrés állapot szerint", "all": "Minden partner", "active": "Aktív partnerek", "archived": "Archivált partnerek" },
-      "actions": { "add": "Partner hozzáadása", "edit": "Szerkesztés", "view": "Megtekintés", "archive": "Archiválás", "restore": "Visszaállítás" },
-      "contacts": { "title": "Kapcsolattartók – {name}", "description": "A partner kapcsolattartóinak megtekintése és kezelése.", "manage": "Kapcsolattartók kezelése", "view": "Kapcsolattartók", "add": "Kapcsolattartó hozzáadása", "edit": "Kapcsolattartó szerkesztése", "remove": "Kapcsolattartó eltávolítása", "removed": "Eltávolítva", "empty": "Ehhez a partnerhez nincs kapcsolattartó.", "archived-read-only": "Az archivált partnerek csak olvashatók." },
+      "filters": {
+        "status": "Szűrés állapot szerint",
+        "all": "Minden partner",
+        "active": "Aktív partnerek",
+        "archived": "Archivált partnerek"
+      },
+      "actions": {
+        "add": "Partner hozzáadása",
+        "edit": "Szerkesztés",
+        "view": "Megtekintés",
+        "archive": "Archiválás",
+        "restore": "Visszaállítás"
+      },
+      "contacts": {
+        "title": "Kapcsolattartók – {name}",
+        "description": "A partner kapcsolattartóinak megtekintése és kezelése.",
+        "manage": "Kapcsolattartók kezelése",
+        "view": "Kapcsolattartók",
+        "add": "Kapcsolattartó hozzáadása",
+        "edit": "Kapcsolattartó szerkesztése",
+        "remove": "Kapcsolattartó eltávolítása",
+        "removed": "Eltávolítva",
+        "empty": "Ehhez a partnerhez nincs kapcsolattartó.",
+        "archived-read-only": "Az archivált partnerek csak olvashatók."
+      },
       "confirm": {
         "archive-title": "Partner archiválása?",
         "archive-description": "Archiválod ezt a partnert: {name}? A korábbi nyilvántartásokban továbbra is elérhető marad.",
@@ -479,8 +512,21 @@
         "remove-contact-title": "Kapcsolattartó eltávolítása?",
         "remove-contact-description": "Eltávolítod ezt a kapcsolattartót? Az előzményekben továbbra is látható marad."
       },
-      "messages": { "created": "A partner létrejött.", "updated": "A partner frissült.", "archived": "A partner archiválva lett.", "restored": "A partner visszaállt.", "contact-created": "A kapcsolattartó létrejött.", "contact-updated": "A kapcsolattartó frissült.", "contact-removed": "A kapcsolattartó eltávolítva." },
-      "validation": { "required": "A mező kitöltése kötelező.", "too-long": "A megadott érték túl hosszú.", "country": "Válassz országot a listából.", "email": "Érvényes e-mail címet adj meg." }
+      "messages": {
+        "created": "A partner létrejött.",
+        "updated": "A partner frissült.",
+        "archived": "A partner archiválva lett.",
+        "restored": "A partner visszaállt.",
+        "contact-created": "A kapcsolattartó létrejött.",
+        "contact-updated": "A kapcsolattartó frissült.",
+        "contact-removed": "A kapcsolattartó eltávolítva."
+      },
+      "validation": {
+        "required": "A mező kitöltése kötelező.",
+        "too-long": "A megadott érték túl hosszú.",
+        "country": "Válassz országot a listából.",
+        "email": "Érvényes e-mail címet adj meg."
+      }
     },
     "stocks": {
       "title": "Készletkezelés",
@@ -535,7 +581,8 @@
       "heading": "Minden rendelés haladjon tovább",
       "description": "Hozz létre és kövess beszerzési és értékesítési dokumentumokat, kezeld a teljesítést, és tartsd a fájlokat a kapcsolódó dokumentumok mellett.",
       "create": {
-        "new": "Új dokumentum", "title": "Dokumentumtervezet indítása",
+        "new": "Új dokumentum",
+        "title": "Dokumentumtervezet indítása",
         "description": "Válassz rendeléstípust, partnert és tételeket. Az új tervezet ezután szerkeszthető és teljesíthető.",
         "loadingOptions": "A fiókod számára elérhető dokumentumtípusok betöltése…",
         "optionsError": "A dokumentumbeállítások átmenetileg nem érhetők el",
@@ -546,57 +593,211 @@
           "SALES_ORDER": "Rögzítsd a tervezett értékesítést.",
           "DELIVERY_NOTE": "Rögzíts közvetlen kiszállítást a raktárkészletből."
         },
-        "partner": "Partner", "selectPartner": "Válassz partnert", "noTypes": "Nincs jogosultságod dokumentumtípus létrehozásához.", "warehouse": "Raktár", "selectWarehouse": "Válassz raktárat", "date": "Dokumentum dátuma",
-        "currency": "Dokumentum pénzneme", "selectCurrency": "Válassz pénznemet", "preferredCurrency": "Vállalati alapértelmezett",
-        "exchangeRates": "Árfolyamok", "exchangeRatesHint": "Add meg, hogy az egyes termékpénznemek egy egysége hány {currency} értéket ér.",
-        "items": "Tételek", "itemsHint": "Keress aktív termékeket, és add hozzá a rendelés sorait.",
+        "partner": "Partner",
+        "selectPartner": "Válassz partnert",
+        "noTypes": "Nincs jogosultságod dokumentumtípus létrehozásához.",
+        "warehouse": "Raktár",
+        "selectWarehouse": "Válassz raktárat",
+        "date": "Dokumentum dátuma",
+        "currency": "Dokumentum pénzneme",
+        "selectCurrency": "Válassz pénznemet",
+        "preferredCurrency": "Vállalati alapértelmezett",
+        "exchangeRates": "Árfolyamok",
+        "exchangeRatesHint": "Add meg, hogy az egyes termékpénznemek egy egysége hány {currency} értéket ér.",
+        "items": "Tételek",
+        "itemsHint": "Keress aktív termékeket, és add hozzá a rendelés sorait.",
         "selectProduct": "Válassz hozzáadandó terméket",
         "searchProducts": "Keresés terméknév vagy cikkszám alapján",
-        "loadingProducts": "Termékek betöltése…", "loadMoreProducts": "További termékek betöltése", "loadingMoreProducts": "Termékek betöltése…",
-        "added": "Hozzáadva", "productOptionsError": "A termékeket nem sikerült betölteni.",
-        "noProducts": "Nincs találat", "noItems": "Adj legalább egy terméket a tervezethez.",
-        "quantity": "Mennyiség", "removeItem": "Tétel eltávolítása", "notes": "Megjegyzések", "notesPlaceholder": "Adj megjegyzést a tervezethez",
-        "saving": "Tervezet mentése…", "saveDraft": "Tervezet mentése", "created": "Tervezet létrehozva"
+        "loadingProducts": "Termékek betöltése…",
+        "loadMoreProducts": "További termékek betöltése",
+        "loadingMoreProducts": "Termékek betöltése…",
+        "added": "Hozzáadva",
+        "productOptionsError": "A termékeket nem sikerült betölteni.",
+        "noProducts": "Nincs találat",
+        "noItems": "Adj legalább egy terméket a tervezethez.",
+        "quantity": "Mennyiség",
+        "removeItem": "Tétel eltávolítása",
+        "notes": "Megjegyzések",
+        "notesPlaceholder": "Adj megjegyzést a tervezethez",
+        "saving": "Tervezet mentése…",
+        "saveDraft": "Tervezet mentése",
+        "created": "Tervezet létrehozva"
       },
-      "summary": { "drafts": "Saját tervezetek", "toReceive": "Bevételezésre vár", "toShip": "Kiszállításra vár" },
+      "summary": {
+        "drafts": "Saját tervezetek",
+        "toReceive": "Bevételezésre vár",
+        "toShip": "Kiszállításra vár"
+      },
       "queue": {
-        "heading": "Feladatlista", "description": "Válassz nézetet a tervezetekhez, teljesítési feladatokhoz vagy dokumentumelőzményekhez.",
+        "heading": "Feladatlista",
+        "description": "Válassz nézetet a tervezetekhez, teljesítési feladatokhoz vagy dokumentumelőzményekhez.",
         "title": "Dokumentumok listája",
         "views": {
-          "MY_DRAFTS": "Saját tervezetek", "READY_TO_RECEIVE": "Bevételezésre vár", "READY_TO_SHIP": "Kiszállításra vár",
-          "PARTIALLY_FULFILLED": "Részben teljesült", "TRANSFERS": "Áthelyezések", "IN_TRANSIT": "Úton lévő áru",
-          "RETURNS": "Visszáruk", "STOCK_COUNTS": "Készletleltárak", "CORRECTIONS": "Helyesbítések",
-          "SUPPLIER_BILLS": "Beszállítói számlák", "CUSTOMER_INVOICES": "Vevői számlák",
-          "FINANCIAL_CREDITS": "Pénzügyi jóváírások", "NEEDS_APPROVAL": "Jóváhagyásra vár", "ALL": "Minden dokumentum"
+          "MY_DRAFTS": "Saját tervezetek",
+          "READY_TO_RECEIVE": "Bevételezésre vár",
+          "READY_TO_SHIP": "Kiszállításra vár",
+          "PARTIALLY_FULFILLED": "Részben teljesült",
+          "TRANSFERS": "Áthelyezések",
+          "IN_TRANSIT": "Úton lévő áru",
+          "RETURNS": "Visszáruk",
+          "STOCK_COUNTS": "Készletleltárak",
+          "CORRECTIONS": "Helyesbítések",
+          "SUPPLIER_BILLS": "Beszállítói számlák",
+          "CUSTOMER_INVOICES": "Vevői számlák",
+          "FINANCIAL_CREDITS": "Pénzügyi jóváírások",
+          "NEEDS_APPROVAL": "Jóváhagyásra vár",
+          "ALL": "Minden dokumentum"
         }
       },
-      "search": "Keresés dokumentumszám vagy partner alapján", "loading": "Dokumentumok betöltése",
-      "loadError": { "title": "A dokumentumok betöltése nem sikerült", "description": "A dokumentumszolgáltatás jelenleg nem érhető el. Próbáld meg később." },
-      "empty": { "title": "Nincs dokumentum ebben a nézetben", "description": "Az ehhez a listához tartozó dokumentumok itt jelennek meg. Válassz másik nézetet, vagy hozz létre tervezetet." },
-      "draft": "Tervezet", "noPartner": "Nincs partner megadva", "owner": "Felelős: {name}",
+      "search": "Keresés dokumentumszám vagy partner alapján",
+      "loading": "Dokumentumok betöltése",
+      "loadError": {
+        "title": "A dokumentumok betöltése nem sikerült",
+        "description": "A dokumentumszolgáltatás jelenleg nem érhető el. Próbáld meg később."
+      },
+      "empty": {
+        "title": "Nincs dokumentum ebben a nézetben",
+        "description": "Az ehhez a listához tartozó dokumentumok itt jelennek meg. Válassz másik nézetet, vagy hozz létre tervezetet."
+      },
+      "draft": "Tervezet",
+      "numberUnavailable": "A dokumentumszám nem érhető el",
+      "noPartner": "Nincs partner megadva",
+      "owner": "Felelős: {name}",
       "lineCount": "{count, plural, one {# tétel} other {# tétel}}",
       "status": {
-        "DRAFT": "Tervezet", "SENT": "Elküldve", "CONFIRMED": "Jóváhagyva",
-        "PARTIALLY_COMPLETED": "Részben teljesült", "COMPLETED": "Teljesült", "CANCELLED": "Visszavonva"
+        "DRAFT": "Tervezet",
+        "SENT": "Elküldve",
+        "CONFIRMED": "Jóváhagyva",
+        "PARTIALLY_COMPLETED": "Részben teljesült",
+        "COMPLETED": "Teljesült",
+        "CANCELLED": "Visszavonva"
       },
       "types": {
-        "PURCHASE_ORDER": "Beszerzési rendelés", "GOODS_RECEIPT": "Áruátvétel",
-        "SALES_ORDER": "Értékesítési rendelés", "DELIVERY_NOTE": "Szállítólevél", "INVOICE": "Régi, általános számla",
+        "PURCHASE_ORDER": "Beszerzési rendelés",
+        "GOODS_RECEIPT": "Áruátvétel",
+        "SALES_ORDER": "Értékesítési rendelés",
+        "DELIVERY_NOTE": "Szállítólevél",
+        "INVOICE": "Régi, általános számla",
         "WAREHOUSE_TRANSFER": "Raktárközi áthelyezés",
-        "STOCK_COUNT": "Készletleltár", "CORRECTION": "Helyesbítés", "SUPPLIER_BILL": "Beszállítói számla",
-        "CUSTOMER_INVOICE": "Vevői számla", "FINANCIAL_CREDIT": "Pénzügyi jóváírás", "RETURN": "Fizikai visszáru"
+        "STOCK_COUNT": "Készletleltár",
+        "CORRECTION": "Helyesbítés",
+        "SUPPLIER_BILL": "Beszállítói számla",
+        "CUSTOMER_INVOICE": "Vevői számla",
+        "FINANCIAL_CREDIT": "Pénzügyi jóváírás",
+        "RETURN": "Fizikai visszáru"
       },
       "actions": {
-        "CONFIRM": "Rendelés jóváhagyása", "RECEIVE": "Áru átvétele", "DELIVER": "Szállítás létrehozása", "POST": "Ellenőrzés és rögzítés",
-        "EDIT": "Tervezet szerkesztése", "GENERATE_PDF": "PDF készítése", "CLOSE_REMAINING": "Hátralék lezárása", "view": "Részletek", "confirmed": "Rendelés jóváhagyva",
-        "DISPATCH": "Áthelyezés indítása", "RECEIVE_TRANSFER": "Áthelyezés átvétele", "RELEASE_QUARANTINE": "Kiadás készletre",
-        "CREATE_RETURN": "Visszáru létrehozása", "CREATE_REPLACEMENT_DELIVERY": "Pótszállítás létrehozása",
-        "START_COUNT": "Leltár indítása", "RECONCILE": "Egyeztetés áttekintése", "CORRECT": "Könyvelési hiba javítása",
-        "CREATE_SUPPLIER_BILL": "Beszállítói számla létrehozása", "CREATE_CUSTOMER_INVOICE": "Vevői számla létrehozása",
-        "CREATE_CREDIT": "Pénzügyi jóváírás létrehozása", "APPROVE": "Jóváhagyás", "REJECT": "Elutasítás"
+        "CONFIRM": "Rendelés jóváhagyása",
+        "RECEIVE": "Áru átvétele",
+        "DELIVER": "Szállítás létrehozása",
+        "POST": "Ellenőrzés és rögzítés",
+        "EDIT": "Tervezet szerkesztése",
+        "GENERATE_PDF": "PDF készítése",
+        "CLOSE_REMAINING": "Hátralék lezárása",
+        "view": "Részletek",
+        "confirmed": "Rendelés jóváhagyva",
+        "DISPATCH": "Áthelyezés indítása",
+        "RECEIVE_TRANSFER": "Áthelyezés átvétele",
+        "RELEASE_QUARANTINE": "Kiadás készletre",
+        "CREATE_RETURN": "Visszáru létrehozása",
+        "CREATE_REPLACEMENT_DELIVERY": "Pótszállítás létrehozása",
+        "RECONCILE": "Egyeztetés áttekintése",
+        "CORRECT": "Könyvelési hiba javítása",
+        "CREATE_SUPPLIER_BILL": "Beszállítói számla létrehozása",
+        "CREATE_CUSTOMER_INVOICE": "Vevői számla létrehozása",
+        "CREATE_CREDIT": "Pénzügyi jóváírás létrehozása",
+        "APPROVE": "Jóváhagyás",
+        "REJECT": "Elutasítás"
+      },
+      "operations": {
+        "effectiveAt": "Készletmozgás hatálybalépése (nem kötelező)",
+        "startCount": "Leltár indítása",
+        "startCountDescription": "Válassz raktárat, és add meg a fizikai leltár időpontját.",
+        "countStarted": "Leltár elindítva",
+        "createTransfer": "Áthelyezés létrehozása",
+        "createTransferDescription": "Válaszd ki a forrás- és célraktárat, majd add hozzá az áthelyezendő tételeket.",
+        "transferCreated": "Áthelyezési tervezet létrehozva",
+        "product": "Termék",
+        "selectProduct": "Válassz terméket",
+        "addLine": "Tétel hozzáadása",
+        "removeLine": "Eltávolítás",
+        "recordingError": "Rögzítési hiba javítása",
+        "physicalReturn": "Fizikai visszáru rögzítése",
+        "recordingErrorDescription": "Javítsd az adatrögzítési hibát az eredeti dokumentum megőrzésével.",
+        "physicalReturnDescription": "A fizikailag visszaérkezett árut visszáru dokumentummal rögzítsd.",
+        "originalWillStay": "Az eredeti rögzített dokumentum és előzményei változatlanok maradnak. A kapcsolódó visszárukat és későbbi mozgásokat a mentés előtt ellenőrizzük.",
+        "warehouseId": "Raktár",
+        "countedAt": "Fizikai leltár időpontja",
+        "lines": "Érintett tételek",
+        "quantity": "Mennyiség",
+        "varianceReason": "Eltérés indoka (nem kötelező)",
+        "reason": "Kötelező indok",
+        "targetWarehouse": "Célraktár",
+        "sourceWarehouse": "Forrásraktár",
+        "destinationWarehouse": "Célraktár",
+        "transitWarehouse": "Átmeneti raktár",
+        "selectWarehouse": "Válassz raktárat",
+        "noTransit": "Nincs átmeneti raktár",
+        "resolution": "Lezárás módja",
+        "preview": "Művelet előnézete",
+        "previewValid": "A művelet érvényes. Ellenőrizd az alábbi hatásokat.",
+        "previewInvalid": "A művelet javítandó problémákat tartalmaz.",
+        "LOSS": "Elveszett",
+        "DAMAGE": "Sérült",
+        "REVERSAL": "Kiadás visszafordítása",
+        "REMAINDER_CLOSURE": "Nyitott mennyiség lezárása",
+        "transferDescription": "Ellenőrizd a(z) {number} mennyiségeit és készlethatását.",
+        "transferQuantities": "Forrás {source} · úton {transit} · cél {destination}",
+        "transferEffect": "forrás {source} · úton {transit} · cél {destination} · változás {change}",
+        "transferSaved": "Áthelyezési művelet rögzítve",
+        "returnDescription": "Ellenőrizd a(z) {number} forrásmennyiségeit és készletcélját.",
+        "returnDirection": "Visszáru iránya: {direction}",
+        "direction": {
+          "CUSTOMER_RETURN": "Vevői visszáru",
+          "SUPPLIER_RETURN": "Beszállítói visszáru"
+        },
+        "targetWarehouseResult": "készlet célraktára: {warehouse}",
+        "returnProgress": "Eredeti {original} · visszaküldve {returned} · még visszaküldhető {returnable} {unit}",
+        "returnEffect": "visszaküldhető {returnable} · eredmény {resulting} · készletváltozás {quantity}",
+        "returnDoesNotReopen": "A fizikai visszáru nem nyitja újra az eredeti rendelést.",
+        "quarantineNotice": "A zárolt és sérült tételek nem elérhetők, amíg egy jogosult felhasználó készletre nem veszi őket.",
+        "disposition": {
+          "RESTOCK": "Készletre vétel",
+          "QUARANTINE": "Zárolás",
+          "DAMAGED": "Sérült",
+          "SUPPLIER_RETURN": "Visszaküldés a beszállítónak"
+        },
+        "countDescription": "Add meg a fizikai mennyiségeket, majd ellenőrizd az újraszámolt korrekciót.",
+        "expectedAtCount": "Leltárkori várt mennyiség",
+        "counted": "Fizikai mennyiség",
+        "countEffect": "várt {expected} · leltározott {counted} · eltérés {variance} · újraszámolt cél {target} · korrekció {adjustment}",
+        "previewReconciliation": "Egyeztetés előnézete",
+        "postAdjustments": "Korrekciók jóváhagyása és rögzítése",
+        "countPosted": "Leltárkorrekciók rögzítve",
+        "correctionDescription": "Válaszd ki, hogyan kezeled a(z) {number} rögzített dokumentumot.",
+        "selectCorrectionLine": "A(z) {product} felvétele a helyesbítésbe",
+        "correctionProgress": "Eredeti {original} · teljesült {fulfilled} · lezárt {closed} · visszáru {returned} · hátralék {remaining}",
+        "reopenClosedQuantity": "A helyesbítés ütközik egy lezárt rendelési mennyiséggel. Add meg a visszanyitandó mennyiséget és annak indokát.",
+        "reopenQuantity": "Visszanyitandó mennyiség (legfeljebb {available})",
+        "reopenReason": "Visszanyitás indoka",
+        "previousClosureReason": "Korábbi lezárás indoka: {reason}",
+        "correctedQuantity": "Javított teljesült mennyiség",
+        "correctedProduct": "Javított termék",
+        "correctedWarehouse": "Javított raktár",
+        "correctionEffect": "eredeti {original} · javított {corrected} · teljesült {fulfilled} · lezárt {closed} · hátralék {remaining} · készletváltozás {delta}",
+        "correctionSaved": "Helyesbítés rögzítve",
+        "relatedReturn": "Kapcsolódó visszáru {number} · {quantity}",
+        "nonBillable": "Pótszállítás · alapértelmezés szerint nem számlázható",
+        "loading": "Feldolgozás…",
+        "saving": "Mentés…",
+        "confirm": "Művelet jóváhagyása",
+        "saved": "Művelet rögzítve"
       },
       "fulfillment": {
-        "title": { "GOODS_RECEIPT": "Áru átvétele", "DELIVERY_NOTE": "Szállítás létrehozása" },
+        "title": {
+          "GOODS_RECEIPT": "Áru átvétele",
+          "DELIVERY_NOTE": "Szállítás létrehozása"
+        },
         "description": "Válaszd ki a(z) {number} dokumentumból rögzítendő mennyiségeket. Jóváhagyás előtt ellenőrizd a készletet.",
         "progress": "Rendelt {ordered} · teljesült {done} · hátralék {remaining} {unit}",
         "quantity": "Most teljesül",
@@ -634,26 +835,71 @@
         "keepMine": "Saját verzió mentése"
       },
       "details": {
-        "items": "Tételek", "product": "Termék", "ordered": "Rendelt", "done": "Teljesült", "remaining": "Hátralék", "billed": "Számlázva",
-        "net": "Nettó", "tax": "ÁFA", "gross": "Összesen", "allocatedFrom": "Forrás: {number} · {quantity} egység",
-        "currencyAndRates": "Pénznem és árfolyamok", "documentCurrency": "Dokumentum pénzneme", "currencyNotRecorded": "Nincs rögzítve", "appliedExchangeRates": "Alkalmazott árfolyamok",
-        "exchangeRateFrom": "1 {source} értéke", "noExchangeRates": "Nem volt szükség pénznemváltásra.", "unitPrice": "Egységár",
-        "noItems": "Még nincsenek tételek.", "activity": "Események", "noActivity": "Még nincs rögzített esemény.",
-        "loadError": "A kapcsolódó dokumentum betöltése nem sikerült.", "back": "Vissza az előző dokumentumhoz",
-        "related": "Kapcsolódó dokumentumok", "source": "Forrásrendelés", "relatedDocument": "Kapcsolódó dokumentum",
+        "items": "Tételek",
+        "product": "Termék",
+        "ordered": "Rendelt",
+        "done": "Teljesült",
+        "remaining": "Hátralék",
+        "billed": "Számlázva",
+        "net": "Nettó",
+        "tax": "ÁFA",
+        "gross": "Összesen",
+        "allocatedFrom": "Forrás: {number} · {quantity} egység",
+        "currencyAndRates": "Pénznem és árfolyamok",
+        "documentCurrency": "Dokumentum pénzneme",
+        "currencyNotRecorded": "Nincs rögzítve",
+        "appliedExchangeRates": "Alkalmazott árfolyamok",
+        "exchangeRateFrom": "1 {source} értéke",
+        "noExchangeRates": "Nem volt szükség pénznemváltásra.",
+        "unitPrice": "Egységár",
+        "noItems": "Még nincsenek tételek.",
+        "activity": "Események",
+        "noActivity": "Még nincs rögzített esemény.",
+        "loadError": "A kapcsolódó dokumentum betöltése nem sikerült.",
+        "back": "Vissza az előző dokumentumhoz",
+        "related": "Kapcsolódó dokumentumok",
+        "source": "Forrásrendelés",
+        "relatedDocument": "Kapcsolódó dokumentum",
         "noRelated": "Még nincsenek kapcsolódó dokumentumok.",
         "relations": {
-          "CREATED_FROM": "Létrehozva ebből", "FULFILLS": "Teljesíti", "CANCELS": "Visszavonja"
+          "CREATED_FROM": "Létrehozva ebből",
+          "FULFILLS": "Teljesíti",
+          "CANCELS": "Visszavonja",
+          "CORRECTS": "Helyesbíti",
+          "RETURNS": "Visszáru",
+          "REPLACES": "Pótolja",
+          "TRANSFER_STEP": "Áthelyezési lépés"
         }
       },
       "files": {
-        "title": "Fájlok és PDF-ek", "add": "Fájl hozzáadása", "empty": "Még nincs fájl csatolva.",
-        "uploaded": "Fájl feltöltve", "generationQueued": "A PDF-készítés sorba állítva", "generating": "PDF készítése…", "pdfLanguage": "PDF nyelve", "languages": { "en": "Angol", "hu": "Magyar" },
-        "retryQueued": "PDF újrapróbálása sorba állítva", "retry": "PDF készítésének újrapróbálása",
-        "download": "Fájl letöltése", "open": "Fájl megnyitása", "sources": { "UPLOAD": "Feltöltött fájl", "GENERATED_PDF": "Létrehozott PDF" },
-        "status": { "QUEUED": "Sorban áll", "PROCESSING": "Feldolgozás alatt", "COMPLETED": "Elkészült", "FAILED": "Sikertelen" }
+        "title": "Fájlok és PDF-ek",
+        "add": "Fájl hozzáadása",
+        "empty": "Még nincs fájl csatolva.",
+        "uploaded": "Fájl feltöltve",
+        "generationQueued": "A PDF-készítés sorba állítva",
+        "generating": "PDF készítése…",
+        "pdfLanguage": "PDF nyelve",
+        "languages": { "en": "Angol", "hu": "Magyar" },
+        "retryQueued": "PDF újrapróbálása sorba állítva",
+        "retry": "PDF készítésének újrapróbálása",
+        "download": "Fájl letöltése",
+        "open": "Fájl megnyitása",
+        "sources": {
+          "UPLOAD": "Feltöltött fájl",
+          "GENERATED_PDF": "Létrehozott PDF"
+        },
+        "status": {
+          "QUEUED": "Sorban áll",
+          "PROCESSING": "Feldolgozás alatt",
+          "COMPLETED": "Elkészült",
+          "FAILED": "Sikertelen"
+        }
       },
-      "pagination": { "page": "{page}. oldal / {pages}", "previous": "Előző", "next": "Következő" },
+      "pagination": {
+        "page": "{page}. oldal / {pages}",
+        "previous": "Előző",
+        "next": "Következő"
+      },
       "validation": {
         "required": "A mező kitöltése kötelező.",
         "notesTooLong": "A megjegyzés legfeljebb 2000 karakter lehet.",
@@ -903,7 +1149,9 @@
       "one-time-code-expired": "A kód lejárt. Kérjük, kérj újat.",
       "one-time-code": {
         "validate-before-two-fa": "Kérjük, először ellenőrizd az egyszer használatos kódot a 2FA beállítása előtt."
-      }
+      },
+      "account-suspended": "Ez a fiók fel van függesztve.",
+      "token-valid": "A munkamenet érvényes."
     },
     "user": {
       "registration-successful": "A felhasználó sikeresen regisztrálva.",
@@ -918,7 +1166,8 @@
       "password-reset-complete": "A jelszó sikeresen visszaállítva.",
       "two-fa-not-enabled": "A kétlépcsős azonosítás nincs engedélyezve ennél a felhasználónál.",
       "avatar-updated": "A profilkép sikeresen frissítve.",
-      "password": "A felhasználó még nem állított be jelszót."
+      "password": "A felhasználó még nem állított be jelszót.",
+      "password-not-set": "Ez a felhasználó még nem állított be jelszót."
     },
     "product": {
       "error": {
@@ -937,7 +1186,50 @@
         "invalid_unit_configuration": "A másodlagos mértékegység beállítása érvénytelen.",
         "exactly_one_attribute_value": "Pontosan egy értéket adj meg ehhez az attribútumhoz.",
         "page_size_limit": "Legfeljebb 100-as oldalméretet válassz."
-      }
+      },
+      "archived": "A termék sikeresen archiválva.",
+      "archived_list": {
+        "retrieved": "Az archivált termékek sikeresen betöltve."
+      },
+      "created": "A termék sikeresen létrejött.",
+      "list": {
+        "retrieved": "A termékek sikeresen betöltve."
+      },
+      "restored": "A termék sikeresen visszaállítva.",
+      "retrieved": "A termék sikeresen betöltve.",
+      "settings": {
+        "attribute": {
+          "created": "A termékattribútum sikeresen létrejött.",
+          "deleted": "A termékattribútum sikeresen törölve.",
+          "updated": "A termékattribútum sikeresen frissítve."
+        },
+        "attribute_option": {
+          "created": "A termékattribútum-beállítás sikeresen létrejött.",
+          "deleted": "A termékattribútum-beállítás sikeresen törölve.",
+          "updated": "A termékattribútum-beállítás sikeresen frissítve."
+        },
+        "attributes": {
+          "retrieved": "A termékattribútumok sikeresen betöltve."
+        },
+        "categories": {
+          "reordered": "A termékkategóriák sorrendje sikeresen módosítva.",
+          "retrieved": "A termékkategóriák sikeresen betöltve."
+        },
+        "category": {
+          "created": "A termékkategória sikeresen létrejött.",
+          "deleted": "A termékkategória sikeresen törölve.",
+          "updated": "A termékkategória sikeresen frissítve."
+        },
+        "unit": {
+          "created": "A termék mértékegysége sikeresen létrejött.",
+          "deleted": "A termék mértékegysége sikeresen törölve.",
+          "updated": "A termék mértékegysége sikeresen frissítve."
+        },
+        "units": {
+          "retrieved": "A termék mértékegységei sikeresen betöltve."
+        }
+      },
+      "updated": "A termék sikeresen frissítve."
     },
     "warehouse": {
       "error": {
@@ -950,7 +1242,14 @@
         "type_cannot_change_with_stock": "A tranzittípus nem módosítható, amíg a raktárban van készlet.",
         "invalid_transit_document": "Ez a tranzitraktár nem használható ehhez a dokumentumhoz.",
         "company_mismatch": "A raktár és a termék különböző cégekhez tartozik."
-      }
+      },
+      "archived": "A raktár sikeresen archiválva.",
+      "created": "A raktár sikeresen létrejött.",
+      "list": {
+        "retrieved": "A raktárak sikeresen betöltve."
+      },
+      "restored": "A raktár sikeresen visszaállítva.",
+      "updated": "A raktár sikeresen frissítve."
     },
     "partner": {
       "error": {
@@ -958,18 +1257,38 @@
         "already_archived": "Ez a partner már archiválva van.",
         "not_archived": "Ez a partner nincs archiválva.",
         "archived_for_transaction": "Archivált partner nem használható új tranzakcióhoz."
-      }
+      },
+      "archived": "A partner sikeresen archiválva.",
+      "created": "A partner sikeresen létrejött.",
+      "list": {
+        "retrieved": "A partnerek sikeresen betöltve."
+      },
+      "restored": "A partner sikeresen visszaállítva.",
+      "retrieved": "A partner sikeresen betöltve.",
+      "updated": "A partner sikeresen frissítve."
     },
     "contact": {
       "error": {
         "already_removed": "Ez a kapcsolattartó már el lett távolítva.",
         "removed_read_only": "Az eltávolított kapcsolattartó nem szerkeszthető."
-      }
+      },
+      "created": "A kapcsolattartó sikeresen létrejött.",
+      "list": {
+        "retrieved": "A kapcsolattartók sikeresen betöltve."
+      },
+      "removed": "A kapcsolattartó sikeresen eltávolítva.",
+      "updated": "A kapcsolattartó sikeresen frissítve."
     },
     "brand": {
       "error": {
         "already_exists": "Már létezik ilyen nevű márka."
-      }
+      },
+      "created": "A márka sikeresen létrejött.",
+      "deleted": "A márka sikeresen törölve.",
+      "list": {
+        "retrieved": "A márkák sikeresen betöltve."
+      },
+      "updated": "A márka sikeresen frissítve."
     },
     "company": {
       "logo-updated": "A céglogó sikeresen frissítve.",
@@ -977,14 +1296,25 @@
     },
     "error": {
       "generic": "Váratlan hiba történt.",
-      "validation": "Érvényesítési hiba történt."
+      "validation": {
+        "generic": "Érvényesítési hiba történt.",
+        "invalid_format": "A kérés érvénytelen formátumú értéket tartalmaz."
+      }
     },
     "request": {
       "success": "A kérés sikeresen feldolgozva."
     },
     "media": {
       "url-generated": "A média URL sikeresen létrehozva.",
-      "deleted": "A média sikeresen törölve."
+      "deleted": "A média sikeresen törölve.",
+      "thumbnail": {
+        "encoder-unavailable": "A képelőnézet létrehozása nem érhető el.",
+        "generation-failed": "A képelőnézet létrehozása nem sikerült.",
+        "image-invalid": "Ez a képfájl érvénytelen vagy nem támogatott.",
+        "job-invalid": "A képelőnézet-kérés érvénytelen.",
+        "job-not-found": "A képelőnézet-kérés nem található.",
+        "payload-invalid": "A képelőnézet adatai érvénytelenek."
+      }
     },
     "not-found": {
       "user": "A felhasználó nem található.",
@@ -997,7 +1327,99 @@
       "media-usage": "A médiahasználat nem található.",
       "currency": "A pénznem nem található.",
       "document-sequence": "A dokumentumszámozás nem található.",
-      "document-prefix": "A dokumentum előtag nem található."
+      "document-prefix": "A dokumentum előtag nem található.",
+      "brand": "A márka nem található.",
+      "contact": "A kapcsolattartó nem található.",
+      "document": "A dokumentum nem található.",
+      "document-line": "A dokumentumtétel nem található.",
+      "document-relation": "A dokumentumkapcsolat nem található.",
+      "product-attribute-definition": "A termékattribútum nem található.",
+      "product-attribute-option": "A termékattribútum-beállítás nem található.",
+      "product-attribute-value": "A termékattribútum értéke nem található.",
+      "product-category": "A termékkategória nem található.",
+      "stock-balance": "A készletegyenleg nem található.",
+      "stock-movement": "A készletmozgás nem található.",
+      "unit": "A mértékegység nem található.",
+      "partner": "A partner nem található."
+    },
+    "async": {
+      "email": {
+        "delivery-failed": "Az e-mail kézbesítése nem sikerült."
+      },
+      "outbox": {
+        "encryption-configuration-invalid": "A kimenő üzenetsor titkosítási beállítása érvénytelen.",
+        "encryption-failed": "A kimenő üzenet tartalmát nem sikerült titkosítani.",
+        "job-not-found": "A háttérfeladat nem található.",
+        "job-type-unsupported": "Ez a háttérfeladat-típus nem támogatott.",
+        "payload-invalid": "A háttérfeladat adatai érvénytelenek.",
+        "payload-serialization-failed": "A háttérfeladat adatait nem sikerült előkészíteni."
+      },
+      "rabbitmq": {
+        "message-unroutable": "A háttérüzenetet nem sikerült továbbítani.",
+        "publish-rejected": "A háttérüzenet küldését elutasították.",
+        "retry-publish-failed": "A háttérüzenet újrapróbálását nem sikerült ütemezni."
+      }
+    },
+    "document": {
+      "error": {
+        "closure_reopen_invalid": "A visszanyitott mennyiségnek pozitívnak kell lennie, és nem haladhatja meg a rendelési sor lezárt mennyiségét.",
+        "closure_reopen_reason_required": "A lezárt mennyiség visszanyitásához indoklás szükséges.",
+        "conflict": "A dokumentum időközben megváltozott. Töltsd be újra, majd próbáld meg ismét.",
+        "correction_blocked": "A helyesbítés kapcsolódó műveletek miatt nem hajtható végre.",
+        "correction_closed_quantity_conflict": "A javított és lezárt mennyiség meghaladja a rendelt mennyiséget. Helyesbítés előtt ellenőrizd a lezárást.",
+        "correction_negative_stock": "A helyesbítés miatt az elérhető készlet negatívvá válna.",
+        "correction_workflow_required": "Fizikai árumozgáshoz a visszáru-folyamatot használd.",
+        "cross_company_reference": "A hivatkozott rekord egy másik vállalathoz tartozik.",
+        "direct_fulfillment_not_allowed": "Ehhez a dokumentumhoz közvetlen teljesítés nem engedélyezett.",
+        "idempotency_key_required": "A kérés azonosítója kötelező. Frissítsd a dokumentumot, majd próbáld újra.",
+        "insufficient_stock": "Nincs elegendő elérhető készlet ehhez a művelethez.",
+        "invalid_lines": "A dokumentum egy vagy több tétele érvénytelen. Ellenőrizd a mennyiségeket és a termékeket.",
+        "invalid_queue_view": "Ez a dokumentumlista-nézet nem érhető el.",
+        "invalid_transition": "A dokumentum nem állítható a kért állapotba.",
+        "pdf_empty_result": "Az elkészült PDF üres. Próbáld meg újra létrehozni.",
+        "pdf_job_invalid": "A PDF-létrehozási kérés érvénytelen.",
+        "pdf_job_not_found": "A PDF-létrehozási kérés nem található.",
+        "pdf_language_invalid": "Válassz támogatott nyelvet a PDF-hez.",
+        "pdf_payload_invalid": "A dokumentum adataiból nem sikerült PDF-et létrehozni.",
+        "pdf_render_failed": "A PDF létrehozása nem sikerült. Próbáld meg később újra.",
+        "reason_required": "A folytatáshoz adj meg egy indoklást.",
+        "return_quantity_exceeded": "A visszáru mennyisége meghaladja a még visszaküldhető mennyiséget.",
+        "sequence_unavailable": "Nem sikerült dokumentumszámot kiosztani. Próbáld újra.",
+        "version_required": "Hiányzik a dokumentum verziója. Töltsd be újra, majd próbáld meg ismét.",
+        "warehouse_required": "A folytatáshoz válassz raktárat."
+      },
+      "success": {
+        "confirmed": "A dokumentum sikeresen jóváhagyva.",
+        "created": "A dokumentum sikeresen létrejött.",
+        "file_uploaded": "A fájl sikeresen feltöltve.",
+        "pdf_queued": "A PDF létrehozása sorba állítva.",
+        "posted": "A dokumentum sikeresen rögzítve.",
+        "saved": "A dokumentum sikeresen mentve."
+      }
+    },
+    "document_line": {
+      "error": {
+        "invalid_conversion_factor": "A mértékegység-átváltási tényező érvénytelen.",
+        "invalid_unit": "A kiválasztott mértékegység nem érvényes ehhez a termékhez.",
+        "product_required": "Minden dokumentumtételhez válassz terméket.",
+        "unit_required": "Minden dokumentumtételhez válassz mértékegységet."
+      }
+    },
+    "mail": {
+      "factory-configuration-invalid": "Az e-mail-küldés beállítása nem megfelelő.",
+      "factory-not-found": "Az e-mail-küldési szolgáltatás nem érhető el.",
+      "invalid-mailable": "Ezt az e-mailt nem sikerült előkészíteni küldésre."
+    },
+    "stock": {
+      "balances": {
+        "retrieved": "A készletegyenlegek sikeresen betöltve."
+      },
+      "movements": {
+        "retrieved": "A készletmozgások sikeresen betöltve."
+      }
+    },
+    "storage": {
+      "object-read-failed": "A kért fájlt nem sikerült beolvasni."
     }
   },
   "sidebar": {

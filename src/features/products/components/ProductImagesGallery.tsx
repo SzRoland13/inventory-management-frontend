@@ -3,11 +3,20 @@
 import { ImagePlus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ProductResponse } from '@/features/products/types/product';
-import { Card, CardContent, CardHeader, CardTitle } from '@/features/shared/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/features/shared/components/ui/card';
 import { sortProductImages } from '@/features/products/helpers/productImages';
 import { ProductImagePreview } from './ProductImagePreview';
 
-export function ProductImagesGallery({ product }: { product: ProductResponse }) {
+export function ProductImagesGallery({
+  product,
+}: {
+  product: ProductResponse;
+}) {
   const t = useTranslations();
   const images = sortProductImages(product.images).slice(1);
 
@@ -32,7 +41,10 @@ export function ProductImagesGallery({ product }: { product: ProductResponse }) 
                 alt={`${product.name} — ${image.filename}`}
                 className='w-full'
               />
-              <p className='mt-2 truncate text-xs text-zinc-400' title={image.filename}>
+              <p
+                className='mt-2 truncate text-xs text-zinc-400'
+                title={image.filename}
+              >
                 {image.filename}
               </p>
             </li>

@@ -107,7 +107,11 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
         </Button>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} onChange={() => setHasChanges(true)} className='flex flex-col gap-4'>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        onChange={() => setHasChanges(true)}
+        className='flex flex-col gap-4'
+      >
         <div className='flex flex-col gap-2'>
           <Label className='text-zinc-400'>
             {t('pages.settings.tabs.company.data.fields.name')}

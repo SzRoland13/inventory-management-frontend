@@ -325,10 +325,7 @@ export function ProductsTable() {
           String(userId)
         ],
       };
-      setSavedColumnVisibility(
-        userId,
-        functionalUpdate(updater, previous),
-      );
+      setSavedColumnVisibility(userId, functionalUpdate(updater, previous));
     },
     onColumnOrderChange: (updater) => {
       if (userId === undefined) return;
@@ -489,11 +486,7 @@ export function ProductsTable() {
           }
         />
       ) : (
-        <DataTable
-          table={table}
-          horizontalScroll
-          stickyColumnId='sku'
-        />
+        <DataTable table={table} horizontalScroll stickyColumnId='sku' />
       )}
 
       <DataTablePagination

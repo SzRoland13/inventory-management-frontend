@@ -1,9 +1,6 @@
 import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
-import type {
-  UseFormGetValues,
-  UseFormSetValue,
-} from 'react-hook-form';
+import type { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { BadgeDollarSign } from 'lucide-react';
 import { Input } from '@/features/shared/components/ui/input';
@@ -24,7 +21,7 @@ import {
 } from '@/features/products/helpers/productPricing';
 import type { ProductFormFields } from './formTypes';
 import { FieldLabel, FormSection } from './FormSection';
-import { numberInputClassName, productSelectTriggerClassName } from './styles';
+import { productSelectTriggerClassName } from './styles';
 
 type ProductUnitsPricingSectionProps = ProductFormFields & {
   getValues: UseFormGetValues<ProductFormValues>;
@@ -149,7 +146,6 @@ export function ProductUnitsPricingSection({
               <Input
                 id='product-secondary-units-per-main'
                 {...register('secondaryUnitsPerMainUnit')}
-                className={numberInputClassName}
                 type='number'
                 min='0'
                 step='any'
@@ -226,7 +222,6 @@ export function ProductUnitsPricingSection({
                   if (grossPrice !== null)
                     setValue('grossPrice', grossPrice, calculatedValueOptions);
                 }}
-                className={numberInputClassName}
                 type='number'
                 min='0'
                 step='any'
@@ -252,7 +247,6 @@ export function ProductUnitsPricingSection({
                   if (netPrice !== null)
                     setValue('netPrice', netPrice, calculatedValueOptions);
                 }}
-                className={numberInputClassName}
                 type='number'
                 min='0'
                 step='any'
@@ -266,7 +260,6 @@ export function ProductUnitsPricingSection({
               <Input
                 id='product-cost-price'
                 {...register('costPrice')}
-                className={numberInputClassName}
                 type='number'
                 min='0'
                 step='any'
@@ -302,7 +295,6 @@ export function ProductUnitsPricingSection({
                       );
                   }
                 }}
-                className={numberInputClassName}
                 type='number'
                 min='0'
                 max='99.999'
