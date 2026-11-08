@@ -63,6 +63,13 @@ export function useResetUserPasswordMutation() {
   });
 }
 
+export function useResendPasswordSetupMutation() {
+  return useMutation({
+    mutationFn: (id: number) =>
+      requireSuccessfulResponse(UserService.resendPasswordSetup(id)),
+  });
+}
+
 export function useResetUserTwoFaMutation() {
   const invalidateUsers = useInvalidateUsers();
 

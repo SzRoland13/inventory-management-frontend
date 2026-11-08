@@ -42,6 +42,10 @@ export const UserService = {
     return handleRequest(BaseService.post(`/user/reset-password/${id}`));
   },
 
+  resendPasswordSetup: async (id: number): Promise<ApiResponse<void>> => {
+    return handleRequest(BaseService.post(`/user/resend-password-setup/${id}`));
+  },
+
   uploadUserAvatar: async (
     id: number,
     data: AvatarUploadRequest,

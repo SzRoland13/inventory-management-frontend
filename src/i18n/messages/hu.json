@@ -162,7 +162,8 @@
         "activate": "Aktiválás",
         "suspend-activate": "Felfüggesztés/Aktiválás",
         "reset-2fa": "2FA visszaállítás",
-        "reset-password": "Jelszó visszaállítás"
+        "reset-password": "Jelszó visszaállítás",
+        "resend-password-setup": "Jelszóbeállító link újraküldése"
       }
     },
     "dashboard": {
@@ -1212,6 +1213,8 @@
       "suspended": "A felhasználó sikeresen felfüggesztve.",
       "activated": "A felhasználó sikeresen aktiválva.",
       "password-reset-complete": "A jelszó sikeresen visszaállítva.",
+      "password-setup-link-sent": "Új jelszóbeállító linket küldtünk.",
+      "password-setup-not-required": "Ennek a felhasználónak nincs szüksége jelszóbeállításra.",
       "two-fa-not-enabled": "A kétlépcsős azonosítás nincs engedélyezve ennél a felhasználónál.",
       "avatar-updated": "A profilkép sikeresen frissítve.",
       "password": "A felhasználó még nem állított be jelszót.",

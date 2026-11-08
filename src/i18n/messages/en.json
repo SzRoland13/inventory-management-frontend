@@ -162,7 +162,8 @@
         "activate": "Activate",
         "suspend-activate": "Suspend/Activate",
         "reset-2fa": "Reset 2FA",
-        "reset-password": "Reset password"
+        "reset-password": "Reset password",
+        "resend-password-setup": "Resend setup link"
       }
     },
     "dashboard": {
@@ -1212,6 +1213,8 @@
       "suspended": "User has been suspended successfully.",
       "activated": "User has been activated successfully.",
       "password-reset-complete": "Password has been reset successfully.",
+      "password-setup-link-sent": "A new password setup link has been sent.",
+      "password-setup-not-required": "This user does not need password setup.",
       "two-fa-not-enabled": "Two-factor authentication is not enabled for this user.",
       "avatar-updated": "Profile picture updated successfully.",
       "password": "User has not set up a password yet.",

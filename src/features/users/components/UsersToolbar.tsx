@@ -8,6 +8,7 @@ import {
   RotateCcw,
   KeyRound,
   ShieldCheck,
+  Mail,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { UserDto } from '@/features/users/types/userDtos';
@@ -20,6 +21,7 @@ interface UsersToolbarProps {
   onToggleSuspend: () => void;
   onReset2FA: () => void;
   onResetPassword: () => void;
+  onResendPasswordSetup: () => void;
 }
 
 export function UsersToolbar({
@@ -29,6 +31,7 @@ export function UsersToolbar({
   onToggleSuspend,
   onReset2FA,
   onResetPassword,
+  onResendPasswordSetup,
 }: UsersToolbarProps) {
   const t = useTranslations();
   const hasSelection = !!selectedUser;
@@ -36,6 +39,8 @@ export function UsersToolbar({
   const canReset2FA = hasSelection && (selectedUser?.twoFaEnabled ?? false);
   const canResetPassword =
     hasSelection && (selectedUser?.otcSetupCompleted ?? false);
+  const canResendPasswordSetup =
+    hasSelection && selectedUser?.userStatus === UserStatus.SETUP_REQUIRED;
   const isSuspended = selectedUser?.userStatus === UserStatus.SUSPENDED;
 
   const canToggleSuspend = hasSelection;
@@ -69,6 +74,15 @@ export function UsersToolbar({
       >
         <Edit className='h-4 w-4' />
         {t('pages.users.toolbar.edit')}
+      </Button>
+
+      <Button
+        disabled={!canResendPasswordSetup}
+        onClick={onResendPasswordSetup}
+        variant='subtleOutline'
+      >
+        <Mail className='h-4 w-4' />
+        {t('pages.users.toolbar.resend-password-setup')}
       </Button>
 
       <Button
