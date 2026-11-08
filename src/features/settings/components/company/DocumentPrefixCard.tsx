@@ -40,6 +40,7 @@ export default function DocumentPrefixCard() {
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const values = watch();
   const prefixes = values.prefixes;
   const { hasChanges, setInitialValues, resetToInitial } =
@@ -127,7 +128,8 @@ export default function DocumentPrefixCard() {
         <Button
           type='submit'
           disabled={!hasChanges || isSubmitting}
-          variant='mutedSolid' className='mt-2 md:col-span-2 w-72 self-center'
+          variant='mutedSolid'
+          className='mt-2 md:col-span-2 w-72 self-center'
         >
           {t('common.save')}
         </Button>
