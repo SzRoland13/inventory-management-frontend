@@ -966,11 +966,17 @@
     "settings": {
       "title": "Beállítások",
       "tabs": {
-        "general": {
-          "title": "Általános"
-        },
         "user": {
           "title": "Felhasználó",
+          "language": {
+            "title": "Nyelv",
+            "description": "Válaszd ki az alkalmazásban használt nyelvet.",
+            "label": "Megjelenítési nyelv",
+            "options": {
+              "en": "Angol",
+              "hu": "Magyar"
+            }
+          },
           "profile": {
             "title": "Profilkép",
             "description": "Tölts fel egy új profilképet a fiókodhoz.",

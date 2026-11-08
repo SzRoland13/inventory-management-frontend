@@ -966,11 +966,17 @@
     "settings": {
       "title": "Settings",
       "tabs": {
-        "general": {
-          "title": "General"
-        },
         "user": {
           "title": "User",
+          "language": {
+            "title": "Language",
+            "description": "Choose the language used across the application.",
+            "label": "Display language",
+            "options": {
+              "en": "English",
+              "hu": "Hungarian"
+            }
+          },
           "profile": {
             "title": "Profile Picture",
             "description": "Upload a new avatar for your account.",
