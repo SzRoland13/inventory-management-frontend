@@ -15,6 +15,10 @@ export interface PartnerRequest {
   name: string;
   type: PartnerType;
   taxNumber: string | null;
+  vatNumber: string | null;
+  registrationNumber: string | null;
+  bankAccount: string | null;
+  iban: string | null;
 }
 
 export interface ContactRequest {

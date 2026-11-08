@@ -117,6 +117,7 @@ export type ProductRequest = {
   sku: string;
   ean: string | null;
   name: string;
+  minimumStockQuantity: number | null;
   description: string | null;
   brandId: number | null;
   status: Exclude<ProductStatus, ProductStatus.ARCHIVED>;
@@ -181,6 +182,7 @@ export type ProductResponse = {
   sku: string;
   ean: string | null;
   name: string;
+  minimumStockQuantity: number | null;
   description: string | null;
   brand: Brand | null;
   status: ProductStatus;

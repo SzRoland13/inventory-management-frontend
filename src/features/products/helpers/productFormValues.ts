@@ -22,6 +22,10 @@ export function valuesFromProduct(
     sku: product?.sku ?? '',
     ean: product?.ean ?? '',
     name: product?.name ?? '',
+    minimumStockQuantity:
+      product?.minimumStockQuantity == null
+        ? ''
+        : String(product.minimumStockQuantity),
     description: product?.description ?? '',
     brandId: product?.brand ? String(product.brand.id) : '',
     status:

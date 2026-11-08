@@ -56,7 +56,6 @@ export function StartStockCountDialog({
       const response = await createCount.mutateAsync({
         warehouseId: Number(warehouseId),
         countedAt: new Date(countedAt).toISOString(),
-        lines: [],
       });
       toast.success(t('pages.documents.operations.countStarted'));
       onCreated(response.payload as BusinessDocument);

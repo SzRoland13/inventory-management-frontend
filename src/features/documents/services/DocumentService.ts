@@ -26,6 +26,7 @@ import type {
   QuarantineReleaseRequest,
   ReplacementDeliveryRequest,
   StockCountRequest,
+  StockCountItemsRequest,
   ReconciliationRequest,
   CorrectionRequest,
   CorrectionPreviewRequest,
@@ -245,6 +246,11 @@ export const DocumentService = {
   createStockCount: (request: StockCountRequest) =>
     BaseService.post<ApiResponse<BusinessDocument>>(
       `${DOCUMENTS_URL}/stock-counts`,
+      request,
+    ),
+  addStockCountItems: (id: number, request: StockCountItemsRequest) =>
+    BaseService.post<ApiResponse<BusinessDocument>>(
+      `${DOCUMENTS_URL}/stock-counts/${id}/items`,
       request,
     ),
   previewStockCount: (id: number, request: ReconciliationRequest) =>

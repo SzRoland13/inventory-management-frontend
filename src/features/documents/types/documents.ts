@@ -277,7 +277,7 @@ export type CloseRemainingRequest = {
 export type DocumentOperationLine = {
   sourceLineId?: number;
   productId: number;
-  quantity: number;
+  quantity?: number;
   unitId?: number;
   correctedQuantity?: number;
   correctedProductId?: number;
@@ -390,11 +390,10 @@ export type ReplacementDeliveryMutationRequest = ReplacementDeliveryRequest & {
 export type StockCountRequest = {
   warehouseId: number;
   countedAt: string;
-  lines: Array<{
-    productId: number;
-    countedQuantity?: number;
-    varianceReason?: string;
-  }>;
+};
+export type StockCountItemsRequest = {
+  version: string;
+  productIds: number[];
 };
 export type ReconciliationRequest = {
   version: string;

@@ -732,7 +732,7 @@ export function CreateDocumentDialog({ open, onOpenChange }: Props) {
                   <DocumentDraftNotesField value={notes} onChange={setNotes} />
                   <div className='space-y-2'>
                     <Label htmlFor='payment-terms'>{t('pages.documents.commercial.paymentTerms')}</Label>
-                    <Input id='payment-terms' value={paymentTerms} onChange={(event) => setPaymentTerms(event.target.value)} maxLength={500} />
+                    <textarea id='payment-terms' value={paymentTerms} onChange={(event) => setPaymentTerms(event.target.value)} rows={2} maxLength={500} className='flex min-h-16 max-h-[40vh] w-full resize-y rounded-md border border-zinc-600 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus-visible:border-indigo-400 focus-visible:ring-0' />
                   </div>
                 </div>
               </ScrollArea>
