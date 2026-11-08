@@ -80,9 +80,13 @@ export default function TwoFaSetupPage() {
   });
 
   const onRequestQr = async (data: FirstLoginRequestFormValues) => {
-    if (data.email) {
+    const shortLifeToken = useAuthStore.getState().shortLifeToken;
+    if (data.email && shortLifeToken) {
       try {
-        const response = await twoFaSetup.mutateAsync({ email: data.email });
+        const response = await twoFaSetup.mutateAsync({
+          email: data.email,
+          shortLifeToken,
+        });
         toast(t(`messagekey.${response.messageKey}`));
         setQrCode(response.payload);
       } catch (error) {

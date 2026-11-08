@@ -9,6 +9,7 @@ import {
   PasswordSetupRequest,
   ShortLifeTokenResponse,
   TwoFactorVerifyRequest,
+  TwoFactorSetupRequest,
 } from '@/features/auth/types/authDtos';
 import { ApiResponse } from '@/features/shared/types/genericDtos';
 import { UserDto } from '@/features/users/types/userDtos';
@@ -47,7 +48,7 @@ export const AuthService = {
     return handleRequest(BaseService.post('/auth/login', req));
   },
 
-  twoFaSetup: async (req: EmailRequest): Promise<ApiResponse<string>> => {
+  twoFaSetup: async (req: TwoFactorSetupRequest): Promise<ApiResponse<string>> => {
     return handleRequest(BaseService.post('/auth/2fa/setup', req));
   },
 

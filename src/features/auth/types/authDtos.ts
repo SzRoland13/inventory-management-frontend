@@ -2,6 +2,11 @@ export type EmailRequest = {
   email: string;
 };
 
+export type TwoFactorSetupRequest = {
+  email: string;
+  shortLifeToken: string;
+};
+
 export type FirstLoginValidationRequest = {
   email: string;
   oneTimeCode: string;
