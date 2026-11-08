@@ -30,7 +30,7 @@ export default function SidebarFooter() {
         useAvatarStore.getState().clearAvatar();
         useCompanyStore.getState().clearCompanyData();
 
-        router.push(Routes.Login_Start);
+        router.push(Routes.Login);
 
         toast(t(`messagekey.${response.messageKey}`));
       },

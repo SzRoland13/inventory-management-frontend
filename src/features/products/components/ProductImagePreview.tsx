@@ -3,8 +3,12 @@
 import Image from 'next/image';
 import { ImageIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useMediaPreviewQuery } from '@/features/shared/media/mediaQueries';
+import {
+  useMediaPreviewQuery,
+  useMediaThumbnailPreviewQuery,
+} from '@/features/shared/media/mediaQueries';
 import type { MediaPreviewResponse } from '@/features/shared/media/types/mediaDtos';
+import { MediaThumbnailStatus } from '@/features/shared/media/types/mediaDtos';
 import { cn } from '@/features/shared/utils/css';
 
 type ProductImagePreviewProps = {
@@ -12,6 +16,7 @@ type ProductImagePreviewProps = {
   alt: string;
   className?: string;
   preview?: MediaPreviewResponse;
+  useThumbnail?: boolean;
 };
 
 export function ProductImagePreview({
@@ -19,6 +24,7 @@ export function ProductImagePreview({
   alt,
   className,
   preview,
+  useThumbnail = false,
 }: ProductImagePreviewProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const [nearViewport, setNearViewport] = useState(false);
@@ -40,8 +46,21 @@ export function ProductImagePreview({
     return () => observer.disconnect();
   }, [mediaAssetId]);
 
-  const query = useMediaPreviewQuery(mediaAssetId, preview, nearViewport);
-  const imageUrl = query.data?.payload.getUrl;
+  const previewQuery = useMediaPreviewQuery(
+    mediaAssetId,
+    preview,
+    nearViewport && !useThumbnail,
+  );
+  const thumbnailQuery = useMediaThumbnailPreviewQuery(
+    mediaAssetId,
+    nearViewport && useThumbnail,
+  );
+  const thumbnail = thumbnailQuery.data?.payload;
+  const imageUrl = useThumbnail
+    ? thumbnail?.status === MediaThumbnailStatus.READY
+      ? thumbnail.getUrl
+      : null
+    : previewQuery.data?.payload.getUrl;
 
   return (
     <div
@@ -63,6 +82,7 @@ export function ProductImagePreview({
           className='absolute inset-0 h-full w-full object-contain'
           onError={(event) => {
             event.currentTarget.style.display = 'none';
+            if (useThumbnail) void thumbnailQuery.refetch();
           }}
         />
       )}

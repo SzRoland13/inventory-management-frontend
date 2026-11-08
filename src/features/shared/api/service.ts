@@ -12,12 +12,14 @@ export const handleRequest = async <T>(
         success: false,
         messageKey: error.response.data.messageKey,
         payload: error.response?.data?.payload ?? null,
+        params: error.response?.data?.params ?? null,
       };
     } else {
       return {
         success: false,
         messageKey: 'error.generic',
         payload: error.response?.data?.payload ?? null,
+        params: error.response?.data?.params ?? null,
       };
     }
   }

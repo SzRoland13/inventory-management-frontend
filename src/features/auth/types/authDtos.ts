@@ -1,14 +1,10 @@
-export type EmailRequest = {
+export type TwoFactorSetupRequest = {
   email: string;
-};
-
-export type FirstLoginValidationRequest = {
-  email: string;
-  oneTimeCode: string;
+  shortLifeToken: string;
 };
 
 export type PasswordSetupRequest = {
-  email: string;
+  oneTimeCode: string;
   password: string;
   repeatPassword: string;
 };
@@ -16,11 +12,6 @@ export type PasswordSetupRequest = {
 export type LoginRequest = {
   email: string;
   password: string;
-};
-
-export type CheckFirstLoginResponse = {
-  emailRegistered: boolean;
-  firstLogin: boolean;
 };
 
 export type UserDetails = {

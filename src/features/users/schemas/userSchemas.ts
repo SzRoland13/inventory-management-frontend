@@ -4,7 +4,10 @@ import { emailSchema } from '@/features/shared/schemas/commonSchemas';
 
 export const addEditUserSchema = z.object({
   id: z.union([z.number(), z.undefined()]),
-  username: z.string().min(1, { error: 'common.username.required' }),
+  username: z
+    .string()
+    .min(1, { error: 'common.username.required' })
+    .max(100, { error: 'messagekey.validation.too_long' }),
   email: emailSchema,
   role: z.enum(UserRole, { error: 'common.role.required' }),
 });

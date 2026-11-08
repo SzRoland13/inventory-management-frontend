@@ -28,7 +28,7 @@ export default async function ProtectedLayout({
   // routes - this is a defense-in-depth fallback (e.g. a future route added
   // under (protected) before PROTECTED_ROUTES is updated), not the primary gate.
   if (!session.authenticated) {
-    redirect({ href: Routes.Login_Start, locale });
+    redirect({ href: Routes.Login, locale });
   }
 
   // Fresh QueryClient per request - never a module-level singleton, which

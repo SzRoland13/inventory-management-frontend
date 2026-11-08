@@ -29,7 +29,7 @@
       "invalid": "Érvénytelen e-mail cím"
     },
     "phone": {
-      "invalid": "Adj meg egy 5–15 számjegyből álló telefonszámot. Csak számjegyeket és szokásos elválasztókat használj (+, szóköz, zárójel, kötőjel vagy pont).",
+      "invalid": "Add meg az országhívószámot, a szám + jellel kezdődjön, és csak számjegyeket használj (pl. +36123456789).",
       "too-long": "A telefonszám túl hosszú."
     },
     "country": {
@@ -162,7 +162,8 @@
         "activate": "Aktiválás",
         "suspend-activate": "Felfüggesztés/Aktiválás",
         "reset-2fa": "2FA visszaállítás",
-        "reset-password": "Jelszó visszaállítás"
+        "reset-password": "Jelszó visszaállítás",
+        "resend-password-setup": "Jelszóbeállító link újraküldése"
       }
     },
     "dashboard": {
@@ -965,11 +966,17 @@
     "settings": {
       "title": "Beállítások",
       "tabs": {
-        "general": {
-          "title": "Általános"
-        },
         "user": {
           "title": "Felhasználó",
+          "language": {
+            "title": "Nyelv",
+            "description": "Válaszd ki az alkalmazásban használt nyelvet.",
+            "label": "Megjelenítési nyelv",
+            "options": {
+              "en": "Angol",
+              "hu": "Magyar"
+            }
+          },
           "profile": {
             "title": "Profilkép",
             "description": "Tölts fel egy új profilképet a fiókodhoz.",
@@ -1118,11 +1125,11 @@
             "title": "Számlázási adatok",
             "description": "A számlákon és egyéb hivatalos dokumentumokon megjelenő számlázási adatok kezelése.",
             "fields": {
-              "taxNumber": "Adószám",
+              "taxNumber": "Belföldi adószám",
               "vatNumber": "EU adószám",
               "registrationNumber": "Cégjegyzékszám",
               "bankAccount": "Bankszámlaszám",
-              "iban": "IBAN"
+              "iban": "IBAN-szám"
             }
           },
           "prefix": {
@@ -1144,7 +1151,10 @@
               "TRANSFER_DELIVERY": "Készletátvezetési kiadás",
               "TRANSFER_RECEIPT": "Készletátvezetési bevételezés",
               "STOCK_ADJUSTMENT": "Készletkorrekció",
-              "RETURN": "Visszáru"
+              "RETURN": "Visszáru",
+              "STOCK_COUNT": "Készletleltár",
+              "WAREHOUSE_TRANSFER": "Raktárközi átadás",
+              "CORRECTION": "Helyesbítés"
             }
           },
           "currency": {
@@ -1164,6 +1174,18 @@
     }
   },
   "messagekey": {
+    "validation": {
+      "required": "A mező kitöltése kötelező.",
+      "too_long": "A megadott érték túl hosszú.",
+      "invalid_value": "Adj meg érvényes értéket.",
+      "website_requires_protocol": "A weboldal címét http:// vagy https:// előtaggal add meg, például: https://example.com.",
+      "country": { "invalid": "Adj meg érvényes ISO országkódot." },
+      "email": { "invalid": "Adj meg érvényes e-mail-címet." },
+      "phone": { "invalid": "Add meg az országhívószámot, a szám + jellel kezdődjön, és csak számjegyeket használj (pl. +36123456789)." },
+      "iban": { "invalid": "Adj meg érvényes IBAN-számot." },
+      "vat": { "invalid": "Adj meg érvényes EU adószámot, például: HU12345678." },
+      "domestic_tax_number": { "invalid": "A belföldi adószám formátuma: 12345678-1-12." }
+    },
     "guard": {
       "session-expired": "Lejárt munkamenet. Kérlek lépj be újra.",
       "invalid-session": "Érvénytelen munkamenet. A hitelesítő adatai már nem érvényesek."
@@ -1212,6 +1234,8 @@
       "suspended": "A felhasználó sikeresen felfüggesztve.",
       "activated": "A felhasználó sikeresen aktiválva.",
       "password-reset-complete": "A jelszó sikeresen visszaállítva.",
+      "password-setup-link-sent": "Új jelszóbeállító linket küldtünk.",
+      "password-setup-not-required": "Ennek a felhasználónak nincs szüksége jelszóbeállításra.",
       "two-fa-not-enabled": "A kétlépcsős azonosítás nincs engedélyezve ennél a felhasználónál.",
       "avatar-updated": "A profilkép sikeresen frissítve.",
       "password": "A felhasználó még nem állított be jelszót.",

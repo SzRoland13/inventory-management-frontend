@@ -15,8 +15,6 @@ export const PROTECTED_ROUTES: readonly Routes[] = [
 
 export const AUTH_ROUTES: readonly Routes[] = [
   Routes.Login,
-  Routes.Login_Start,
-  Routes.First_Login,
   Routes.Setup_Password,
   Routes.Two_Fa_Login,
   Routes.Two_Fa_Setup,

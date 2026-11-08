@@ -15,6 +15,7 @@ import CardWrapper from '@/features/shared/components/CardWrapper';
 import { useUpdateCompanyBaseDataMutation } from '@/features/settings/queries/companyQueries';
 import { toastApiError } from '@/features/shared/api/apiResponse';
 import { companyBaseDataSchema } from '@/features/settings/schemas/companySchemas';
+import { ValidationMessage } from '@/features/shared/components/ValidationMessage';
 
 type Props = {
   initialCompanyData?: CompanyExtendedResponse | null;
@@ -120,6 +121,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
             {...register('name')}
             className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
           />
+          <ValidationMessage messageKey={errors.name?.message} />
         </div>
 
         <div className='flex flex-col gap-2'>
@@ -130,6 +132,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
             {...register('description')}
             className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
           />
+          <ValidationMessage messageKey={errors.description?.message} />
         </div>
 
         <div className='flex flex-col gap-2'>
@@ -140,6 +143,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
             {...register('email')}
             className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
           />
+          <ValidationMessage messageKey={errors.email?.message} />
         </div>
 
         <div className='flex flex-col gap-2'>
@@ -151,11 +155,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
             {...register('phone')}
             className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
           />
-          {errors.phone?.message && (
-            <p className='text-sm text-red-400' role='alert'>
-              {t(errors.phone.message)}
-            </p>
-          )}
+          <ValidationMessage messageKey={errors.phone?.message} />
         </div>
 
         <div className='flex flex-col gap-2'>
@@ -166,6 +166,7 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
             {...register('address')}
             className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
           />
+          <ValidationMessage messageKey={errors.address?.message} />
         </div>
 
         <div className='flex flex-col gap-2'>
@@ -174,8 +175,11 @@ export default function BaseDataCard({ initialCompanyData }: Props) {
           </Label>
           <Input
             {...register('website')}
+            maxLength={2048}
+            placeholder='https://example.com'
             className='bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-400'
           />
+          <ValidationMessage messageKey={errors.website?.message} />
         </div>
 
         <Button

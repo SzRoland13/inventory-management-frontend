@@ -12,30 +12,6 @@ export function useSessionQuery() {
   });
 }
 
-export function useCheckFirstLoginMutation() {
-  return useMutation({
-    mutationFn: (
-      request: Parameters<typeof AuthService.checkIfFirstLogin>[0],
-    ) => requireSuccessfulResponse(AuthService.checkIfFirstLogin(request)),
-  });
-}
-
-export function useRequestOneTimeCodeMutation() {
-  return useMutation({
-    mutationFn: (
-      request: Parameters<typeof AuthService.requestOneTimeCode>[0],
-    ) => requireSuccessfulResponse(AuthService.requestOneTimeCode(request)),
-  });
-}
-
-export function useValidateOneTimeCodeMutation() {
-  return useMutation({
-    mutationFn: (
-      request: Parameters<typeof AuthService.validateOneTimeCode>[0],
-    ) => requireSuccessfulResponse(AuthService.validateOneTimeCode(request)),
-  });
-}
-
 export function useSetupNewPasswordMutation() {
   return useMutation({
     mutationFn: (request: Parameters<typeof AuthService.setupNewPassword>[0]) =>

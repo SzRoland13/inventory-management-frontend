@@ -22,6 +22,7 @@ import {
   useSetUserSuspendedMutation,
   useResetUserPasswordMutation,
   useResetUserTwoFaMutation,
+  useResendPasswordSetupMutation,
 } from '@/features/users/queries/userQueries';
 import { toastApiError } from '@/features/shared/api/apiResponse';
 import { toast } from 'sonner';
@@ -53,6 +54,7 @@ export function UsersTable() {
   const setSuspended = useSetUserSuspendedMutation();
   const resetPassword = useResetUserPasswordMutation();
   const resetTwoFa = useResetUserTwoFaMutation();
+  const resendPasswordSetup = useResendPasswordSetupMutation();
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -158,6 +160,18 @@ export function UsersTable() {
     });
   };
 
+  const handleResendPasswordSetup = () => {
+    if (selectedIds.length !== 1) return;
+
+    resendPasswordSetup.mutate(selectedIds[0], {
+      onSuccess: () => {
+        toast.success(t('messagekey.user.password-setup-link-sent'));
+        setRowSelection({});
+      },
+      onError: (error) => toastApiError(t, error),
+    });
+  };
+
   return (
     <section className='m-3 overflow-hidden rounded-lg border bg-zinc-900'>
       <UsersToolbar
@@ -167,6 +181,7 @@ export function UsersTable() {
         onToggleSuspend={handleToggleSuspend}
         onReset2FA={handleReset2FA}
         onResetPassword={handleResetPassword}
+        onResendPasswordSetup={handleResendPasswordSetup}
       />
       <div className='flex w-full bg-zinc-900'>
         <DataTable table={table} />

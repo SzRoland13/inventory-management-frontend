@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { optionalPhoneSchema } from '@/features/shared/schemas/commonSchemas';
+import {
+  optionalEmailSchema,
+  optionalPhoneSchema,
+} from '@/features/shared/schemas/commonSchemas';
 import { isIsoCountryCode } from '@/features/shared/helpers/countries';
 import {
   WarehouseType,
@@ -21,7 +24,7 @@ export const warehouseFormSchema = z
     addressLine1: z.string(),
     addressLine2: z.string().max(255, tooLong),
     phone: optionalPhoneSchema(50),
-    email: z.string().max(255, tooLong),
+    email: optionalEmailSchema(254),
   })
   .superRefine((value, context) => {
     if (!value.addressEnabled) return;
