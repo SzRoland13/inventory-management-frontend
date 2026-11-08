@@ -1,8 +1,6 @@
 import { z } from 'zod';
 import { emailSchema } from '@/features/shared/schemas/commonSchemas';
 
-export const loginStartSchema = z.object({ email: emailSchema });
-
 export const loginSchema = z.object({
   email: emailSchema,
   password: z
@@ -11,12 +9,7 @@ export const loginSchema = z.object({
     .min(8, { error: 'common.password.rules.min-8-chars' }),
 });
 
-export const firstLoginRequestSchema = z.object({ email: emailSchema });
-
-export const firstLoginVerifySchema = z.object({
-  email: emailSchema,
-  oneTimeCode: z.string().min(1, { error: 'pages.first-login.otc.required' }),
-});
+export const emailRequestSchema = z.object({ email: emailSchema });
 
 const sixDigitCodeSchema = z
   .string()
@@ -76,7 +69,6 @@ const setupPasswordSchema = z
 
 export const passwordSetupSchema = z
   .object({
-    email: emailSchema,
     password: setupPasswordSchema,
     repeatPassword: z
       .string()
@@ -87,12 +79,8 @@ export const passwordSetupSchema = z
     error: 'pages.setup-password.repeat-password.no-match',
   });
 
-export type LoginStartFormValues = z.infer<typeof loginStartSchema>;
 export type LoginFormValues = z.infer<typeof loginSchema>;
-export type FirstLoginRequestFormValues = z.infer<
-  typeof firstLoginRequestSchema
->;
-export type FirstLoginVerifyFormValues = z.infer<typeof firstLoginVerifySchema>;
+export type EmailRequestFormValues = z.infer<typeof emailRequestSchema>;
 export type TwoFactorLoginFormValues = z.infer<typeof twoFactorLoginSchema>;
 export type TwoFactorSetupCodeFormValues = z.infer<
   typeof twoFactorSetupCodeSchema

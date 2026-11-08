@@ -2,7 +2,6 @@
 
 import { Button } from '@/features/shared/components/ui/button';
 import { AuthCard } from '@/features/auth/components/AuthCard';
-import { AuthFormField } from '@/features/auth/components/AuthFormField';
 import {
   passwordSetupSchema,
   type PasswordSetupFormValues,
@@ -20,11 +19,6 @@ import {
   ApiResponseError,
   getApiErrorMessageKey,
 } from '@/features/shared/api/apiResponse';
-import { useAuthStore } from '@/features/auth/stores/authStore';
-import {
-  clearPasswordSetupToken,
-  getPasswordSetupToken,
-} from '@/features/auth/stores/passwordSetupTokenStorage';
 import { Routes } from '@/features/shared/types/routes';
 import { Label } from '@radix-ui/react-label';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -40,9 +34,10 @@ export default function SetupPasswordPage() {
   const t = useTranslations();
   const router = useRouter();
   const passwordRef = useRef<HTMLInputElement | null>(null);
+  const setupTokenInitialized = useRef(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
-  const [setupToken, setSetupToken] = useState<string | null>(null);
+  const [oneTimeCode, setOneTimeCode] = useState<string | null>(null);
   const setupNewPassword = useSetupNewPasswordMutation();
 
   const {
@@ -55,17 +50,29 @@ export default function SetupPasswordPage() {
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
     defaultValues: {
-      email: useAuthStore.getState().email ?? '',
       password: '',
       repeatPassword: '',
     },
   });
 
   useEffect(() => {
-    const token = getPasswordSetupToken();
-    setSetupToken(token);
-    if (!useAuthStore.getState().email || !token) {
-      router.push(Routes.Login_Start);
+    if (setupTokenInitialized.current) return;
+    setupTokenInitialized.current = true;
+
+    const currentUrl = new URL(window.location.href);
+    const token =
+      currentUrl.searchParams.get('setupToken') ?? currentUrl.hash.slice(1);
+    setOneTimeCode(token || null);
+    if (token) {
+      currentUrl.searchParams.delete('setupToken');
+      currentUrl.hash = '';
+      window.history.replaceState(
+        null,
+        '',
+        `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`,
+      );
+    } else {
+      router.replace(Routes.Login);
     }
     passwordRef.current?.focus();
   }, [router]);
@@ -74,18 +81,18 @@ export default function SetupPasswordPage() {
   const password = watch('password');
 
   const onSubmit = async (data: PasswordSetupFormValues) => {
-    if (!setupToken) {
-      router.push(Routes.Login_Start);
+    if (!oneTimeCode) {
+      router.push(Routes.Login);
       return;
     }
 
     try {
       const response = await setupNewPassword.mutateAsync({
-        setupToken,
+        oneTimeCode,
         password: data.password,
         repeatPassword: data.repeatPassword,
       });
-      clearPasswordSetupToken();
+      setOneTimeCode(null);
       toast(t(`messagekey.${response.messageKey}`));
       router.push(Routes.Login);
     } catch (error) {
@@ -94,8 +101,8 @@ export default function SetupPasswordPage() {
         error instanceof ApiResponseError &&
         error.messageKey === 'auth.invalid-or-expired-session'
       ) {
-        clearPasswordSetupToken();
-        router.push(Routes.Login_Start);
+        setOneTimeCode(null);
+        router.push(Routes.Login);
       }
     }
   };
@@ -155,15 +162,6 @@ export default function SetupPasswordPage() {
         onSubmit={handleSubmit(onSubmit)}
         className='space-y-4 animate-fadeIn'
       >
-        <AuthFormField
-          id='email'
-          label={t('common.email.title')}
-          type='email'
-          disabled
-          error={errors.email?.message}
-          {...register('email')}
-        />
-
         <div className='flex flex-col gap-2'>
           <Label htmlFor='password' className='text-zinc-300'>
             {t('common.password.title')}

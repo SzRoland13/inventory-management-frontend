@@ -49,7 +49,7 @@ export default function TwoFaLoginPage() {
       !storeState.shortLifeTokenExpiry
     ) {
       toast(t('messagekey.auth.invalid-or-expired-session'));
-      router.push(Routes.Login_Start);
+      router.push(Routes.Login);
     } else {
       setTimeout(() => codeInputRef.current?.focus(), 250);
     }

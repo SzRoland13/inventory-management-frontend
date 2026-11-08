@@ -1,11 +1,7 @@
 import { BaseService } from '@/features/shared/api/BaseService';
 import {
-  CheckFirstLoginResponse,
-  EmailRequest,
-  FirstLoginValidationRequest,
   LoginRequest,
   LoginResponse,
-  PasswordSetupTokenResponse,
   PasswordSetupRequest,
   ShortLifeTokenResponse,
   TwoFactorVerifyRequest,
@@ -18,22 +14,6 @@ import { handleRequest } from '@/features/shared/api/service';
 export const AuthService = {
   checkSession: async (): Promise<ApiResponse<UserDto>> => {
     return handleRequest(BaseService.get('/auth/check-session'));
-  },
-
-  checkIfFirstLogin: async (
-    req: EmailRequest,
-  ): Promise<ApiResponse<CheckFirstLoginResponse>> => {
-    return handleRequest(BaseService.post('/auth/check-first-login', req));
-  },
-
-  requestOneTimeCode: async (req: EmailRequest): Promise<ApiResponse<void>> => {
-    return handleRequest(BaseService.post('/auth/send-one-time-code', req));
-  },
-
-  validateOneTimeCode: async (
-    req: FirstLoginValidationRequest,
-  ): Promise<ApiResponse<PasswordSetupTokenResponse>> => {
-    return handleRequest(BaseService.post('/auth/validate-one-time-code', req));
   },
 
   setupNewPassword: async (

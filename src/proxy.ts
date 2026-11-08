@@ -51,10 +51,11 @@ export default async function proxy(request: NextRequest) {
     // Built directly rather than deferring to next-intl, since the
     // fallback locale computed above already produces a correctly
     // prefixed URL regardless of whether the incoming request had one.
-    const redirectUrl = new URL(`/${locale}${Routes.Login_Start}`, request.url);
+    const redirectUrl = new URL(`/${locale}${Routes.Login}`, request.url);
     redirectUrl.searchParams.set('reason', 'session-expired');
     const response = NextResponse.redirect(redirectUrl);
     applyCookieInstructions(response, result);
+
     return response;
   }
 

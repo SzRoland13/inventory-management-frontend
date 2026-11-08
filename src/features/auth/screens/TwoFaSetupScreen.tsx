@@ -10,9 +10,9 @@ import { Button } from '@/features/shared/components/ui/button';
 import { AuthCard } from '@/features/auth/components/AuthCard';
 import { AuthFormField } from '@/features/auth/components/AuthFormField';
 import {
-  firstLoginRequestSchema,
+  emailRequestSchema,
   twoFactorSetupCodeSchema,
-  type FirstLoginRequestFormValues,
+  type EmailRequestFormValues,
   type TwoFactorSetupCodeFormValues,
 } from '@/features/auth/schemas/authSchemas';
 import {
@@ -51,7 +51,7 @@ export default function TwoFaSetupPage() {
       !storeState.shortLifeTokenExpiry
     ) {
       toast(t('messagekey.auth.invalid-or-expired-session'));
-      router.push(Routes.Login_Start);
+      router.push(Routes.Login);
     }
   }, [router, t]);
 
@@ -65,8 +65,8 @@ export default function TwoFaSetupPage() {
     register: registerEmail,
     handleSubmit: handleEmailSubmit,
     formState: { errors: emailErrors, isSubmitting: emailSubmitting },
-  } = useForm<FirstLoginRequestFormValues>({
-    resolver: zodResolver(firstLoginRequestSchema),
+  } = useForm<EmailRequestFormValues>({
+    resolver: zodResolver(emailRequestSchema),
     defaultValues: { email: useAuthStore.getState().email ?? '' },
   });
 
@@ -79,7 +79,7 @@ export default function TwoFaSetupPage() {
     defaultValues: { code: '' },
   });
 
-  const onRequestQr = async (data: FirstLoginRequestFormValues) => {
+  const onRequestQr = async (data: EmailRequestFormValues) => {
     const shortLifeToken = useAuthStore.getState().shortLifeToken;
     if (data.email && shortLifeToken) {
       try {
@@ -150,7 +150,7 @@ export default function TwoFaSetupPage() {
       size='md'
       headerAccessory={
         <ShortLifeTokenCountdown
-          onExpire={() => router.push(Routes.Login_Start)}
+          onExpire={() => router.push(Routes.Login)}
         />
       }
       footer={

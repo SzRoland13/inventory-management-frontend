@@ -56,8 +56,9 @@ axiosClient.interceptors.response.use(
             ? segment
             : routing.defaultLocale;
 
-          if (window.location.pathname !== `/${locale}/login-start`) {
-            window.location.href = `/${locale}/login-start`;
+          if (window.location.pathname !== `/${locale}/login`) {
+            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+            globalThis.location.href = `/${locale}/login`;
           }
 
           return Promise.reject(null);

@@ -21,12 +21,21 @@ import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
   const router = useRouter();
   const t = useTranslations();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const login = useLoginMutation();
+
+  useEffect(() => {
+    if (searchParams.get('reason') === 'session-expired') {
+      toast(t('messagekey.guard.session-expired'));
+      router.replace({ pathname: Routes.Login, query: {} });
+    }
+  }, [router, searchParams, t]);
 
   const {
     register,
@@ -36,16 +45,18 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
-    defaultValues: { email: useAuthStore.getState().email ?? '', password: '' },
+    defaultValues: { email: '', password: '' },
   });
 
   const onSubmit = async (data: LoginFormValues) => {
+    useAuthStore.getState().clearAuthData();
     try {
       const response = await login.mutateAsync({
         email: data.email,
         password: data.password,
       });
 
+      useAuthStore.getState().setAuthData({ email: data.email });
       if (response.payload?.shortLifeToken && response.payload?.expiresAt) {
         const expiresAt = new Date(response.payload.expiresAt);
 
@@ -67,12 +78,6 @@ export default function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    if (!useAuthStore.getState().email) {
-      router.push(Routes.Login_Start);
-    }
-  }, [router]);
-
   return (
     <AuthCard
       title={t('pages.login.title')}
@@ -89,7 +94,6 @@ export default function LoginPage() {
           label={t('common.email.title')}
           type='email'
           placeholder='m@example.com'
-          disabled
           error={errors.email?.message}
           {...register('email')}
         />
@@ -118,23 +122,14 @@ export default function LoginPage() {
           <ValidationMessage messageKey={errors.password?.message} />
         </div>
 
-        <div className='flex flex-col sm:flex-row w-full gap-3'>
-          <Button
-            type='button'
-            disabled={isSubmitting}
-            variant='mutedSolid' className='flex-1'
-            onClick={() => router.push(Routes.Login_Start)}
-          >
-            {t('common.back')}
-          </Button>
-          <Button
-            type='submit'
-            disabled={isSubmitting}
-            variant='mutedSolid' className='flex-1'
-          >
-            {isSubmitting ? t('common.submitting') : t('common.continue')}
-          </Button>
-        </div>
+        <Button
+          type='submit'
+          disabled={isSubmitting}
+          variant='mutedSolid'
+          className='w-full'
+        >
+          {isSubmitting ? t('common.submitting') : t('common.continue')}
+        </Button>
       </form>
     </AuthCard>
   );
