@@ -5,6 +5,7 @@ import {
   FirstLoginValidationRequest,
   LoginRequest,
   LoginResponse,
+  PasswordSetupTokenResponse,
   PasswordSetupRequest,
   ShortLifeTokenResponse,
   TwoFactorVerifyRequest,
@@ -30,7 +31,7 @@ export const AuthService = {
 
   validateOneTimeCode: async (
     req: FirstLoginValidationRequest,
-  ): Promise<ApiResponse<void>> => {
+  ): Promise<ApiResponse<PasswordSetupTokenResponse>> => {
     return handleRequest(BaseService.post('/auth/validate-one-time-code', req));
   },
 

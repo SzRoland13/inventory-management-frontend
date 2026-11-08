@@ -7,8 +7,13 @@ export type FirstLoginValidationRequest = {
   oneTimeCode: string;
 };
 
+export type PasswordSetupTokenResponse = {
+  setupToken: string;
+  expiresAt: string;
+};
+
 export type PasswordSetupRequest = {
-  email: string;
+  setupToken: string;
   password: string;
   repeatPassword: string;
 };

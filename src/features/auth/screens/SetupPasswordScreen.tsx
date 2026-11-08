@@ -11,13 +11,20 @@ import { Dialog, DialogTrigger } from '@/features/shared/components/ui/dialog';
 import {
   AppDialogBody,
   AppDialogCard,
-  AppDialogHeader
+  AppDialogHeader,
 } from '@/features/shared/components/AppDialogLayout';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { Input } from '@/features/shared/components/ui/input';
 import { useSetupNewPasswordMutation } from '@/features/auth/queries/authQueries';
-import { getApiErrorMessageKey } from '@/features/shared/api/apiResponse';
+import {
+  ApiResponseError,
+  getApiErrorMessageKey,
+} from '@/features/shared/api/apiResponse';
 import { useAuthStore } from '@/features/auth/stores/authStore';
+import {
+  clearPasswordSetupToken,
+  getPasswordSetupToken,
+} from '@/features/auth/stores/passwordSetupTokenStorage';
 import { Routes } from '@/features/shared/types/routes';
 import { Label } from '@radix-ui/react-label';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -35,6 +42,7 @@ export default function SetupPasswordPage() {
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+  const [setupToken, setSetupToken] = useState<string | null>(null);
   const setupNewPassword = useSetupNewPasswordMutation();
 
   const {
@@ -54,7 +62,9 @@ export default function SetupPasswordPage() {
   });
 
   useEffect(() => {
-    if (!useAuthStore.getState().email) {
+    const token = getPasswordSetupToken();
+    setSetupToken(token);
+    if (!useAuthStore.getState().email || !token) {
       router.push(Routes.Login_Start);
     }
     passwordRef.current?.focus();
@@ -64,12 +74,29 @@ export default function SetupPasswordPage() {
   const password = watch('password');
 
   const onSubmit = async (data: PasswordSetupFormValues) => {
+    if (!setupToken) {
+      router.push(Routes.Login_Start);
+      return;
+    }
+
     try {
-      const response = await setupNewPassword.mutateAsync(data);
+      const response = await setupNewPassword.mutateAsync({
+        setupToken,
+        password: data.password,
+        repeatPassword: data.repeatPassword,
+      });
+      clearPasswordSetupToken();
       toast(t(`messagekey.${response.messageKey}`));
       router.push(Routes.Login);
     } catch (error) {
       toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
+      if (
+        error instanceof ApiResponseError &&
+        error.messageKey === 'auth.invalid-or-expired-session'
+      ) {
+        clearPasswordSetupToken();
+        router.push(Routes.Login_Start);
+      }
     }
   };
 
@@ -236,7 +263,8 @@ export default function SetupPasswordPage() {
         <Button
           type='submit'
           disabled={isSubmitting}
-          variant='mutedSolid' className='mt-4 w-full'
+          variant='mutedSolid'
+          className='mt-4 w-full'
         >
           {isSubmitting ? t('common.submitting') : t('common.continue')}
         </Button>

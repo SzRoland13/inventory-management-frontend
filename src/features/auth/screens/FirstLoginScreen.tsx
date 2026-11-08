@@ -19,6 +19,7 @@ import {
 } from '@/features/auth/queries/authQueries';
 import { getApiErrorMessageKey } from '@/features/shared/api/apiResponse';
 import { useAuthStore } from '@/features/auth/stores/authStore';
+import { storePasswordSetupToken } from '@/features/auth/stores/passwordSetupTokenStorage';
 import { Routes } from '@/features/shared/types/routes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
@@ -99,6 +100,7 @@ export default function FirstLoginPage() {
       });
 
       toast(t(`messagekey.${response.messageKey}`));
+      storePasswordSetupToken(response.payload.setupToken);
 
       router.push(Routes.Setup_Password);
     } catch (error) {
@@ -140,7 +142,8 @@ export default function FirstLoginPage() {
             <Button
               type='submit'
               disabled={emailSubmitting}
-              variant='mutedSolid' className='w-full'
+              variant='mutedSolid'
+              className='w-full'
             >
               {emailSubmitting ? t('common.requesting') : t('common.request')}
             </Button>
@@ -184,7 +187,8 @@ export default function FirstLoginPage() {
             <Button
               type='submit'
               disabled={totpSubmitting}
-              variant='mutedSolid' className='mt-4 w-full'
+              variant='mutedSolid'
+              className='mt-4 w-full'
             >
               {totpSubmitting ? t('common.verifying') : t('common.verify')}
             </Button>
