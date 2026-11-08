@@ -10,7 +10,6 @@ import {
 } from '@/features/shared/components/ui/tabs';
 import { SettingsTab } from '@/features/settings/types/settings';
 import UserTab from '@/features/settings/components/user/UserTab';
-import GeneralTab from '@/features/settings/components/general/GeneralTab';
 import ProductTab from '@/features/settings/components/product/ProductTab';
 import CompanyTab from '@/features/settings/components/company/CompanyTab';
 import { castToEnum } from '@/features/shared/helpers/enum';
@@ -32,10 +31,10 @@ export default function SettingsPage() {
 
   const currentTab =
     castToEnum(SettingsTab, searchParams.get('tab') ?? '') ??
-    SettingsTab.General;
+    SettingsTab.User;
 
   const onTabChange = (tab: string) => {
-    const enumValue = castToEnum(SettingsTab, tab) ?? SettingsTab.General;
+    const enumValue = castToEnum(SettingsTab, tab) ?? SettingsTab.User;
     router.replace({ pathname: Routes.Settings, query: { tab: enumValue } });
   };
 
@@ -65,11 +64,7 @@ export default function SettingsPage() {
             onValueChange={onTabChange}
             className='rounded-none w-full h-full py-0'
           >
-            <TabsList className='mb-6 grid grid-cols-2 sm:grid-cols-4 rounded-none w-full py-0 bg-zinc-700 data-[state=active]:bg-zinc-500'>
-              <TabsTrigger value={SettingsTab.General} className={triggerStyle}>
-                {t('pages.settings.tabs.general.title')}
-              </TabsTrigger>
-
+            <TabsList className='mb-6 grid grid-cols-2 sm:grid-cols-3 rounded-none w-full py-0 bg-zinc-700 data-[state=active]:bg-zinc-500'>
               <TabsTrigger value={SettingsTab.User} className={triggerStyle}>
                 {t('pages.settings.tabs.user.title')}
               </TabsTrigger>
@@ -87,10 +82,6 @@ export default function SettingsPage() {
                 </TabsTrigger>
               )}
             </TabsList>
-
-            <TabsContent value={SettingsTab.General}>
-              <GeneralTab />
-            </TabsContent>
 
             <TabsContent value={SettingsTab.User}>
               <UserTab />
