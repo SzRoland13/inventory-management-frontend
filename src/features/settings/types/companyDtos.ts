@@ -24,21 +24,21 @@ export type CompanyExtendedResponse = CompanyMinimalResponse & {
   phone: string;
   address: string;
   website: string;
-  taxNumber: string;
-  vatNumber: string;
-  registrationNumber: string;
-  bankAccount: string;
-  iban: string;
+  taxNumber: string | null;
+  vatNumber: string | null;
+  registrationNumber: string | null;
+  bankAccount: string | null;
+  iban: string | null;
   preferredCurrency: Currency;
 };
 
 export type CompanyBillingDataResponse = {
   id: number;
-  taxNumber: string;
-  vatNumber: string;
-  registrationNumber: string;
-  bankAccount: string;
-  iban: string;
+  taxNumber: string | null;
+  vatNumber: string | null;
+  registrationNumber: string | null;
+  bankAccount: string | null;
+  iban: string | null;
 };
 
 export type CompanyBaseDataUpdateRequest = {

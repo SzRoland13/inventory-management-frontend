@@ -3,7 +3,10 @@ import { toast } from 'sonner';
 import { ApiResponse } from '@/features/shared/types/genericDtos';
 
 export class ApiResponseError extends Error {
-  constructor(public readonly messageKey: string) {
+  constructor(
+    public readonly messageKey: string,
+    public readonly params?: Record<string, unknown> | null,
+  ) {
     super(messageKey);
     this.name = 'ApiResponseError';
   }
@@ -15,7 +18,7 @@ export async function requireSuccessfulResponse<T>(
   const response = await request;
 
   if (!response.success) {
-    throw new ApiResponseError(response.messageKey);
+    throw new ApiResponseError(response.messageKey, response.params);
   }
 
   return response;
@@ -36,5 +39,15 @@ export function toastApiError(
   t: ReturnType<typeof useTranslations>,
   error: unknown,
 ): void {
+  if (error instanceof ApiResponseError && error.params) {
+    const fieldMessage = Object.values(error.params).find(
+      (value): value is string =>
+        typeof value === 'string' && value.startsWith('validation.'),
+    );
+    if (fieldMessage) {
+      toast.error(t(`messagekey.${fieldMessage}` as never));
+      return;
+    }
+  }
   toast.error(t(`messagekey.${getApiErrorMessageKey(error)}`));
 }

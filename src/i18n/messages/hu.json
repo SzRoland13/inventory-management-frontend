@@ -29,7 +29,7 @@
       "invalid": "Érvénytelen e-mail cím"
     },
     "phone": {
-      "invalid": "Adj meg egy 5–15 számjegyből álló telefonszámot. Csak számjegyeket és szokásos elválasztókat használj (+, szóköz, zárójel, kötőjel vagy pont).",
+      "invalid": "Add meg az országhívószámot, a szám + jellel kezdődjön, és csak számjegyeket használj (pl. +36123456789).",
       "too-long": "A telefonszám túl hosszú."
     },
     "country": {
@@ -1119,11 +1119,11 @@
             "title": "Számlázási adatok",
             "description": "A számlákon és egyéb hivatalos dokumentumokon megjelenő számlázási adatok kezelése.",
             "fields": {
-              "taxNumber": "Adószám",
+              "taxNumber": "Belföldi adószám",
               "vatNumber": "EU adószám",
               "registrationNumber": "Cégjegyzékszám",
               "bankAccount": "Bankszámlaszám",
-              "iban": "IBAN"
+              "iban": "IBAN-szám"
             }
           },
           "prefix": {
@@ -1145,7 +1145,10 @@
               "TRANSFER_DELIVERY": "Készletátvezetési kiadás",
               "TRANSFER_RECEIPT": "Készletátvezetési bevételezés",
               "STOCK_ADJUSTMENT": "Készletkorrekció",
-              "RETURN": "Visszáru"
+              "RETURN": "Visszáru",
+              "STOCK_COUNT": "Készletleltár",
+              "WAREHOUSE_TRANSFER": "Raktárközi átadás",
+              "CORRECTION": "Helyesbítés"
             }
           },
           "currency": {
@@ -1165,6 +1168,18 @@
     }
   },
   "messagekey": {
+    "validation": {
+      "required": "A mező kitöltése kötelező.",
+      "too_long": "A megadott érték túl hosszú.",
+      "invalid_value": "Adj meg érvényes értéket.",
+      "website_requires_protocol": "A weboldal címét http:// vagy https:// előtaggal add meg, például: https://example.com.",
+      "country": { "invalid": "Adj meg érvényes ISO országkódot." },
+      "email": { "invalid": "Adj meg érvényes e-mail-címet." },
+      "phone": { "invalid": "Add meg az országhívószámot, a szám + jellel kezdődjön, és csak számjegyeket használj (pl. +36123456789)." },
+      "iban": { "invalid": "Adj meg érvényes IBAN-számot." },
+      "vat": { "invalid": "Adj meg érvényes EU adószámot, például: HU12345678." },
+      "domestic_tax_number": { "invalid": "A belföldi adószám formátuma: 12345678-1-12." }
+    },
     "guard": {
       "session-expired": "Lejárt munkamenet. Kérlek lépj be újra.",
       "invalid-session": "Érvénytelen munkamenet. A hitelesítő adatai már nem érvényesek."

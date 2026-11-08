@@ -29,7 +29,7 @@
       "invalid": "Invalid email address"
     },
     "phone": {
-      "invalid": "Enter a phone number with 5–15 digits. Use only digits and common separators (+, spaces, parentheses, hyphens, or periods).",
+      "invalid": "Include the country code and start the number with +, using digits only (e.g. +36123456789).",
       "too-long": "Phone number is too long."
     },
     "country": {
@@ -1119,11 +1119,11 @@
             "title": "Billing information",
             "description": "Manage the billing details that will appear on invoices and other official documents.",
             "fields": {
-              "taxNumber": "Tax number",
-              "vatNumber": "VAT number",
+              "taxNumber": "Domestic tax number",
+              "vatNumber": "EU VAT number",
               "registrationNumber": "Company registration number",
               "bankAccount": "Bank account number",
-              "iban": "IBAN"
+              "iban": "IBAN number"
             }
           },
           "prefix": {
@@ -1145,7 +1145,10 @@
               "TRANSFER_DELIVERY": "Stock transfer delivery",
               "TRANSFER_RECEIPT": "Stock transfer receipt",
               "STOCK_ADJUSTMENT": "Stock adjustment",
-              "RETURN": "Return"
+              "RETURN": "Return",
+              "STOCK_COUNT": "Stock count",
+              "WAREHOUSE_TRANSFER": "Warehouse transfer",
+              "CORRECTION": "Correction"
             }
           },
           "currency": {
@@ -1165,6 +1168,18 @@
     }
   },
   "messagekey": {
+    "validation": {
+      "required": "This field is required.",
+      "too_long": "This value is too long.",
+      "invalid_value": "Enter a valid value.",
+      "website_requires_protocol": "Enter a website starting with http:// or https://, for example https://example.com.",
+      "country": { "invalid": "Enter a valid ISO country code." },
+      "email": { "invalid": "Enter a valid email address." },
+      "phone": { "invalid": "Include the country code and start the number with +, using digits only (e.g. +36123456789)." },
+      "iban": { "invalid": "Enter a valid IBAN." },
+      "vat": { "invalid": "Enter a valid EU VAT number, for example HU12345678." },
+      "domestic_tax_number": { "invalid": "Enter a domestic tax number in the format 12345678-1-12." }
+    },
     "guard": {
       "session-expired": "Session expired. Please log in again.",
       "invalid-session": "Invalid session. Your credentials are no longer valid."
