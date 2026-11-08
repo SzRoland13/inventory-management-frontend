@@ -1,8 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useRef } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { HTMLAttributes, useEffect, useRef } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { ContactRound } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/features/shared/components/ui/select';
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
+import { BillingIdentifiersFields } from '@/features/shared/components/BillingIdentifiersFields';
 import {
   partnerFormSchema,
   partnerFormToRequest,
@@ -54,6 +55,7 @@ export function PartnerFormDialog({
   const {
     register,
     control,
+    setValue,
     reset,
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -63,6 +65,17 @@ export function PartnerFormDialog({
   });
   const wasOpen = useRef(false);
   const lastPartnerId = useRef<number | null>(null);
+  const formValues = useWatch({ control });
+  const partnerType = formValues.type ?? PartnerType.CUSTOMER;
+  const billingValues = {
+    taxNumber: formValues.taxNumber ?? '',
+    vatNumber: formValues.vatNumber ?? '',
+    registrationNumber: formValues.registrationNumber ?? '',
+    bankAccount: formValues.bankAccount ?? '',
+    iban: formValues.iban ?? '',
+  };
+  const requiresBillingIdentifiers =
+    partnerType === PartnerType.SUPPLIER || partnerType === PartnerType.BOTH;
 
   useEffect(() => {
     if (!open) {
@@ -77,14 +90,21 @@ export function PartnerFormDialog({
     wasOpen.current = true;
   }, [open, partner, reset]);
 
-  const field = (name: 'name' | 'taxNumber', maxLength: number) => (
+  const field = (
+    name: keyof PartnerFormValues,
+    maxLength: number,
+    inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'],
+    required = false,
+  ) => (
     <div className='space-y-1'>
       <Label htmlFor={`partner-${name}`}>
-        {t(`pages.partners.fields.${name}`)}
+        {t(`pages.partners.fields.${name}`)}{required ? ' *' : ''}
       </Label>
       <Input
         id={`partner-${name}`}
         maxLength={maxLength}
+        inputMode={inputMode}
+        aria-required={required}
         aria-invalid={!!errors[name]}
         {...register(name)}
       />
@@ -151,7 +171,30 @@ export function PartnerFormDialog({
                     )}
                   />
                 </div>
-                {field('taxNumber', 50)}
+                <div>
+                  <BillingIdentifiersFields
+                    values={billingValues}
+                    errors={{
+                      taxNumber: errors.taxNumber?.message,
+                      vatNumber: errors.vatNumber?.message,
+                      registrationNumber: errors.registrationNumber?.message,
+                      bankAccount: errors.bankAccount?.message,
+                      iban: errors.iban?.message,
+                    }}
+                    labelPrefix='pages.partners.fields'
+                    requiredFields={
+                      requiresBillingIdentifiers
+                        ? ['taxNumber', 'vatNumber', 'bankAccount', 'iban']
+                        : []
+                    }
+                    onChange={(field, value) =>
+                      setValue(field, value, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }
+                  />
+                </div>
               </div>
             </AppDialogSection>
           </AppDialogBody>

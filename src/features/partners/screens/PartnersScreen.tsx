@@ -100,9 +100,15 @@ export default function PartnersScreen() {
       .filter(
         (partner) =>
           !term ||
-          [partner.name, partner.type, partner.taxNumber ?? ''].some((value) =>
-            value.toLocaleLowerCase().includes(term),
-          ),
+          [
+            partner.name,
+            partner.type,
+            partner.taxNumber,
+            partner.vatNumber,
+            partner.registrationNumber,
+            partner.bankAccount,
+            partner.iban,
+          ].some((value) => value?.toLocaleLowerCase().includes(term)),
       )
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [partners, search, stateFilter]);
@@ -130,6 +136,26 @@ export default function PartnersScreen() {
         accessorKey: 'taxNumber',
         header: t('pages.partners.fields.taxNumber'),
         cell: ({ row }) => row.original.taxNumber || t('common.none'),
+      },
+      {
+        accessorKey: 'vatNumber',
+        header: t('pages.partners.fields.vatNumber'),
+        cell: ({ row }) => row.original.vatNumber || t('common.none'),
+      },
+      {
+        accessorKey: 'registrationNumber',
+        header: t('pages.partners.fields.registrationNumber'),
+        cell: ({ row }) => row.original.registrationNumber || t('common.none'),
+      },
+      {
+        accessorKey: 'bankAccount',
+        header: t('pages.partners.fields.bankAccount'),
+        cell: ({ row }) => row.original.bankAccount || t('common.none'),
+      },
+      {
+        accessorKey: 'iban',
+        header: t('pages.partners.fields.iban'),
+        cell: ({ row }) => row.original.iban || t('common.none'),
       },
       {
         accessorKey: 'archived',
@@ -363,6 +389,22 @@ export default function PartnersScreen() {
                     {t('pages.partners.fields.taxNumber')}
                   </dt>
                   <dd>{selectedPartner.taxNumber || t('common.none')}</dd>
+                  <dt className='text-zinc-400'>
+                    {t('pages.partners.fields.vatNumber')}
+                  </dt>
+                  <dd>{selectedPartner.vatNumber || t('common.none')}</dd>
+                  <dt className='text-zinc-400'>
+                    {t('pages.partners.fields.registrationNumber')}
+                  </dt>
+                  <dd>{selectedPartner.registrationNumber || t('common.none')}</dd>
+                  <dt className='text-zinc-400'>
+                    {t('pages.partners.fields.bankAccount')}
+                  </dt>
+                  <dd>{selectedPartner.bankAccount || t('common.none')}</dd>
+                  <dt className='text-zinc-400'>
+                    {t('pages.partners.fields.iban')}
+                  </dt>
+                  <dd>{selectedPartner.iban || t('common.none')}</dd>
                   <dt className='text-zinc-400'>
                     {t('pages.partners.fields.status')}
                   </dt>

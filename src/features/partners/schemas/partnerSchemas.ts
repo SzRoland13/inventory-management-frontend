@@ -1,7 +1,10 @@
 import { z } from 'zod';
 import {
   optionalEmailSchema,
+  optionalDomesticTaxNumberSchema,
+  optionalIbanSchema,
   optionalPhoneSchema,
+  optionalVatSchema,
 } from '@/features/shared/schemas/commonSchemas';
 import { isoCountryCodeSchema } from '@/features/shared/schemas/countrySchemas';
 import {
@@ -19,7 +22,24 @@ const tooLong = { error: 'pages.partners.validation.too-long' };
 export const partnerFormSchema = z.object({
   name: z.string().trim().min(1, required).max(255, tooLong),
   type: z.enum(PartnerType),
-  taxNumber: z.string().max(50, tooLong),
+  taxNumber: optionalDomesticTaxNumberSchema,
+  vatNumber: optionalVatSchema,
+  registrationNumber: z.string().max(100, tooLong),
+  bankAccount: z.string().max(100, tooLong),
+  iban: optionalIbanSchema,
+}).superRefine((values, context) => {
+  if (values.type !== PartnerType.SUPPLIER && values.type !== PartnerType.BOTH) {
+    return;
+  }
+  for (const field of ['taxNumber', 'vatNumber', 'iban', 'bankAccount'] as const) {
+    if (!values[field].trim()) {
+      context.addIssue({
+        code: 'custom',
+        path: [field],
+        message: 'pages.partners.validation.required',
+      });
+    }
+  }
 });
 
 export type PartnerFormValues = z.infer<typeof partnerFormSchema>;
@@ -31,6 +51,10 @@ export function partnerValuesFromResponse(
     name: partner?.name ?? '',
     type: partner?.type ?? PartnerType.CUSTOMER,
     taxNumber: partner?.taxNumber ?? '',
+    vatNumber: partner?.vatNumber ?? '',
+    registrationNumber: partner?.registrationNumber ?? '',
+    bankAccount: partner?.bankAccount ?? '',
+    iban: partner?.iban ?? '',
   };
 }
 
@@ -41,6 +65,10 @@ export function partnerFormToRequest(
     name: values.name.trim(),
     type: values.type,
     taxNumber: values.taxNumber.trim() || null,
+    vatNumber: values.vatNumber.trim() || null,
+    registrationNumber: values.registrationNumber.trim() || null,
+    bankAccount: values.bankAccount.trim() || null,
+    iban: values.iban.trim() || null,
   };
 }
 
