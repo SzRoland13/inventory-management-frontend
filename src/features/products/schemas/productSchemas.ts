@@ -63,6 +63,7 @@ const productFormBaseSchema = z.object({
     .trim()
     .min(1, invalid('pages.products.validation.required'))
     .max(255, invalid('pages.products.validation.too-long')),
+  minimumStockQuantity: decimalText('decimal-precision', 16, 8),
   description: z.string(),
   brandId: z.string(),
   status: z.enum([
@@ -255,6 +256,7 @@ export function productFormToRequest(
     sku: values.sku,
     ean: values.ean || null,
     name: values.name,
+    minimumStockQuantity: toOptionalNumber(values.minimumStockQuantity),
     description: values.description || null,
     brandId: values.brandId ? Number(values.brandId) : null,
     status: values.status,

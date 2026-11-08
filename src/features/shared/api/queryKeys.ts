@@ -28,6 +28,9 @@ export const queryKeys = {
     balances: (params: unknown) => ['stocks', 'balances', params] as const,
     movements: (params: unknown) => ['stocks', 'movements', params] as const,
   },
+  dashboard: {
+    all: ['dashboard'] as const,
+  },
   documents: {
     all: ['documents'] as const,
     capabilities: ['documents', 'capabilities'] as const,

@@ -85,6 +85,23 @@ export function ProductDetailsSection({
           <ValidationMessage messageKey={errors.name?.message} />
         </div>
         <div>
+          <FieldLabel htmlFor='product-minimum-stock'>
+            {t('pages.products.fields.minimum-stock')}
+          </FieldLabel>
+          <Input
+            id='product-minimum-stock'
+            type='number'
+            min='0'
+            step='any'
+            inputMode='decimal'
+            {...register('minimumStockQuantity')}
+          />
+          <p className='mt-1 text-xs text-zinc-400'>
+            {t('pages.products.fields.minimum-stock-hint')}
+          </p>
+          <ValidationMessage messageKey={errors.minimumStockQuantity?.message} />
+        </div>
+        <div>
           <FieldLabel htmlFor='product-ean'>
             {t('pages.products.fields.ean')}
           </FieldLabel>
