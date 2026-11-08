@@ -23,6 +23,7 @@ import type {
   ReturnMutationRequest,
   ReturnRequest,
   StockCountRequest,
+  StockCountItemsRequest,
   TransferActionRequest,
   TransferDraftRequest,
   TransferPreviewRequest,
@@ -379,6 +380,20 @@ export function useCreateStockCountMutation() {
     mutationFn: (request: StockCountRequest) =>
       requireSuccessfulResponse(DocumentService.createStockCount(request)),
     onSuccess: () => invalidate(),
+  });
+}
+export function useAddStockCountItemsMutation() {
+  const invalidate = useInvalidateDocuments();
+  return useMutation({
+    mutationFn: ({
+      id,
+      request,
+    }: {
+      id: number;
+      request: StockCountItemsRequest;
+    }) =>
+      requireSuccessfulResponse(DocumentService.addStockCountItems(id, request)),
+    onSuccess: (_, variables) => invalidate(variables.id),
   });
 }
 export function useStockCountPreviewMutation() {

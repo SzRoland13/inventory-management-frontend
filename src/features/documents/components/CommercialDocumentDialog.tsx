@@ -203,9 +203,9 @@ export function CommercialDocumentDialog({ open, type, editDocument = null, onOp
               </div>
             </ScrollArea>
           </fieldset>
-          <div className='grid gap-3 sm:grid-cols-2'>
+          <div className='grid gap-3'>
             <div className='space-y-2'><Label htmlFor='commercial-date'>{t('pages.documents.create.date')}</Label><Input id='commercial-date' type='date' value={date} onChange={(event) => setDate(event.target.value)} /></div>
-            <div className='space-y-2'><Label htmlFor='commercial-reason'>{t(activeType === DocumentType.FINANCIAL_CREDIT ? 'pages.documents.commercial.reason' : 'pages.documents.commercial.referenceNumber')}</Label><Input id='commercial-reason' value={reason} onChange={(event) => setReason(event.target.value)} /></div>
+            <div className='space-y-2'><Label htmlFor='commercial-reason'>{t(activeType === DocumentType.FINANCIAL_CREDIT ? 'pages.documents.commercial.reason' : 'pages.documents.commercial.referenceNumber')}</Label><textarea id='commercial-reason' value={reason} onChange={(event) => setReason(event.target.value)} rows={2} maxLength={activeType === DocumentType.FINANCIAL_CREDIT ? 500 : 255} className='flex min-h-16 max-h-[40vh] w-full resize-y rounded-md border border-zinc-600 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus-visible:border-indigo-400 focus-visible:ring-0' /></div>
           </div>
           <section className='space-y-2'>
             <h3 className='text-sm font-medium text-zinc-200'>

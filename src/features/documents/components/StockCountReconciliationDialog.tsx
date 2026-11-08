@@ -5,6 +5,7 @@ import { ClipboardList } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import {
+  useAddStockCountItemsMutation,
   usePostStockCountMutation,
   useStockCountPreviewMutation,
 } from '@/features/documents/queries/documentQueries';
@@ -26,6 +27,8 @@ import {
 import { ThemedDialogContent } from '@/features/shared/components/ThemedDialogWrapper';
 import { convertLineQuantity, lineUnitName, lineUnitOptions } from '@/features/documents/utils/lineUnits';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/features/shared/components/ui/select';
+import { useInfiniteProductsQuery } from '@/features/products/queries/productQueries';
+import { ScrollArea } from '@/features/shared/components/ui/scroll-area';
 
 export function StockCountReconciliationDialog({
   document,
@@ -39,6 +42,15 @@ export function StockCountReconciliationDialog({
   const t = useTranslations();
   const previewMutation = useStockCountPreviewMutation();
   const postMutation = usePostStockCountMutation();
+  const addItemsMutation = useAddStockCountItemsMutation();
+  const [countLines, setCountLines] = useState(document.lines);
+  const [version, setVersion] = useState(document.version);
+  const [productSearch, setProductSearch] = useState('');
+  const productsQuery = useInfiniteProductsQuery(productSearch, true);
+  const products = useMemo(
+    () => productsQuery.data?.pages.flatMap((page) => page.content) ?? [],
+    [productsQuery.data?.pages],
+  );
   const [quantities, setQuantities] = useState<Record<number, string>>(() =>
     Object.fromEntries(
       document.lines.map((line) => [
@@ -55,34 +67,66 @@ export function StockCountReconciliationDialog({
   const [previewKey, setPreviewKey] = useState('');
   const lines = useMemo(
     () =>
-      document.lines
+      countLines
         .map((line) => ({
           sourceLineId: line.id,
           productId: line.productId,
           unitId: unitIds[line.id] ?? undefined,
-          quantity: Number(quantities[line.id] ?? 0),
-          countedQuantity: Number(quantities[line.id] ?? 0),
+          countedQuantity: Number(quantities[line.id]),
           varianceReason: reasons[line.id] || undefined,
         }))
-        .filter((line) => line.quantity >= 0),
-    [document.lines, quantities, reasons, unitIds],
+        .filter((line) => line.countedQuantity >= 0),
+    [countLines, quantities, reasons, unitIds],
   );
   const countedAt = document.countedAt ?? document.date;
   const signature = JSON.stringify({
-    version: document.version,
+    version,
     countedAt,
     lines,
   });
   const previewIsCurrent = Boolean(preview?.valid && previewKey === signature);
-  const busy = previewMutation.isPending || postMutation.isPending;
+  const allQuantitiesEntered = countLines.length > 0 && countLines.every((line) => {
+    const value = quantities[line.id]?.trim();
+    return value !== undefined && value !== '' && Number.isFinite(Number(value)) && Number(value) >= 0;
+  });
+  const busy = previewMutation.isPending || postMutation.isPending || addItemsMutation.isPending;
+
+  async function addProduct(productId: number) {
+    if (busy) return;
+    try {
+      const response = await addItemsMutation.mutateAsync({
+        id: document.id,
+        request: { version, productIds: [productId] },
+      });
+      const updated = response.payload;
+      setCountLines(updated.lines);
+      setVersion(updated.version);
+      setQuantities((current) => ({
+        ...Object.fromEntries(
+          updated.lines.map((line) => [
+            line.id,
+            current[line.id] ?? String(line.countedQuantity ?? 0),
+          ]),
+        ),
+      }));
+      setUnitIds((current) => ({
+        ...Object.fromEntries(
+          updated.lines.map((line) => [line.id, current[line.id] ?? line.unitId ?? null]),
+        ),
+      }));
+      setPreview(null);
+    } catch (error) {
+      toastApiError(t, error);
+    }
+  }
 
   async function previewCount() {
-    if (busy) return;
+    if (busy || !allQuantitiesEntered) return;
     setPreview(null);
     try {
       const response = await previewMutation.mutateAsync({
         id: document.id,
-        request: { version: document.version, countedAt, lines },
+        request: { version, countedAt, lines },
       });
       setPreview(response.payload);
       setPreviewKey(signature);
@@ -97,7 +141,7 @@ export function StockCountReconciliationDialog({
       await postMutation.mutateAsync({
         id: document.id,
         request: {
-          version: document.version,
+          version,
           calculationVersion: preview?.calculationVersion,
           idempotencyKey: createIdempotencyKey(),
           countedAt,
@@ -130,7 +174,45 @@ export function StockCountReconciliationDialog({
               timeStyle: 'short',
             }).format(new Date(countedAt))}
           </p>
-          {document.lines.map((line) => (
+          {countLines.length === 0 && (
+            <p className='rounded-lg border border-zinc-700 bg-zinc-900/60 p-3 text-sm text-zinc-300'>
+              {t('pages.documents.operations.emptyStockCount')}
+            </p>
+          )}
+          <section className='space-y-2 rounded-lg border border-zinc-700 bg-zinc-900/40 p-3'>
+            <Label htmlFor='stock-count-product-search'>
+              {t('pages.documents.operations.addCountProducts')}
+            </Label>
+            <Input
+              id='stock-count-product-search'
+              value={productSearch}
+              onChange={(event) => setProductSearch(event.target.value)}
+              placeholder={t('pages.documents.operations.selectProduct')}
+            />
+            <ScrollArea className='h-40 rounded-md border border-zinc-700'>
+              <div className='space-y-1 p-2'>
+                {products.filter((product) => !countLines.some((line) => line.productId === product.id)).map((product) => (
+                  <div key={product.id} className='flex items-center justify-between gap-3 rounded-md px-2 py-1.5 hover:bg-zinc-800'>
+                    <span className='min-w-0 truncate text-sm'>{product.name} · {product.sku}</span>
+                    <Button type='button' variant='subtleOutline' onClick={() => void addProduct(product.id)} disabled={busy}>
+                      {t('pages.documents.operations.addLine')}
+                    </Button>
+                  </div>
+                ))}
+                {!productsQuery.isPending && products.length === 0 && (
+                  <p className='px-2 py-3 text-sm text-zinc-400'>
+                    {t('pages.documents.operations.noCountProducts')}
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
+            {productsQuery.hasNextPage && (
+              <Button type='button' variant='mutedOutline' onClick={() => void productsQuery.fetchNextPage()} disabled={productsQuery.isFetchingNextPage}>
+                {t(productsQuery.isFetchingNextPage ? 'pages.documents.operations.loading' : 'pages.documents.pagination.next')}
+              </Button>
+            )}
+          </section>
+          {countLines.map((line) => (
             <div
               key={line.id}
               className='grid gap-3 rounded-lg border border-zinc-700 bg-zinc-900/60 p-3 sm:grid-cols-[minmax(0,1fr)_8rem]'
@@ -149,10 +231,15 @@ export function StockCountReconciliationDialog({
                     onValueChange={(value) => {
                       const nextUnitId = Number(value);
                       const previousUnitId = unitIds[line.id] ?? line.unitId;
-                      setQuantities((current) => ({
-                        ...current,
-                        [line.id]: String(convertLineQuantity(Number(current[line.id] ?? 0), line, previousUnitId, nextUnitId)),
-                      }));
+                      setQuantities((current) => {
+                        const currentValue = current[line.id];
+                        return {
+                          ...current,
+                          [line.id]: currentValue === undefined || currentValue.trim() === ''
+                            ? ''
+                            : String(convertLineQuantity(Number(currentValue), line, previousUnitId, nextUnitId)),
+                        };
+                      });
                       setUnitIds((current) => ({ ...current, [line.id]: nextUnitId }));
                       setPreview(null);
                     }}
@@ -183,7 +270,7 @@ export function StockCountReconciliationDialog({
                   type='number'
                   min='0'
                   step='any'
-                  value={quantities[line.id] ?? '0'}
+                  value={quantities[line.id] ?? ''}
                   onChange={(event) => {
                     setQuantities((current) => ({
                       ...current,
@@ -246,7 +333,7 @@ export function StockCountReconciliationDialog({
           <Button
             variant='mutedOutline'
             onClick={() => void previewCount()}
-            disabled={busy}
+            disabled={busy || !allQuantitiesEntered}
           >
             {t(
               busy

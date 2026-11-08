@@ -845,7 +845,10 @@
           "DAMAGED": "Damaged",
           "SUPPLIER_RETURN": "Return to supplier"
         },
-        "countDescription": "Enter physical quantities, then review the rebased adjustment before posting.",
+        "countDescription": "Add the products you counted, enter their physical quantities, then review the adjustment before posting.",
+        "emptyStockCount": "No products have been added to this count yet. Search for a product above; each added product starts with a counted quantity of zero.",
+        "addCountProducts": "Add counted products",
+        "noCountProducts": "No matching active products.",
         "expectedAtCount": "Expected at count",
         "counted": "Physical quantity",
         "countEffect": "expected {expected} · counted {counted} · variance {variance} · rebased target {target} · adjustment {adjustment}",

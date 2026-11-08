@@ -845,7 +845,10 @@
           "DAMAGED": "Sérült",
           "SUPPLIER_RETURN": "Visszaküldés a beszállítónak"
         },
-        "countDescription": "Add meg a fizikai mennyiségeket, majd ellenőrizd az újraszámolt korrekciót.",
+        "countDescription": "Add hozzá a leltározott termékeket, rögzítsd a fizikai mennyiségeket, majd ellenőrizd a korrekciót.",
+        "emptyStockCount": "Még nincs termék a leltárban. Keress rá a termékre fent; az új tételek leltározott mennyisége nulláról indul.",
+        "addCountProducts": "Leltározott termékek hozzáadása",
+        "noCountProducts": "Nincs ilyen aktív termék.",
         "expectedAtCount": "Leltárkori várt mennyiség",
         "counted": "Fizikai mennyiség",
         "countEffect": "várt {expected} · leltározott {counted} · eltérés {variance} · újraszámolt cél {target} · korrekció {adjustment}",

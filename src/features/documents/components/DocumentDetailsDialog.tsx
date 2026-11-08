@@ -370,29 +370,6 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
                       {t('pages.documents.operations.nonBillable')}
                     </p>
                   )}
-                  {current.allowedActions.some((action) =>
-                    documentWorkflowActions.includes(
-                      action as DocumentWorkflowAction,
-                    ),
-                  ) && (
-                    <div className='flex flex-wrap gap-2'>
-                      {current.allowedActions
-                        .filter((action): action is DocumentWorkflowAction =>
-                          documentWorkflowActions.includes(
-                            action as DocumentWorkflowAction,
-                          ),
-                        )
-                        .map((action) => (
-                          <Button
-                            key={action}
-                            onClick={() => setWorkflowAction(action)}
-                            variant='subtleOutline'
-                          >
-                            {t(`pages.documents.actions.${action}`)}
-                          </Button>
-                        ))}
-                    </div>
-                  )}
                   <AppDialogSection
                     title={t('pages.documents.details.items')}
                     icon={Package}
@@ -712,7 +689,10 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
             </div>
           </ScrollArea>
         </AppDialogBody>
-        {(current.allowedActions.includes(DocumentAction.EDIT) ||
+        {(current.allowedActions.some((action) =>
+          documentWorkflowActions.includes(action as DocumentWorkflowAction),
+        ) ||
+          current.allowedActions.includes(DocumentAction.EDIT) ||
           current.allowedActions.includes(DocumentAction.CONFIRM) ||
           current.allowedActions.includes(DocumentAction.POST) ||
           current.allowedActions.includes(DocumentAction.CLOSE_REMAINING) ||
@@ -721,7 +701,22 @@ export function DocumentDetailsDialog({ document, onClose }: Props) {
           current.allowedActions.includes(DocumentAction.REJECT) ||
           current.allowedActions.includes(DocumentAction.FINALIZE) ||
           current.allowedActions.includes(DocumentAction.ASSIGN_SETTLEMENT)) && (
-          <AppDialogFooter>
+          <AppDialogFooter className='flex-wrap gap-2 sm:gap-2'>
+            {current.allowedActions
+              .filter((action): action is DocumentWorkflowAction =>
+                documentWorkflowActions.includes(
+                  action as DocumentWorkflowAction,
+                ),
+              )
+              .map((action) => (
+                <Button
+                  key={action}
+                  onClick={() => setWorkflowAction(action)}
+                  variant='subtleOutline'
+                >
+                  {t(`pages.documents.actions.${action}`)}
+                </Button>
+              ))}
             {current.allowedActions.includes(DocumentAction.POST) && (
               <Button
                 onClick={() => setFulfillmentOpen(true)}

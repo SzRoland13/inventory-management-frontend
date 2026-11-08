@@ -555,7 +555,7 @@ export function DocumentDraftEditor({ document, onClose }: Props) {
             />
             <div className='space-y-2'>
               <label htmlFor='editor-payment-terms' className='text-sm font-medium text-zinc-200'>{t('pages.documents.commercial.paymentTerms')}</label>
-              <Input id='editor-payment-terms' value={paymentTerms} maxLength={500} onChange={(event) => change(setPaymentTerms, event.target.value)} />
+              <textarea id='editor-payment-terms' value={paymentTerms} maxLength={500} rows={2} onChange={(event) => change(setPaymentTerms, event.target.value)} className='flex min-h-16 max-h-[40vh] w-full resize-y rounded-md border border-zinc-600 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus-visible:border-indigo-400 focus-visible:ring-0' />
             </div>
           </div>
         </AppDialogBody>
