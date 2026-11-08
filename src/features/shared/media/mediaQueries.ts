@@ -1,7 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { MediaService } from '@/features/shared/media/MediaService';
 import { ObjectStorageService } from '@/features/shared/media/ObjectStorageService';
-import { MediaPreviewResponse } from '@/features/shared/media/types/mediaDtos';
+import {
+  MediaPreviewResponse,
+  MediaThumbnailPreviewResponse,
+  MediaThumbnailStatus,
+} from '@/features/shared/media/types/mediaDtos';
 import { requireSuccessfulResponse } from '@/features/shared/api/apiResponse';
 import { queryKeys } from '@/features/shared/api/queryKeys';
 
@@ -40,6 +44,35 @@ export function useMediaPreviewQuery(
     },
     refetchInterval: (query) => {
       const expiry = query.state.data?.payload.expiry;
+      return expiry ? getMsUntilRefreshNeeded(expiry, 1_000) : 60_000;
+    },
+  });
+}
+
+export function useMediaThumbnailPreviewQuery(
+  id: number | null,
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: queryKeys.media.thumbnailPreview(id ?? 0),
+    queryFn: () => requireSuccessfulResponse(MediaService.getThumbnailPreview(id!)),
+    enabled: id !== null && enabled,
+    staleTime: (query) => {
+      const preview = query.state.data?.payload as
+        | MediaThumbnailPreviewResponse
+        | undefined;
+      const expiry =
+        preview?.status === MediaThumbnailStatus.READY ? preview.expiry : null;
+      return expiry ? getMsUntilRefreshNeeded(expiry, 0) : 0;
+    },
+    refetchInterval: (query) => {
+      const preview = query.state.data?.payload as
+        | MediaThumbnailPreviewResponse
+        | undefined;
+      if (preview?.status === MediaThumbnailStatus.PENDING) return 2_000;
+      if (preview?.status === MediaThumbnailStatus.FAILED) return false;
+      const expiry =
+        preview?.status === MediaThumbnailStatus.READY ? preview.expiry : null;
       return expiry ? getMsUntilRefreshNeeded(expiry, 1_000) : 60_000;
     },
   });

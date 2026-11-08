@@ -110,6 +110,7 @@ export function useProductsColumns(
               aria-label={t('common.select-row')}
             />
             <ProductImagePreview
+              useThumbnail
               mediaAssetId={
                 getPrimaryProductImage(row.original.images)?.mediaAssetId ??
                 null

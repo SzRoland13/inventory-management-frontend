@@ -16,6 +16,7 @@ export const queryKeys = {
   media: {
     all: ['media'] as const,
     preview: (id: number) => ['media', 'preview', id] as const,
+    thumbnailPreview: (id: number) => ['media', 'thumbnail-preview', id] as const,
   },
   users: {
     all: ['users'] as const,

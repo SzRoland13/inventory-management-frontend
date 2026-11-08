@@ -2,6 +2,7 @@ import { BaseService } from '@/features/shared/api/BaseService';
 import { ApiResponse } from '@/features/shared/types/genericDtos';
 import {
   MediaPreviewResponse,
+  MediaThumbnailPreviewResponse,
   MediaUploadInitResponse,
   MediaUploadRequest,
 } from '@/features/shared/media/types/mediaDtos';
@@ -18,5 +19,11 @@ export const MediaService = {
     id: number,
   ): Promise<ApiResponse<MediaPreviewResponse>> => {
     return handleRequest(BaseService.get(`/media/${id}/preview`));
+  },
+
+  getThumbnailPreview: async (
+    id: number,
+  ): Promise<ApiResponse<MediaThumbnailPreviewResponse>> => {
+    return handleRequest(BaseService.get(`/media/${id}/thumbnail/preview`));
   },
 };
